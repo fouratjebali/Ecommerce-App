@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { VersioningType } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -23,6 +23,13 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   if (docsEnabled) {
     const document = SwaggerModule.createDocument(
@@ -30,9 +37,10 @@ async function bootstrap() {
       new DocumentBuilder()
         .setTitle('GreenCraft Marketplace API')
         .setDescription(
-          'Sprint 1 foundation for the GreenCraft handmade commerce platform.',
+          'Sprint 2 foundation for auth, artisan onboarding, and catalog management.',
         )
-        .setVersion('0.1.0')
+        .setVersion('0.2.0')
+        .addBearerAuth()
         .build(),
     );
 
