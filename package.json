@@ -1,0 +1,35 @@
+{
+  "name": "greencraft-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GreenCraft Marketplace monorepo for the Angular storefront and NestJS commerce platform.",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run start --workspace greencraft-web",
+    "build:web": "npm run build --workspace greencraft-web",
+    "test:web": "npm run test --workspace greencraft-web",
+    "format:check": "npm exec --workspace greencraft-web prettier --check \"src/**/*.{ts,scss,html}\""
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fouratjebali/Ecommerce-App.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fouratjebali/Ecommerce-App/issues"
+  },
+  "homepage": "https://github.com/fouratjebali/Ecommerce-App#readme",
+  "keywords": [
+    "angular",
+    "nestjs",
+    "marketplace",
+    "sustainability",
+    "handmade"
+  ],
+  "license": "UNLICENSED"
+}
