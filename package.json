@@ -13,6 +13,9 @@
     "build:api": "npm run build --workspace greencraft-api",
     "test:web": "npm run test --workspace greencraft-web",
     "test:api": "npm run test --workspace greencraft-api",
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "infra:logs": "docker compose -f infra/docker-compose.yml logs -f",
     "format:check": "npm exec --workspace greencraft-web prettier --check \"src/**/*.{ts,scss,html}\""
   },
   "engines": {

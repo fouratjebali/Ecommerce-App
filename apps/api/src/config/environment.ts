@@ -11,6 +11,13 @@ const environmentSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   FRONTEND_ORIGIN: z.string().default('http://localhost:4200'),
   API_DOCS_ENABLED: booleanish.default(true),
+  DATABASE_URL: z
+    .string()
+    .default('postgresql://greencraft:greencraft@localhost:5432/greencraft?schema=public'),
+  REDIS_URL: z.string().default('redis://localhost:6379'),
+  RABBITMQ_URL: z.string().default('amqp://greencraft:greencraft@localhost:5672'),
+  MEILISEARCH_HOST: z.string().default('http://localhost:7700'),
+  MEILISEARCH_MASTER_KEY: z.string().default('greencraft-master-key'),
 });
 
 export type AppEnvironment = z.infer<typeof environmentSchema>;
