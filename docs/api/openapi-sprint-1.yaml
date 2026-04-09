@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: GreenCraft Marketplace API
+  version: 0.1.0
+  description: Sprint 1 API contract for the GreenCraft Marketplace platform.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v1/health:
+    get:
+      summary: Get API health
+      tags: [Health]
+      responses:
+        '200':
+          description: Health payload
+  /api/v1/catalog/highlights:
+    get:
+      summary: Get storefront catalog highlights
+      tags: [Catalog]
+      responses:
+        '200':
+          description: Highlighted categories and featured products
+  /api/v1/artisans/featured:
+    get:
+      summary: Get featured artisan profiles
+      tags: [Artisans]
+      responses:
+        '200':
+          description: Featured artisans for the storefront
+  /api/v1/platform/overview:
+    get:
+      summary: Get platform metrics and initiatives
+      tags: [Platform]
+      responses:
+        '200':
+          description: Business metrics and Sprint roadmap initiatives
+  /api/v1/storefront/homepage:
+    get:
+      summary: Get homepage aggregate payload
+      tags: [Storefront]
+      responses:
+        '200':
+          description: Homepage content contract for the Angular storefront
