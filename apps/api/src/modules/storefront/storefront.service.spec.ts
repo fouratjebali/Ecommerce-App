@@ -1,27 +1,37 @@
-import { Test } from '@nestjs/testing';
-import { ArtisansService } from '../artisans/artisans.service';
-import { CatalogService } from '../catalog/catalog.service';
-import { PlatformService } from '../platform/platform.service';
 import { StorefrontService } from './storefront.service';
 
 describe('StorefrontService', () => {
   let storefrontService: StorefrontService;
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      providers: [
-        StorefrontService,
-        CatalogService,
-        ArtisansService,
-        PlatformService,
-      ],
-    }).compile();
-
-    storefrontService = moduleRef.get(StorefrontService);
+  beforeEach(() => {
+    storefrontService = new StorefrontService(
+      {
+        getHighlights: jest.fn().mockResolvedValue({
+          categories: [
+            { slug: 'tableware' },
+            { slug: 'bags-and-accessories' },
+            { slug: 'lighting-and-decor' },
+          ],
+          featuredProducts: [{ impactScore: 95 }],
+        }),
+      } as never,
+      {
+        getFeatured: jest.fn().mockResolvedValue([
+          { impactBadge: 'Kiln co-op partner' },
+          { impactBadge: 'Deadstock rescue leader' },
+        ]),
+      } as never,
+      {
+        getOverview: jest.fn().mockResolvedValue({
+          metrics: [{ value: '3' }],
+          initiatives: [{ milestone: 'Sprint 2 foundation' }],
+        }),
+      } as never,
+    );
   });
 
-  it('returns the Sprint 1 homepage payload', () => {
-    const homepage = storefrontService.getHomepage();
+  it('returns the Sprint 2 homepage payload', async () => {
+    const homepage = await storefrontService.getHomepage();
 
     expect(homepage.hero.title).toContain('sustainable marketplace');
     expect(homepage.categories).toHaveLength(3);

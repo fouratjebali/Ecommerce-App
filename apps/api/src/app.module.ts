@@ -9,6 +9,7 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { StorefrontModule } from './modules/storefront/storefront.module';
 import { UsersModule } from './modules/users/users.module';
+import { VendorsModule } from './modules/vendors/vendors.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UsersModule } from './modules/users/users.module';
     HealthModule,
     CatalogModule,
     ArtisansModule,
+    VendorsModule,
     PlatformModule,
     StorefrontModule,
   ],
