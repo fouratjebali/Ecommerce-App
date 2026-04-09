@@ -1,0 +1,198 @@
+@let currentCatalog = catalog();
+@let currentFacets = facets();
+
+<section class="catalog-page">
+  <header class="catalog-header">
+    <div>
+      <p class="eyebrow">Catalog & PIM</p>
+      <h1>Browse sustainable goods with faceted discovery, impact data, and artisan context.</h1>
+      <p>
+        Sprint 2 adds a real public catalog API with category, material, eco-rating, and
+        made-to-order filters.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="ghost-link" routerLink="/">Home</a>
+      <a class="primary-link" routerLink="/vendor">Vendor workspace</a>
+    </div>
+  </header>
+
+  <div class="catalog-layout">
+    <aside class="filter-panel">
+      <div class="filter-card">
+        <label class="search-field">
+          <span>Search</span>
+          <input
+            type="text"
+            [ngModel]="filters().q"
+            (ngModelChange)="updateSearch($event)"
+            placeholder="Bowls, totes, lamps..."
+          />
+        </label>
+      </div>
+
+      <div class="filter-card">
+        <div class="filter-heading">
+          <strong>Categories</strong>
+          <button type="button" (click)="resetFilters()">Reset</button>
+        </div>
+
+        @for (category of currentFacets?.categories ?? []; track category.slug) {
+          <button
+            type="button"
+            class="pill"
+            [class.is-active]="filters().category?.includes(category.slug)"
+            (click)="toggleCategory(category.slug)"
+          >
+            {{ category.name }} <span>{{ category.count }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="filter-card">
+        <strong>Materials</strong>
+
+        @for (material of currentFacets?.materials ?? []; track material.slug) {
+          <button
+            type="button"
+            class="pill"
+            [class.is-active]="filters().material?.includes(material.slug)"
+            (click)="toggleMaterial(material.slug)"
+          >
+            {{ material.name }}
+          </button>
+        }
+      </div>
+
+      <div class="filter-card">
+        <strong>Eco ratings</strong>
+
+        @for (eco of currentFacets?.ecoRatings ?? []; track eco.code) {
+          <button
+            type="button"
+            class="pill"
+            [class.is-active]="filters().ecoRating?.includes(eco.code)"
+            (click)="toggleEcoRating(eco.code)"
+          >
+            {{ eco.label }} <span>{{ eco.score }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="filter-card">
+        <strong>Artisans</strong>
+
+        @for (artisan of currentFacets?.artisans ?? []; track artisan.slug) {
+          <button
+            type="button"
+            class="pill"
+            [class.is-active]="filters().artisan?.includes(artisan.slug)"
+            (click)="toggleArtisan(artisan.slug)"
+          >
+            {{ artisan.studioName }} <span>{{ artisan.count }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="filter-card">
+        <strong>Impact filters</strong>
+
+        <label>
+          <span>Minimum impact score</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            [ngModel]="filters().minImpactScore ?? 0"
+            (ngModelChange)="setMinImpactScore($event)"
+          />
+          <small>{{ filters().minImpactScore ?? 0 }}/100</small>
+        </label>
+
+        <label>
+          <span>Made to order</span>
+          <select
+            [ngModel]="
+              filters().madeToOrder === null ? '' : filters().madeToOrder ? 'true' : 'false'
+            "
+            (ngModelChange)="setMadeToOrder($event)"
+          >
+            <option value="">All items</option>
+            <option value="true">Made to order only</option>
+            <option value="false">Ready to ship only</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Sort by</span>
+          <select [ngModel]="filters().sort" (ngModelChange)="setSort($event)">
+            <option value="featured">Featured</option>
+            <option value="impact-desc">Impact score</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="newest">Newest</option>
+          </select>
+        </label>
+      </div>
+    </aside>
+
+    <div class="catalog-results">
+      <div class="results-toolbar">
+        <div>
+          <strong>{{ currentCatalog?.total ?? 0 }} items</strong>
+          <p>Live from the Nest catalog service and Prisma-backed dataset.</p>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="empty-state">Loading the catalog...</div>
+      } @else if (!currentCatalog?.items?.length) {
+        <div class="empty-state">No products match the current filters.</div>
+      } @else {
+        <div class="product-grid">
+          @for (product of currentCatalog?.items ?? []; track product.id) {
+            <article class="product-card">
+              <div
+                class="product-image"
+                [style.background-image]="
+                  product.imageUrl
+                    ? 'linear-gradient(rgba(22,51,45,.18), rgba(22,51,45,.08)), url(' +
+                      product.imageUrl +
+                      ')'
+                    : ''
+                "
+              >
+                <span class="impact-badge">{{ product.impactScore }}/100</span>
+              </div>
+
+              <div class="product-copy">
+                <div class="product-meta">
+                  <span>{{ product.artisan.studioName }}</span>
+                  <span>{{ product.artisan.location }}</span>
+                </div>
+
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.shortDescription }}</p>
+
+                <div class="material-strip">
+                  @for (material of product.materials; track material.id) {
+                    <span>{{ material.name }}</span>
+                  }
+                </div>
+
+                <div class="product-footer">
+                  <strong>{{
+                    product.price.amountInCents / 100
+                      | currency: product.price.currency : 'symbol' : '1.0-0'
+                  }}</strong>
+                  <a [routerLink]="['/catalog', product.slug]">View details</a>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

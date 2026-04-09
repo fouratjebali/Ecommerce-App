@@ -19,7 +19,7 @@
       }
     </nav>
 
-    <a class="header-cta" href="#bundle">Build a bundle</a>
+    <a class="header-cta" routerLink="/catalog">Shop the catalog</a>
   </header>
 
   <main class="page-content">
@@ -30,10 +30,10 @@
         <p class="hero-description">{{ storefront.hero.subtitle }}</p>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="#featured">
+          <a class="button button-primary" routerLink="/catalog">
             {{ storefront.hero.primaryCta }}
           </a>
-          <a class="button button-secondary" href="#artisans">
+          <a class="button button-secondary" routerLink="/vendor">
             {{ storefront.hero.secondaryCta }}
           </a>
         </div>
@@ -72,6 +72,15 @@
         <div class="floating-chip floating-chip-one">Carbon tracked</div>
         <div class="floating-chip floating-chip-two">Bundle ready</div>
       </div>
+    </section>
+
+    <section class="quick-link-strip" aria-label="Sprint 2 shortcuts">
+      @for (link of quickLinks; track link.route) {
+        <a class="quick-link-card" [routerLink]="link.route">
+          <span class="card-label">Sprint 2</span>
+          <strong>{{ link.label }}</strong>
+        </a>
+      }
     </section>
 
     <section class="metrics-grid" aria-label="Marketplace metrics">

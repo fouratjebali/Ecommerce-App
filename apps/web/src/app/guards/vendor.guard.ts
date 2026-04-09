@@ -1,0 +1,20 @@
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+
+export const vendorGuard: CanActivateFn = async () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const user = await authService.ensureProfile();
+
+  if (!user) {
+    return router.createUrlTree(['/auth']);
+  }
+
+  if (user.role !== 'ARTISAN') {
+    return router.createUrlTree(['/catalog']);
+  }
+
+  return true;
+};

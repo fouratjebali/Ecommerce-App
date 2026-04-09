@@ -1,0 +1,223 @@
+<section class="auth-page">
+  <a class="page-link" routerLink="/">Back to home</a>
+
+  <div class="auth-layout">
+    <article class="auth-story">
+      <p class="eyebrow">Sprint 2 access</p>
+      <h1>Sign in to manage a studio or create a buyer account.</h1>
+      <p>
+        GreenCraft now includes JWT auth, artisan onboarding, and protected vendor tooling
+        backed by the Nest API.
+      </p>
+
+      <div class="demo-accounts">
+        <p class="card-label">Seeded demo accounts</p>
+        <div>
+          <strong>Artisan:</strong>
+          <span>`noura@greencraft.local / Artisan@1234`</span>
+        </div>
+        <div>
+          <strong>Buyer:</strong>
+          <span>`buyer@greencraft.local / Buyer@1234`</span>
+        </div>
+        <div>
+          <strong>Admin:</strong>
+          <span>`admin@greencraft.local / Admin@1234`</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="auth-card">
+      <div class="mode-switch">
+        <button
+          type="button"
+          [class.is-active]="mode() === 'login'"
+          (click)="setMode('login')"
+        >
+          Login
+        </button>
+        <button
+          type="button"
+          [class.is-active]="mode() === 'register'"
+          (click)="setMode('register')"
+        >
+          Register
+        </button>
+      </div>
+
+      @if (mode() === 'register') {
+        <div class="type-switch">
+          <button
+            type="button"
+            [class.is-active]="registrationType() === 'buyer'"
+            (click)="setRegistrationType('buyer')"
+          >
+            Buyer
+          </button>
+          <button
+            type="button"
+            [class.is-active]="registrationType() === 'artisan'"
+            (click)="setRegistrationType('artisan')"
+          >
+            Artisan
+          </button>
+        </div>
+      }
+
+      <form class="auth-form" (ngSubmit)="submit()">
+        @if (mode() === 'login') {
+          <label>
+            <span>Email</span>
+            <input
+              type="email"
+              name="loginEmail"
+              [(ngModel)]="loginForm.email"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Password</span>
+            <input
+              type="password"
+              name="loginPassword"
+              [(ngModel)]="loginForm.password"
+              required
+            />
+          </label>
+        } @else if (registrationType() === 'buyer') {
+          <label>
+            <span>Full name</span>
+            <input
+              type="text"
+              name="buyerFullName"
+              [(ngModel)]="buyerForm.fullName"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input
+              type="email"
+              name="buyerEmail"
+              [(ngModel)]="buyerForm.email"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Password</span>
+            <input
+              type="password"
+              name="buyerPassword"
+              [(ngModel)]="buyerForm.password"
+              required
+            />
+          </label>
+        } @else {
+          <div class="grid-two">
+            <label>
+              <span>Full name</span>
+              <input
+                type="text"
+                name="artisanFullName"
+                [(ngModel)]="artisanForm.fullName"
+                required
+              />
+            </label>
+            <label>
+              <span>Studio name</span>
+              <input
+                type="text"
+                name="artisanStudioName"
+                [(ngModel)]="artisanForm.studioName"
+                required
+              />
+            </label>
+          </div>
+
+          <div class="grid-two">
+            <label>
+              <span>Email</span>
+              <input
+                type="email"
+                name="artisanEmail"
+                [(ngModel)]="artisanForm.email"
+                required
+              />
+            </label>
+            <label>
+              <span>Slug</span>
+              <input
+                type="text"
+                name="artisanSlug"
+                [(ngModel)]="artisanForm.slug"
+                required
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Password</span>
+            <input
+              type="password"
+              name="artisanPassword"
+              [(ngModel)]="artisanForm.password"
+              required
+            />
+          </label>
+
+          <div class="grid-two">
+            <label>
+              <span>Location</span>
+              <input
+                type="text"
+                name="artisanLocation"
+                [(ngModel)]="artisanForm.location"
+                required
+              />
+            </label>
+            <label>
+              <span>Headline</span>
+              <input
+                type="text"
+                name="artisanHeadline"
+                [(ngModel)]="artisanForm.headline"
+                required
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Studio bio</span>
+            <textarea
+              rows="4"
+              name="artisanBio"
+              [(ngModel)]="artisanForm.bio"
+              required
+            ></textarea>
+          </label>
+
+          <label>
+            <span>Impact statement</span>
+            <textarea
+              rows="4"
+              name="artisanImpactStatement"
+              [(ngModel)]="artisanForm.impactStatement"
+              required
+            ></textarea>
+          </label>
+        }
+
+        @if (errorMessage()) {
+          <p class="error-message">{{ errorMessage() }}</p>
+        }
+
+        <button class="submit-button" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Working...' : mode() === 'login' ? 'Continue' : 'Create account' }}
+        </button>
+      </form>
+    </article>
+  </div>
+</section>

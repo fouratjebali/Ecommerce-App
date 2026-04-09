@@ -1,0 +1,79 @@
+@let detail = productDetail();
+
+<section class="detail-page">
+  <a class="back-link" routerLink="/catalog">Back to catalog</a>
+
+  @if (loading()) {
+    <div class="detail-card">Loading product details...</div>
+  } @else if (!detail) {
+    <div class="detail-card">This product could not be loaded.</div>
+  } @else {
+    <div class="detail-layout">
+      <div
+        class="detail-image"
+        [style.background-image]="
+          detail.product.imageUrl
+            ? 'linear-gradient(rgba(22,51,45,.18), rgba(22,51,45,.08)), url(' +
+              detail.product.imageUrl +
+              ')'
+            : ''
+        "
+      ></div>
+
+      <article class="detail-card detail-copy">
+        <p class="eyebrow">{{ detail.product.ecoRating.label }}</p>
+        <h1>{{ detail.product.name }}</h1>
+        <p>{{ detail.product.description }}</p>
+
+        <div class="metric-strip">
+          <div>
+            <span>Price</span>
+            <strong>{{
+              detail.product.price.amountInCents / 100
+                | currency: detail.product.price.currency : 'symbol' : '1.0-0'
+            }}</strong>
+          </div>
+          <div>
+            <span>Impact score</span>
+            <strong>{{ detail.product.impactScore }}/100</strong>
+          </div>
+          <div>
+            <span>CO2 saved</span>
+            <strong>{{ detail.product.co2SavedKg }}kg</strong>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <strong>Artisan</strong>
+          <p>{{ detail.product.artisan.studioName }} | {{ detail.product.artisan.location }}</p>
+        </div>
+
+        <div class="detail-section">
+          <strong>Story</strong>
+          <p>{{ detail.product.story }}</p>
+        </div>
+
+        <div class="detail-section">
+          <strong>Materials</strong>
+          <div class="chip-row">
+            @for (material of detail.product.materials; track material.id) {
+              <span>{{ material.name }}</span>
+            }
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <strong>Attributes</strong>
+          <div class="attribute-grid">
+            @for (attribute of detail.product.attributes; track attribute.id) {
+              <div>
+                <span>{{ attribute.label }}</span>
+                <strong>{{ attribute.value }}</strong>
+              </div>
+            }
+          </div>
+        </div>
+      </article>
+    </div>
+  }
+</section>

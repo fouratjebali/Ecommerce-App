@@ -1,6 +1,7 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { fallbackStorefront } from '../../data/fallback-storefront';
 import { ArtisanProfile, StorefrontProduct } from '../../models/storefront';
 import { StorefrontService } from '../../services/storefront.service';
@@ -17,7 +18,7 @@ interface InnovationPanel {
 
 @Component({
   selector: 'app-home-page',
-  imports: [CurrencyPipe, DecimalPipe],
+  imports: [CurrencyPipe, DecimalPipe, RouterLink],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -34,6 +35,12 @@ export class HomePageComponent {
     { label: 'Artisans', href: '#artisans' },
     { label: 'Bundle Lab', href: '#bundle' },
     { label: 'AI Studio', href: '#ai' },
+  ];
+
+  protected readonly quickLinks = [
+    { label: 'Shop catalog', route: '/catalog' },
+    { label: 'Artisan sign in', route: '/auth' },
+    { label: 'Vendor workspace', route: '/vendor' },
   ];
 
   protected readonly activeInnovation = signal<InnovationMode>('visual-search');
