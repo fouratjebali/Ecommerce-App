@@ -12,14 +12,20 @@ export class StorefrontService {
     private readonly platformService: PlatformService,
   ) {}
 
-  getHomepage() {
+  async getHomepage() {
+    const [highlights, artisans, overview] = await Promise.all([
+      this.catalogService.getHighlights(),
+      this.artisansService.getFeatured(),
+      this.platformService.getOverview(),
+    ]);
+
     return {
       hero: storefrontSnapshot.hero,
-      metrics: this.platformService.getOverview().metrics,
-      categories: this.catalogService.getHighlights().categories,
-      featuredProducts: this.catalogService.getHighlights().featuredProducts,
-      artisans: this.artisansService.getFeatured(),
-      initiatives: this.platformService.getOverview().initiatives,
+      metrics: overview.metrics,
+      categories: highlights.categories,
+      featuredProducts: highlights.featuredProducts,
+      artisans,
+      initiatives: overview.initiatives,
     };
   }
 }
