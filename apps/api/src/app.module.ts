@@ -11,6 +11,7 @@ import { StorefrontModule } from './modules/storefront/storefront.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '../../.env'],
       validate: validateEnvironment,
     }),
     HealthModule,

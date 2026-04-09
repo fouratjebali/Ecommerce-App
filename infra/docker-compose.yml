@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: greencraft-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-greencraft}
+      POSTGRES_USER: ${POSTGRES_USER:-greencraft}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-greencraft}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-greencraft} -d ${POSTGRES_DB:-greencraft}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: greencraft-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: greencraft-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: greencraft
+      RABBITMQ_DEFAULT_PASS: greencraft
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.15
+    container_name: greencraft-meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY:-greencraft-master-key}
+    ports:
+      - '7700:7700'
+    volumes:
+      - meilisearch_data:/meili_data
+
+  pgadmin:
+    image: dpage/pgadmin4:9
+    container_name: greencraft-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@greencraft.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-ChangeMe123!}
+    ports:
+      - '8081:80'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  meilisearch_data:
