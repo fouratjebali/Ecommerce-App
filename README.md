@@ -2,7 +2,7 @@
 
 GreenCraft Marketplace is a sustainable handmade goods platform that connects eco-conscious artisans with buyers who care about provenance, low-impact materials, and transparent storytelling.
 
-Sprint 1 delivers the development foundation only. This repo is not configured for production deployment yet.
+Sprint 2 is now in place in development mode. The repo includes local auth, vendor tooling, product management, and a Prisma-backed catalog, but it is still not configured for production deployment.
 
 ## Stack
 
@@ -16,8 +16,18 @@ Sprint 1 delivers the development foundation only. This repo is not configured f
 1. Copy `.env.example` to `.env`
 2. Run `npm install`
 3. Run `npm run infra:up`
-4. Run `npm run dev:api`
-5. Run `npm run dev:web`
+4. Run `npm run db:push`
+5. Run `npm run db:seed`
+6. Run `npm run dev:api`
+7. Run `npm run dev:web`
+
+Docker Desktop or a compatible local Docker engine is required for the infrastructure services.
+
+## Seeded demo accounts
+
+- Artisan: `noura@greencraft.local / Artisan@1234`
+- Buyer: `buyer@greencraft.local / Buyer@1234`
+- Admin: `admin@greencraft.local / Admin@1234`
 
 ## Useful scripts
 
@@ -26,9 +36,13 @@ Sprint 1 delivers the development foundation only. This repo is not configured f
 - `npm run build:web`
 - `npm run build:api`
 - `npm run test:api`
+- `cd apps/api && npm run test:e2e`
 - `npm run infra:up`
 - `npm run infra:down`
 - `npm run infra:logs`
+- `npm run db:push`
+- `npm run db:seed`
+- `npm run db:studio`
 
 ## Branch strategy
 
@@ -40,6 +54,10 @@ Sprint 1 delivers the development foundation only. This repo is not configured f
 - `sprint-1/domain-design`
 - `sprint-1/frontend-foundation`
 - `sprint-1/docs-roadmap`
+- `sprint-2/foundation-auth`
+- `sprint-2/vendors-catalog`
+- `sprint-2/frontend-flow`
+- `sprint-2/docs`
 
 ## Sprint 1 outcomes
 
@@ -48,11 +66,20 @@ Sprint 1 delivers the development foundation only. This repo is not configured f
 - Local infrastructure with Docker Compose and `pgvector`-ready PostgreSQL
 - Domain model, architecture references, and initial API contract documentation
 
+## Sprint 2 outcomes
+
+- JWT authentication with buyer registration, artisan onboarding, and RBAC-backed route protection
+- Prisma schema and seed data for users, artisan profiles, products, categories, materials, eco ratings, and attributes
+- Public catalog browsing with faceted filters, product detail pages, and artisan-aware metadata
+- Artisan vendor dashboard with profile editing, inventory overview, and product create/update flows
+- Angular storefront routes for `/auth`, `/catalog`, `/catalog/:slug`, and `/vendor`
+
 ## Documentation index
 
 - `docs/architecture/system-overview.md`
 - `docs/domain/domain-model.md`
 - `docs/api/api-design.md`
+- `docs/api/sprint-2-api-guide.md`
 - `docs/api/openapi-sprint-1.yaml`
 - `docs/roadmap/e-scrum-roadmap.md`
 - `CONTRIBUTING.md`

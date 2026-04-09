@@ -18,6 +18,10 @@
 - `sprint-1/domain-design`
 - `sprint-1/frontend-foundation`
 - `sprint-1/docs-roadmap`
+- `sprint-2/foundation-auth`
+- `sprint-2/vendors-catalog`
+- `sprint-2/frontend-flow`
+- `sprint-2/docs`
 
 ## Commit style
 
@@ -28,8 +32,12 @@
 
 ## Verification
 
+- Infrastructure: `npm run infra:up`
+- Database schema: `npm run db:push`
+- Database seed: `npm run db:seed`
 - Frontend: `npm run build:web`
 - Backend: `npm run build:api`
 - Backend tests: `npm run test:api`
+- Backend e2e: `cd apps/api && npm run test:e2e`
 
 Angular Karma tests may need local browser configuration depending on the machine running them.
