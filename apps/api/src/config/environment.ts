@@ -11,6 +11,8 @@ const environmentSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   FRONTEND_ORIGIN: z.string().default('http://localhost:4200'),
   API_DOCS_ENABLED: booleanish.default(true),
+  JWT_SECRET: z.string().min(12).default('greencraft-local-secret'),
+  JWT_EXPIRES_IN: z.string().default('7d'),
   DATABASE_URL: z
     .string()
     .default('postgresql://greencraft:greencraft@localhost:5432/greencraft?schema=public'),
