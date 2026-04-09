@@ -8,8 +8,11 @@
   ],
   "scripts": {
     "dev:web": "npm run start --workspace greencraft-web",
+    "dev:api": "npm run start:dev --workspace greencraft-api",
     "build:web": "npm run build --workspace greencraft-web",
+    "build:api": "npm run build --workspace greencraft-api",
     "test:web": "npm run test --workspace greencraft-web",
+    "test:api": "npm run test --workspace greencraft-api",
     "format:check": "npm exec --workspace greencraft-web prettier --check \"src/**/*.{ts,scss,html}\""
   },
   "engines": {
