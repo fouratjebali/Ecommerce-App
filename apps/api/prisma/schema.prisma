@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  ARTISAN
+  BUYER
+}
+
+enum VendorStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AttributeKind {
+  TEXT
+  NUMBER
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  fullName       String
+  passwordHash   String
+  role           UserRole        @default(BUYER)
+  avatarUrl      String?
+  artisanProfile ArtisanProfile?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model ArtisanProfile {
+  id                 String       @id @default(uuid())
+  userId             String       @unique
+  slug               String       @unique
+  studioName         String
+  headline           String
+  bio                String       @db.Text
+  location           String
+  impactStatement    String       @db.Text
+  verificationStatus VendorStatus @default(PENDING)
+  verified           Boolean      @default(false)
+  responseRate       Int          @default(92)
+  averageRating      Float        @default(4.8)
+  totalSales         Int          @default(0)
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products           Product[]
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  description String
+  products    Product[]
+}
+
+model MaterialTag {
+  id                  String            @id @default(uuid())
+  slug                String            @unique
+  name                String
+  origin              String
+  description         String
+  sustainabilityScore Int
+  productMaterials    ProductMaterial[]
+}
+
+model EcoRating {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  label       String
+  score       Int
+  description String
+  products    Product[]
+}
+
+model Product {
+  id               String                @id @default(uuid())
+  artisanId        String
+  categoryId       String
+  ecoRatingId      String
+  slug             String                @unique
+  name             String
+  shortDescription String
+  description      String                @db.Text
+  story            String                @db.Text
+  currency         String                @default("USD")
+  priceInCents     Int
+  inventoryCount   Int
+  impactScore      Int
+  co2SavedKg       Float
+  leadTimeDays     Int                   @default(5)
+  status           ProductStatus         @default(DRAFT)
+  isFeatured       Boolean               @default(false)
+  artisan          ArtisanProfile        @relation(fields: [artisanId], references: [id], onDelete: Cascade)
+  category         Category              @relation(fields: [categoryId], references: [id])
+  ecoRating        EcoRating             @relation(fields: [ecoRatingId], references: [id])
+  images           ProductImage[]
+  materials        ProductMaterial[]
+  attributes       ProductAttributeValue[]
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  @@index([artisanId, status])
+  @@index([categoryId, status])
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  productId String
+  url       String
+  alt       String
+  sortOrder Int     @default(0)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ProductMaterial {
+  productId     String
+  materialTagId String
+  percentage    Int?
+  product       Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  materialTag   MaterialTag @relation(fields: [materialTagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, materialTagId])
+}
+
+model ProductAttributeDefinition {
+  id           String                   @id @default(uuid())
+  code         String                   @unique
+  label        String
+  kind         AttributeKind
+  filterGroup  String
+  unit         String?
+  facetEnabled Boolean                  @default(true)
+  sortOrder    Int                      @default(0)
+  options      ProductAttributeOption[]
+  values       ProductAttributeValue[]
+}
+
+model ProductAttributeOption {
+  id           String                     @id @default(uuid())
+  definitionId String
+  value        String
+  label        String
+  sortOrder    Int                        @default(0)
+  definition   ProductAttributeDefinition @relation(fields: [definitionId], references: [id], onDelete: Cascade)
+  values       ProductAttributeValue[]
+
+  @@unique([definitionId, value])
+}
+
+model ProductAttributeValue {
+  id           String                     @id @default(uuid())
+  productId    String
+  definitionId String
+  optionId     String?
+  valueText    String?
+  valueNumber  Float?
+  valueBoolean Boolean?
+  product      Product                    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  definition   ProductAttributeDefinition @relation(fields: [definitionId], references: [id], onDelete: Cascade)
+  option       ProductAttributeOption?    @relation(fields: [optionId], references: [id], onDelete: SetNull)
+
+  @@index([productId, definitionId])
+}
