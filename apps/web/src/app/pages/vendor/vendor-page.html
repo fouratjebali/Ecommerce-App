@@ -1,0 +1,430 @@
+@let currentDashboard = dashboard();
+@let currentOptions = options();
+@let currentUser = authService.user();
+@let currentNotice = notice();
+
+<section class="vendor-page">
+  <header class="vendor-header panel">
+    <div>
+      <p class="eyebrow">Vendor dashboard</p>
+      <h1>Manage your artisan studio, catalog entries, and Sprint 2 profile data.</h1>
+      <p>
+        This workspace is connected to protected NestJS endpoints for vendor profile updates and
+        product publishing.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <div class="account-pill">
+        <strong>{{ currentUser?.fullName ?? 'Artisan account' }}</strong>
+        <span>{{
+          currentDashboard ? currentDashboard.profile.verificationStatus : 'PENDING'
+        }}</span>
+      </div>
+      <a class="ghost-link" routerLink="/">Home</a>
+      <a class="ghost-link" routerLink="/catalog">Catalog</a>
+      <button type="button" class="primary-link" (click)="logout()">Log out</button>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel loading-panel">Loading the vendor workspace...</div>
+  } @else {
+    <section class="metrics-grid">
+      <article class="metric-card panel">
+        <span>Total products</span>
+        <strong>{{ currentDashboard ? currentDashboard.metrics.totalProducts : 0 }}</strong>
+        <p>All artisan SKUs currently linked to your studio.</p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Published</span>
+        <strong>{{ currentDashboard ? currentDashboard.metrics.publishedProducts : 0 }}</strong>
+        <p>Live products available in the public marketplace catalog.</p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Average impact</span>
+        <strong
+          >{{ currentDashboard ? currentDashboard.metrics.averageImpactScore : 0 }}/100</strong
+        >
+        <p>Average sustainability score across your current assortment.</p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Total CO2 saved</span>
+        <strong
+          >{{
+            (currentDashboard ? currentDashboard.metrics.totalCo2SavedKg : 0) | number: '1.1-1'
+          }}kg</strong
+        >
+        <p>Current cumulative savings surfaced by your published stories.</p>
+      </article>
+    </section>
+
+    <div class="vendor-layout">
+      <article class="panel profile-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Studio profile</p>
+            <h2>Artisan identity</h2>
+          </div>
+          <span class="meta-chip">{{
+            currentDashboard ? currentDashboard.profile.location : 'Location pending'
+          }}</span>
+        </div>
+
+        <form class="panel-form" (ngSubmit)="saveProfile()">
+          <label>
+            <span>Studio name</span>
+            <input type="text" name="studioName" [(ngModel)]="profileForm.studioName" required />
+          </label>
+
+          <div class="grid-two">
+            <label>
+              <span>Headline</span>
+              <input type="text" name="headline" [(ngModel)]="profileForm.headline" required />
+            </label>
+
+            <label>
+              <span>Location</span>
+              <input type="text" name="location" [(ngModel)]="profileForm.location" required />
+            </label>
+          </div>
+
+          <label>
+            <span>Studio bio</span>
+            <textarea rows="5" name="bio" [(ngModel)]="profileForm.bio" required></textarea>
+          </label>
+
+          <label>
+            <span>Impact statement</span>
+            <textarea
+              rows="4"
+              name="impactStatement"
+              [(ngModel)]="profileForm.impactStatement"
+              required
+            ></textarea>
+          </label>
+
+          <button class="primary-button" type="submit" [disabled]="savingProfile()">
+            {{ savingProfile() ? 'Saving profile...' : 'Save studio profile' }}
+          </button>
+        </form>
+      </article>
+
+      <article class="panel composer-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Product composer</p>
+            <h2>{{ editingProductId() ? 'Edit product' : 'Create a new product' }}</h2>
+          </div>
+          <button type="button" class="ghost-button" (click)="startNewProduct()">New draft</button>
+        </div>
+
+        <form class="panel-form" (ngSubmit)="saveProduct()">
+          <div class="grid-two">
+            <label>
+              <span>Product name</span>
+              <input type="text" name="productName" [(ngModel)]="productForm.name" required />
+            </label>
+
+            <label>
+              <span>Slug</span>
+              <input type="text" name="productSlug" [(ngModel)]="productForm.slug" required />
+            </label>
+          </div>
+
+          <label>
+            <span>Short description</span>
+            <input
+              type="text"
+              name="shortDescription"
+              [(ngModel)]="productForm.shortDescription"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Description</span>
+            <textarea
+              rows="4"
+              name="description"
+              [(ngModel)]="productForm.description"
+              required
+            ></textarea>
+          </label>
+
+          <label>
+            <span>Artisan story</span>
+            <textarea rows="4" name="story" [(ngModel)]="productForm.story" required></textarea>
+          </label>
+
+          <div class="grid-three">
+            <label>
+              <span>Category</span>
+              <select name="categoryId" [(ngModel)]="productForm.categoryId" required>
+                @for (category of currentOptions?.categories ?? []; track category.id) {
+                  <option [value]="category.id">{{ category.name }}</option>
+                }
+              </select>
+            </label>
+
+            <label>
+              <span>Eco rating</span>
+              <select name="ecoRatingId" [(ngModel)]="productForm.ecoRatingId" required>
+                @for (ecoRating of currentOptions?.ecoRatings ?? []; track ecoRating.id) {
+                  <option [value]="ecoRating.id">
+                    {{ ecoRating.label }} ({{ ecoRating.score }})
+                  </option>
+                }
+              </select>
+            </label>
+
+            <label>
+              <span>Status</span>
+              <select name="status" [(ngModel)]="productForm.status" required>
+                @for (status of currentOptions?.productStatuses ?? []; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            </label>
+          </div>
+
+          <div class="grid-four">
+            <label>
+              <span>Price (USD)</span>
+              <input
+                type="number"
+                min="1"
+                step="0.01"
+                name="price"
+                [(ngModel)]="productForm.price"
+                required
+              />
+            </label>
+
+            <label>
+              <span>Inventory</span>
+              <input
+                type="number"
+                min="0"
+                name="inventoryCount"
+                [(ngModel)]="productForm.inventoryCount"
+                required
+              />
+            </label>
+
+            <label>
+              <span>Impact score</span>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                name="impactScore"
+                [(ngModel)]="productForm.impactScore"
+                required
+              />
+            </label>
+
+            <label>
+              <span>CO2 saved (kg)</span>
+              <input
+                type="number"
+                min="0"
+                step="0.1"
+                name="co2SavedKg"
+                [(ngModel)]="productForm.co2SavedKg"
+                required
+              />
+            </label>
+          </div>
+
+          <div class="grid-three">
+            <label>
+              <span>Lead time (days)</span>
+              <input
+                type="number"
+                min="1"
+                name="leadTimeDays"
+                [(ngModel)]="productForm.leadTimeDays"
+                required
+              />
+            </label>
+
+            <label>
+              <span>Currency</span>
+              <input type="text" name="currency" [(ngModel)]="productForm.currency" required />
+            </label>
+
+            <label class="checkbox-field">
+              <span>Featured placement</span>
+              <input type="checkbox" name="isFeatured" [(ngModel)]="productForm.isFeatured" />
+            </label>
+          </div>
+
+          <div class="grid-two">
+            <label>
+              <span>Image URL</span>
+              <input type="url" name="imageUrl" [(ngModel)]="productForm.imageUrl" required />
+            </label>
+
+            <label>
+              <span>Image alt text</span>
+              <input type="text" name="imageAlt" [(ngModel)]="productForm.imageAlt" required />
+            </label>
+          </div>
+
+          <div class="form-block">
+            <div class="block-heading">
+              <strong>Materials</strong>
+              <span>Select every sourcing tag that applies.</span>
+            </div>
+
+            <div class="chip-grid">
+              @for (material of currentOptions?.materials ?? []; track material.id) {
+                <label class="chip-option">
+                  <input
+                    type="checkbox"
+                    [name]="'material-' + material.id"
+                    [ngModel]="productForm.materialIds.includes(material.id)"
+                    (ngModelChange)="toggleMaterial(material.id, $event)"
+                  />
+                  <span>{{ material.name }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          @if (currentOptions?.attributeDefinitions?.length) {
+            <div class="form-block">
+              <div class="block-heading">
+                <strong>Product attributes</strong>
+                <span>Faceted attributes used by the catalog and product filters.</span>
+              </div>
+
+              <div class="attribute-grid">
+                @for (
+                  definition of currentOptions?.attributeDefinitions ?? [];
+                  track definition.id
+                ) {
+                  <label>
+                    <span>{{ definition.label }}</span>
+
+                    @if (definition.options.length) {
+                      <select
+                        [name]="'attribute-' + definition.id"
+                        [ngModel]="readAttributeOption(definition.id)"
+                        (ngModelChange)="updateAttributeOption(definition.id, $event)"
+                      >
+                        <option value="">Select an option</option>
+                        @for (option of definition.options; track option.id) {
+                          <option [value]="option.id">{{ option.label }}</option>
+                        }
+                      </select>
+                    } @else if (definition.kind === 'BOOLEAN') {
+                      <span class="inline-checkbox">
+                        <input
+                          type="checkbox"
+                          [name]="'attribute-' + definition.id"
+                          [ngModel]="readAttributeBoolean(definition.id)"
+                          (ngModelChange)="updateAttributeBoolean(definition.id, $event)"
+                        />
+                        <small>Enabled</small>
+                      </span>
+                    } @else if (definition.kind === 'NUMBER') {
+                      <input
+                        type="number"
+                        [name]="'attribute-' + definition.id"
+                        [ngModel]="readAttributeNumber(definition.id)"
+                        (ngModelChange)="updateAttributeNumber(definition.id, $event)"
+                      />
+                    } @else {
+                      <input
+                        type="text"
+                        [name]="'attribute-' + definition.id"
+                        [ngModel]="readAttributeText(definition.id)"
+                        (ngModelChange)="updateAttributeText(definition.id, $event)"
+                      />
+                    }
+                  </label>
+                }
+              </div>
+            </div>
+          }
+
+          <button class="primary-button" type="submit" [disabled]="savingProduct()">
+            {{
+              savingProduct()
+                ? 'Saving product...'
+                : editingProductId()
+                  ? 'Update product'
+                  : 'Create product'
+            }}
+          </button>
+        </form>
+      </article>
+    </div>
+
+    <section class="panel inventory-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Current inventory</p>
+          <h2>Artisan catalog overview</h2>
+        </div>
+        <span class="meta-chip">{{ products().length }} products</span>
+      </div>
+
+      @if (!products().length) {
+        <div class="empty-state">No products have been created for this artisan yet.</div>
+      } @else {
+        <div class="product-list">
+          @for (product of products(); track product.id) {
+            <article class="inventory-card">
+              <div class="inventory-header">
+                <div>
+                  <span class="status-badge">{{ product.status }}</span>
+                  <h3>{{ product.name }}</h3>
+                </div>
+                <button type="button" class="ghost-button" (click)="editProduct(product)">
+                  Edit
+                </button>
+              </div>
+
+              <p>{{ product.shortDescription }}</p>
+
+              <div class="inventory-metrics">
+                <div>
+                  <span>Price</span>
+                  <strong>{{
+                    product.priceInCents / 100 | currency: product.currency : 'symbol' : '1.0-0'
+                  }}</strong>
+                </div>
+                <div>
+                  <span>Inventory</span>
+                  <strong>{{ product.inventoryCount }}</strong>
+                </div>
+                <div>
+                  <span>Impact</span>
+                  <strong>{{ product.impactScore }}/100</strong>
+                </div>
+              </div>
+
+              <div class="material-row">
+                @for (materialId of product.materialIds; track materialId) {
+                  <span>{{ materialName(materialId) }}</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>
