@@ -1,1 +1,81 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --pine-950: #16332d;
+  --pine-800: #22453d;
+  --pine-700: #2f5f54;
+  --sage-500: #7f9973;
+  --sand-50: #f7f1e5;
+  --mist-100: rgba(255, 255, 255, 0.72);
+  --clay-500: #bc744b;
+  --gold-400: #d9bd7c;
+  --ink-900: #1f2a24;
+  --ink-700: #405149;
+  --shadow-soft: 0 24px 60px rgba(37, 54, 45, 0.14);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Manrope', 'Segoe UI', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink-900);
+  background:
+    radial-gradient(circle at top left, rgba(217, 189, 124, 0.25), transparent 26rem),
+    radial-gradient(circle at top right, rgba(127, 153, 115, 0.18), transparent 30rem),
+    linear-gradient(180deg, #fbf6ee 0%, #f3ebdc 42%, #fbf7f0 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(31, 42, 36, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 42, 36, 0.02) 1px, transparent 1px);
+  background-size: 120px 120px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

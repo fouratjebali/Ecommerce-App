@@ -1,0 +1,279 @@
+@let storefront = homepage();
+@let bundle = bundleSummary();
+@let spotlightProduct = heroProduct();
+@let spotlightArtisan = leadArtisan();
+
+<div class="page-shell">
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="GreenCraft home">
+      <span class="brand-mark">GC</span>
+      <span class="brand-copy">
+        <strong>GreenCraft</strong>
+        <small>Marketplace</small>
+      </span>
+    </a>
+
+    <nav class="site-nav" aria-label="Section navigation">
+      @for (item of navigation; track item.href) {
+        <a [href]="item.href">{{ item.label }}</a>
+      }
+    </nav>
+
+    <a class="header-cta" href="#bundle">Build a bundle</a>
+  </header>
+
+  <main class="page-content">
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow">{{ storefront.hero.eyebrow }}</p>
+        <h1>{{ storefront.hero.title }}</h1>
+        <p class="hero-description">{{ storefront.hero.subtitle }}</p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="#featured">
+            {{ storefront.hero.primaryCta }}
+          </a>
+          <a class="button button-secondary" href="#artisans">
+            {{ storefront.hero.secondaryCta }}
+          </a>
+        </div>
+
+        <div class="material-ribbon" aria-label="Highlighted materials">
+          @for (material of materialPills(); track material) {
+            <span>{{ material }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="hero-stage">
+        <article class="passport-card">
+          <p class="card-label">Impact passport</p>
+          <div class="passport-score">
+            <span>{{ spotlightProduct.impactScore }}</span>
+            <small>Impact score</small>
+          </div>
+          <div class="passport-details">
+            <p>{{ spotlightProduct.name }}</p>
+            <strong> +{{ spotlightProduct.co2SavedKg | number: '1.1-1' }}kg CO2 saved </strong>
+            <span>{{ spotlightProduct.material }}</span>
+          </div>
+        </article>
+
+        <article class="story-card">
+          <p class="card-label">Artisan spotlight</p>
+          <h2>{{ spotlightArtisan.studio }}</h2>
+          <p>{{ spotlightArtisan.story }}</p>
+          <div class="story-meta">
+            <span>{{ spotlightArtisan.location }}</span>
+            <span>{{ spotlightArtisan.impactBadge }}</span>
+          </div>
+        </article>
+
+        <div class="floating-chip floating-chip-one">Carbon tracked</div>
+        <div class="floating-chip floating-chip-two">Bundle ready</div>
+      </div>
+    </section>
+
+    <section class="metrics-grid" aria-label="Marketplace metrics">
+      @for (metric of storefront.metrics; track metric.label) {
+        <article class="metric-card">
+          <span>{{ metric.label }}</span>
+          <strong>{{ metric.value }}</strong>
+          <p>{{ metric.detail }}</p>
+        </article>
+      }
+    </section>
+
+    <section class="editorial-section" id="collection">
+      <div class="section-intro">
+        <p class="section-kicker">Curated collection</p>
+        <h2>Seasonal goods shaped by provenance, craft, and measurable impact.</h2>
+        <p>
+          Each collection is organized around the materials, artisans, and impact improvements
+          buyers actually care about.
+        </p>
+      </div>
+
+      <div class="category-grid">
+        @for (category of storefront.categories; track category.slug) {
+          <article class="category-card">
+            <p class="card-label">{{ category.materialFocus }}</p>
+            <h3>{{ category.name }}</h3>
+            <p>{{ category.description }}</p>
+            <span>{{ category.impactHighlight }}</span>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="editorial-section" id="featured">
+      <div class="section-intro section-intro-compact">
+        <p class="section-kicker">Featured creations</p>
+        <h2>
+          Handmade objects with the warmth of a boutique edit and the rigor of a product passport.
+        </h2>
+      </div>
+
+      <div class="featured-grid">
+        @for (product of storefront.featuredProducts; track product.id) {
+          <article class="product-card">
+            <div class="product-visual">
+              <span>{{ product.imageHint }}</span>
+              <div class="product-badge">+{{ product.co2SavedKg | number: '1.1-1' }}kg CO2</div>
+            </div>
+
+            <div class="product-copy">
+              <div class="product-meta">
+                <span>{{ product.artisanName }}</span>
+                <span>{{ product.region }}</span>
+              </div>
+
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.storySnippet }}</p>
+
+              <div class="product-footer">
+                <strong>{{
+                  product.price | currency: product.currency : 'symbol' : '1.0-0'
+                }}</strong>
+                <span>{{ product.material }}</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="editorial-section artisan-layout" id="artisans">
+      <article class="artisan-feature">
+        <p class="section-kicker">Artisan stories</p>
+        <h2>
+          {{ spotlightArtisan.name }} is building slow-made essentials with transparent sourcing.
+        </h2>
+        <p>{{ spotlightArtisan.story }}</p>
+
+        <div class="artisan-feature-meta">
+          <span>{{ spotlightArtisan.specialty }}</span>
+          <span>{{ spotlightArtisan.location }}</span>
+        </div>
+      </article>
+
+      <div class="artisan-stack">
+        @for (artisan of supportingArtisans(); track artisan.id) {
+          <article class="artisan-card">
+            <div>
+              <p class="card-label">{{ artisan.impactBadge }}</p>
+              <h3>{{ artisan.studio }}</h3>
+            </div>
+            <p>{{ artisan.story }}</p>
+            <span>{{ artisan.location }}</span>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="editorial-section bundle-layout" id="bundle">
+      <article class="bundle-builder">
+        <p class="section-kicker">Bundle builder</p>
+        <h2>Create a room-ready set and see your sustainability gains stack in real time.</h2>
+        <p>
+          GreenCraft bundles are designed to lower packaging waste, increase artisan discovery, and
+          make coordinated shopping feel intentional.
+        </p>
+
+        <div class="bundle-items">
+          @for (item of bundle.bundle; track item.id) {
+            <div class="bundle-item">
+              <div>
+                <strong>{{ item.name }}</strong>
+                <span>{{ item.artisanName }}</span>
+              </div>
+              <span>{{ item.price | currency: item.currency : 'symbol' : '1.0-0' }}</span>
+            </div>
+          }
+        </div>
+      </article>
+
+      <aside class="bundle-summary">
+        <div class="summary-row">
+          <span>Total bundle value</span>
+          <strong>{{ bundle.total | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Bundle savings preview</span>
+          <strong>{{ bundle.bundleDiscount | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Shared CO2 savings</span>
+          <strong>{{ bundle.co2SavedKg | number: '1.1-1' }}kg</strong>
+        </div>
+        <div class="summary-total">
+          <span>Estimated bundle checkout</span>
+          <strong>{{ bundle.bundledPrice | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+        </div>
+      </aside>
+    </section>
+
+    <section class="editorial-section ai-layout" id="ai">
+      <div class="section-intro section-intro-compact">
+        <p class="section-kicker">AI studio</p>
+        <h2>Two differentiators built directly into the marketplace roadmap.</h2>
+      </div>
+
+      <div class="innovation-layout">
+        <div class="innovation-switcher" role="tablist" aria-label="AI experiences">
+          <button
+            type="button"
+            class="innovation-toggle"
+            [class.is-active]="activeInnovation() === 'visual-search'"
+            (click)="setInnovation('visual-search')"
+          >
+            Visual Search
+          </button>
+          <button
+            type="button"
+            class="innovation-toggle"
+            [class.is-active]="activeInnovation() === 'craftmind'"
+            (click)="setInnovation('craftmind')"
+          >
+            CraftMind
+          </button>
+        </div>
+
+        <article class="innovation-card">
+          <p class="card-label">{{ activePanel().eyebrow }}</p>
+          <h3>{{ activePanel().title }}</h3>
+          <p>{{ activePanel().summary }}</p>
+          <div class="innovation-highlight">{{ activePanel().highlight }}</div>
+
+          <ul class="innovation-points">
+            @for (point of activePanel().points; track point) {
+              <li>{{ point }}</li>
+            }
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="initiative-strip" aria-label="Roadmap initiatives">
+      @for (initiative of storefront.initiatives; track initiative.title) {
+        <article class="initiative-card">
+          <p class="card-label">{{ initiative.milestone }}</p>
+          <h3>{{ initiative.title }}</h3>
+          <p>{{ initiative.summary }}</p>
+        </article>
+      }
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>GreenCraft Marketplace</strong>
+      <p>Eco-conscious commerce for buyers who care and artisans who build with purpose.</p>
+    </div>
+
+    <div class="footer-meta">
+      <span>Angular + NestJS + PostgreSQL</span>
+      <span>Development mode only</span>
+    </div>
+  </footer>
+</div>
