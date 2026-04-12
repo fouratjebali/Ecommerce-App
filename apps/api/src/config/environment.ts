@@ -17,6 +17,9 @@ const environmentSchema = z.object({
     .string()
     .default('postgresql://greencraft:greencraft@localhost:5432/greencraft?schema=public'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
+  CART_SESSION_TTL_HOURS: z.coerce.number().int().positive().default(72),
+  CART_RESERVATION_TTL_MINUTES: z.coerce.number().int().positive().default(30),
+  BUNDLE_DISCOUNT_PERCENT: z.coerce.number().int().min(0).max(100).default(8),
   RABBITMQ_URL: z.string().default('amqp://greencraft:greencraft@localhost:5672'),
   MEILISEARCH_HOST: z.string().default('http://localhost:7700'),
   MEILISEARCH_MASTER_KEY: z.string().default('greencraft-master-key'),

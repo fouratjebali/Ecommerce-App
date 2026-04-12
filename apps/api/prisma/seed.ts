@@ -1,5 +1,9 @@
 import {
   AttributeKind,
+  CouponType,
+  InventoryReservationStatus,
+  OrderItemStatus,
+  OrderStatus,
   PrismaClient,
   ProductStatus,
   UserRole,
@@ -14,6 +18,10 @@ async function main() {
   const artisanPassword = await hash('Artisan@1234', 10);
   const buyerPassword = await hash('Buyer@1234', 10);
 
+  await prisma.inventoryReservation.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.coupon.deleteMany();
   await prisma.productAttributeValue.deleteMany();
   await prisma.productAttributeOption.deleteMany();
   await prisma.productAttributeDefinition.deleteMany();
@@ -137,6 +145,32 @@ async function main() {
         description:
           'Soft cotton lining and straps produced with reduced chemical use.',
         sustainabilityScore: 87,
+      },
+    }),
+  ]);
+
+  const [welcomeTen, studioBundle] = await Promise.all([
+    prisma.coupon.create({
+      data: {
+        code: 'WELCOME10',
+        label: 'Welcome 10%',
+        description:
+          'A first-order percentage discount for new GreenCraft buyers.',
+        type: CouponType.PERCENTAGE,
+        percentOff: 10,
+        minimumSubtotalInCents: 5000,
+        maxDiscountInCents: 1800,
+      },
+    }),
+    prisma.coupon.create({
+      data: {
+        code: 'STUDIOBUNDLE',
+        label: 'Studio Bundle',
+        description:
+          'A fixed discount for intentional multi-item handmade bundles.',
+        type: CouponType.FIXED_AMOUNT,
+        amountOffInCents: 1500,
+        minimumSubtotalInCents: 12000,
       },
     }),
   ]);
@@ -286,7 +320,7 @@ async function main() {
     }),
   ]);
 
-  await prisma.user.create({
+  const buyer = await prisma.user.create({
     data: {
       email: 'buyer@greencraft.local',
       fullName: 'Jordan Lee',
@@ -507,10 +541,84 @@ async function main() {
     })),
   });
 
-  console.log('Seeded GreenCraft Sprint 2 data.');
+  const seededOrder = await prisma.order.create({
+    data: {
+      orderNumber: 'GC-20260412-0001',
+      buyerId: buyer.id,
+      couponId: welcomeTen.id,
+      cartSessionId: 'seed-session-jordan',
+      status: OrderStatus.CONFIRMED,
+      currency: 'USD',
+      subtotalInCents: 13000,
+      couponDiscountInCents: 1300,
+      bundleDiscountInCents: 0,
+      totalInCents: 11700,
+      shippingName: 'Jordan Lee',
+      shippingEmail: 'buyer@greencraft.local',
+      shippingAddressLine1: '18 Palm Court',
+      shippingCity: 'Casablanca',
+      shippingPostalCode: '20000',
+      shippingCountry: 'Morocco',
+      notes: 'Seeded Sprint 3 order for buyer dashboard and OMS workflows.',
+      items: {
+        create: [
+          {
+            productId: bowl.id,
+            artisanId: noura.id,
+            status: OrderItemStatus.CONFIRMED,
+            productName: bowl.name,
+            artisanStudioName: noura.studioName,
+            unitPriceInCents: bowl.priceInCents,
+            quantity: 1,
+            lineTotalInCents: bowl.priceInCents,
+            impactScore: bowl.impactScore,
+            co2SavedKg: bowl.co2SavedKg,
+            currency: bowl.currency,
+          },
+          {
+            productId: tote.id,
+            artisanId: selene.id,
+            status: OrderItemStatus.CONFIRMED,
+            productName: tote.name,
+            artisanStudioName: selene.studioName,
+            unitPriceInCents: tote.priceInCents,
+            quantity: 1,
+            lineTotalInCents: tote.priceInCents,
+            impactScore: tote.impactScore,
+            co2SavedKg: tote.co2SavedKg,
+            currency: tote.currency,
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.inventoryReservation.createMany({
+    data: [
+      {
+        sessionId: seededOrder.cartSessionId,
+        productId: bowl.id,
+        orderId: seededOrder.id,
+        quantity: 1,
+        status: InventoryReservationStatus.CONSUMED,
+        expiresAt: new Date('2026-04-11T12:00:00.000Z'),
+      },
+      {
+        sessionId: seededOrder.cartSessionId,
+        productId: tote.id,
+        orderId: seededOrder.id,
+        quantity: 1,
+        status: InventoryReservationStatus.CONSUMED,
+        expiresAt: new Date('2026-04-11T12:00:00.000Z'),
+      },
+    ],
+  });
+
+  console.log('Seeded GreenCraft Sprint 3 data.');
   console.log('Admin login: admin@greencraft.local / Admin@1234');
   console.log('Artisan login: noura@greencraft.local / Artisan@1234');
   console.log('Buyer login: buyer@greencraft.local / Buyer@1234');
+  console.log(`Coupons: ${welcomeTen.code}, ${studioBundle.code}`);
 }
 
 main()
