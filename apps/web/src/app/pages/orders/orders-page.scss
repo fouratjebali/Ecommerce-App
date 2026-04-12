@@ -1,0 +1,156 @@
+:host {
+  display: block;
+}
+
+.orders-page {
+  width: min(100%, 1360px);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.panel,
+.notice {
+  border: 1px solid rgba(34, 69, 61, 0.08);
+  border-radius: 1.9rem;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-soft);
+}
+
+.page-header,
+.header-actions,
+.order-header,
+.order-meta,
+.order-summary,
+.order-item,
+.order-item-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-header {
+  align-items: flex-start;
+  padding: 1.7rem 1.8rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  margin: 0 0 0.8rem;
+  color: var(--pine-700);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.page-header h1,
+.order-card h2,
+.empty-state h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 0.98;
+}
+
+.page-header h1 {
+  max-width: 14ch;
+  font-size: clamp(2.3rem, 5vw, 4.6rem);
+}
+
+.page-header p,
+.empty-state p {
+  color: var(--ink-700);
+  line-height: 1.75;
+}
+
+.ghost-link,
+.primary-link,
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.85rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+}
+
+.ghost-link,
+.ghost-button {
+  background: rgba(34, 69, 61, 0.08);
+  color: var(--ink-700);
+}
+
+.primary-link {
+  background: linear-gradient(135deg, var(--pine-950), var(--pine-700));
+  color: white;
+}
+
+.notice,
+.empty-state {
+  margin-top: 1rem;
+  padding: 1.2rem 1.4rem;
+}
+
+.notice.is-error {
+  color: #a44935;
+  border-color: rgba(164, 73, 53, 0.18);
+  background: rgba(255, 243, 240, 0.92);
+}
+
+.order-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.order-card {
+  padding: 1.5rem;
+}
+
+.order-meta,
+.order-item-meta {
+  align-items: center;
+}
+
+.order-summary {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 1.2rem;
+  background: rgba(247, 241, 229, 0.66);
+}
+
+.order-summary div,
+.order-item div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.order-summary span,
+.order-item span {
+  color: var(--ink-700);
+}
+
+.order-items {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1rem 0;
+}
+
+.order-item {
+  padding: 1rem;
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+@media (max-width: 760px) {
+  .page-header,
+  .header-actions,
+  .order-header,
+  .order-meta,
+  .order-summary,
+  .order-item,
+  .order-item-meta {
+    flex-direction: column;
+  }
+}

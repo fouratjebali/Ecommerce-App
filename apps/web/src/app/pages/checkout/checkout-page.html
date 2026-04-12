@@ -1,0 +1,161 @@
+@let currentCart = cart();
+@let currentNotice = notice();
+
+<section class="checkout-page">
+  <header class="page-header panel">
+    <div>
+      <p class="eyebrow">OMS checkout</p>
+      <h1>Confirm shipping details and convert the reserved cart into an order.</h1>
+      <p>
+        Sprint 3 checkout validates the buyer session, keeps coupon and bundle pricing, and creates
+        a tracked order record.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="ghost-link" routerLink="/cart">Back to cart</a>
+      <a class="ghost-link" routerLink="/catalog">Catalog</a>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice is-error">{{ currentNotice.text }}</div>
+  }
+
+  @if (loading()) {
+    <div class="panel empty-state">Loading checkout details...</div>
+  } @else if (currentCart; as cart) {
+    @if (!cart.items.length) {
+      <div class="panel empty-state">
+        <h2>Your cart is empty.</h2>
+        <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+      </div>
+    } @else {
+      <div class="checkout-layout">
+        <form class="panel checkout-form" (ngSubmit)="submit()">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Shipping details</p>
+              <h2>Buyer information</h2>
+            </div>
+          </div>
+
+          <div class="grid-two">
+            <label>
+              <span>Full name</span>
+              <input type="text" name="shippingName" [(ngModel)]="form.shippingName" required />
+            </label>
+
+            <label>
+              <span>Email</span>
+              <input type="email" name="shippingEmail" [(ngModel)]="form.shippingEmail" required />
+            </label>
+          </div>
+
+          <label>
+            <span>Address line 1</span>
+            <input
+              type="text"
+              name="shippingAddressLine1"
+              [(ngModel)]="form.shippingAddressLine1"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Address line 2</span>
+            <input
+              type="text"
+              name="shippingAddressLine2"
+              [(ngModel)]="form.shippingAddressLine2"
+            />
+          </label>
+
+          <div class="grid-three">
+            <label>
+              <span>City</span>
+              <input type="text" name="shippingCity" [(ngModel)]="form.shippingCity" required />
+            </label>
+
+            <label>
+              <span>Postal code</span>
+              <input
+                type="text"
+                name="shippingPostalCode"
+                [(ngModel)]="form.shippingPostalCode"
+                required
+              />
+            </label>
+
+            <label>
+              <span>Country</span>
+              <input
+                type="text"
+                name="shippingCountry"
+                [(ngModel)]="form.shippingCountry"
+                required
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Order notes</span>
+            <textarea rows="4" name="notes" [(ngModel)]="form.notes"></textarea>
+          </label>
+
+          <button class="primary-link submit-button" type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Creating order...' : 'Place order' }}
+          </button>
+        </form>
+
+        <aside class="panel summary-panel">
+          <p class="eyebrow">Order summary</p>
+          <h2>{{ cart.summary.itemCount }} items ready</h2>
+
+          <div class="summary-list">
+            @for (item of cart.items; track item.productId) {
+              <div class="summary-item">
+                <div>
+                  <strong>{{ item.name }}</strong>
+                  <span>{{ item.artisan.studioName }}</span>
+                </div>
+                <span>{{
+                  item.lineTotalInCents / 100 | currency: item.price.currency : 'symbol' : '1.0-0'
+                }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Bundle discount</span>
+            <strong>{{
+              cart.summary.bundleDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+            }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Coupon discount</span>
+            <strong>{{
+              cart.summary.couponDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+            }}</strong>
+          </div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <strong>{{ cart.summary.totalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+        </aside>
+      </div>
+    }
+  } @else {
+    <div class="panel empty-state">
+      <h2>Your cart is empty.</h2>
+      <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+    </div>
+  }
+</section>
