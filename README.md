@@ -2,7 +2,7 @@
 
 GreenCraft Marketplace is a sustainable handmade goods platform that connects eco-conscious artisans with buyers who care about provenance, low-impact materials, and transparent storytelling.
 
-Sprint 3 is now in place in development mode. The repo includes local auth, vendor tooling, product management, Redis-aware cart sessions, stock reservation, a coupon engine, and an order management foundation, but it is still not configured for production deployment.
+Sprint 4 is now in place in development mode. The repo includes local auth, vendor tooling, product management, Redis-aware cart sessions, stock reservation, an order management foundation, and a visual search workflow powered by `pgvector`, hybrid filtering, and Redis-backed fallbacks, but it is still not configured for production deployment.
 
 ## Stack
 
@@ -32,6 +32,17 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 5. Apply `WELCOME10` or `STUDIOBUNDLE`
 6. Continue to `/checkout`
 7. Place the order and review `/orders`
+
+## Sprint 4 visual search flow
+
+1. Start the stack from the quick start section
+2. Open `/visual-search`
+3. Upload a photo reference
+4. Apply optional category, material, eco-rating, artisan, impact, or price filters
+5. Review the pgvector matches or Redis cold-start fallback set
+6. Open a matched product or add it directly to the cart
+
+The visual index is prepared lazily on the first visual-search request, so the first query may take a little longer while product embeddings are generated and cached.
 
 ## Sprint 3 artisan flow
 
@@ -87,6 +98,10 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 - `sprint-3/cart-oms-backend`
 - `sprint-3/frontend-buyer-flow`
 - `sprint-3/docs`
+- `sprint-4/vector-foundation`
+- `sprint-4/backend-visual-search`
+- `sprint-4/frontend-visual-search`
+- `sprint-4/docs`
 
 ## Sprint 1 outcomes
 
@@ -113,6 +128,17 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 - Artisan OMS panel inside `/vendor` for order item progression
 - Backend unit and e2e tests for cart and order workflows plus frontend service specs for Sprint 3 browser behavior
 
+## Sprint 4 outcomes
+
+- Visual search API under `/api/v1/visual-search` with multipart image upload and cached recommendations
+- `pgvector` storage prepared through backend SQL helpers with a lazy catalog indexing pass
+- Image feature extraction powered by `sharp`, plus synthetic fallback vectors when remote product images are unavailable
+- Hybrid ranking that combines cosine similarity with GreenCraft impact and filter context
+- Redis-backed similar-product caches and cold-start category fallbacks
+- Angular `/visual-search` page for photo upload and filter-driven discovery
+- Product detail recommendations sourced from the Redis visual cache
+- Backend tests for the extractor, ranking, and API surface plus a frontend service spec for upload requests
+
 ## Documentation index
 
 - `docs/architecture/system-overview.md`
@@ -120,6 +146,7 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 - `docs/api/api-design.md`
 - `docs/api/sprint-2-api-guide.md`
 - `docs/api/sprint-3-api-guide.md`
+- `docs/api/sprint-4-api-guide.md`
 - `docs/api/openapi-sprint-1.yaml`
 - `docs/roadmap/e-scrum-roadmap.md`
 - `CONTRIBUTING.md`

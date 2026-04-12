@@ -26,6 +26,10 @@
 - `sprint-3/cart-oms-backend`
 - `sprint-3/frontend-buyer-flow`
 - `sprint-3/docs`
+- `sprint-4/vector-foundation`
+- `sprint-4/backend-visual-search`
+- `sprint-4/frontend-visual-search`
+- `sprint-4/docs`
 
 ## Commit style
 

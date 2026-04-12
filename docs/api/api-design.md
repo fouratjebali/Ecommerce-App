@@ -50,6 +50,11 @@
 - `GET /api/v1/orders/vendor/items`
 - `PATCH /api/v1/orders/vendor/items/:itemId/status`
 
+## Sprint 4 live endpoints
+
+- `POST /api/v1/visual-search/query`
+- `GET /api/v1/visual-search/recommendations/:slug`
+
 ## Planned endpoint families
 
 - `/api/v1/payments`
@@ -67,9 +72,15 @@ The homepage endpoint is intentionally aggregate-oriented. It gives the Angular 
 - Checkout converts the cart snapshot into order and order-item records, decrements inventory, and emits commerce domain events
 - Buyer and artisan order flows share the same order module, with RBAC and endpoint shape separating responsibilities
 
+## Sprint 4 integration notes
+
+- Visual search uses `multipart/form-data` uploads and computes image features with `sharp`
+- Product vectors are stored in PostgreSQL `pgvector` through raw SQL helpers rather than Prisma-native column support
+- Redis keeps visually similar product IDs and category fallback sets warm for the storefront
+- The Angular storefront now consumes both direct visual-search results and product-detail recommendation caches
+
 ## Future integration notes
 
 - Stripe webhooks will land in a dedicated payment module and publish internal order events
-- Visual search will call an embeddings service and query `pgvector` with cosine similarity
 - Meilisearch remains the primary faceted retrieval engine, with PostgreSQL as the source of truth
-- Prisma currently owns the source-of-truth catalog, identity, and order schema used by the Angular and NestJS Sprint 3 flows
+- Prisma currently owns the source-of-truth catalog, identity, and order schema used by the Angular and NestJS Sprint 4 flows
