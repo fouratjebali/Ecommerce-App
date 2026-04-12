@@ -19,10 +19,7 @@ export class VendorsService {
     };
   }
 
-  async updateOwnProfile(
-    user: AuthenticatedUser,
-    dto: UpdateVendorProfileDto,
-  ) {
+  async updateOwnProfile(user: AuthenticatedUser, dto: UpdateVendorProfileDto) {
     await this.requireArtisanProfile(user);
 
     const profile = await this.prisma.artisanProfile.update({

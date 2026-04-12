@@ -12,10 +12,7 @@ export class CommerceEventsListener {
   private readonly logger = new Logger(CommerceEventsListener.name);
 
   @OnEvent(CART_UPDATED_EVENT)
-  onCartUpdated(payload: {
-    sessionId: string;
-    itemCount: number;
-  }) {
+  onCartUpdated(payload: { sessionId: string; itemCount: number }) {
     this.logger.log(
       `Cart ${payload.sessionId} updated with ${payload.itemCount} items.`,
     );
@@ -33,10 +30,7 @@ export class CommerceEventsListener {
   }
 
   @OnEvent(ORDER_CANCELLED_EVENT)
-  onOrderCancelled(payload: {
-    orderNumber: string;
-    buyerId: string;
-  }) {
+  onOrderCancelled(payload: { orderNumber: string; buyerId: string }) {
     this.logger.warn(
       `Order ${payload.orderNumber} cancelled by buyer ${payload.buyerId}.`,
     );
