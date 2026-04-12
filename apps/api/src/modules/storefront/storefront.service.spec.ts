@@ -16,10 +16,12 @@ describe('StorefrontService', () => {
         }),
       } as never,
       {
-        getFeatured: jest.fn().mockResolvedValue([
-          { impactBadge: 'Kiln co-op partner' },
-          { impactBadge: 'Deadstock rescue leader' },
-        ]),
+        getFeatured: jest
+          .fn()
+          .mockResolvedValue([
+            { impactBadge: 'Kiln co-op partner' },
+            { impactBadge: 'Deadstock rescue leader' },
+          ]),
       } as never,
       {
         getOverview: jest.fn().mockResolvedValue({

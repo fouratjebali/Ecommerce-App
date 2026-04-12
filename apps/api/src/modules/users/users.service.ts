@@ -46,11 +46,7 @@ export class UsersService {
     });
   }
 
-  createBuyer(data: {
-    email: string;
-    fullName: string;
-    passwordHash: string;
-  }) {
+  createBuyer(data: { email: string; fullName: string; passwordHash: string }) {
     return this.prisma.user.create({
       data: {
         email: data.email.toLowerCase(),

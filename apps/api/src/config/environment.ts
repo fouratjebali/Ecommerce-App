@@ -15,12 +15,32 @@ const environmentSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
   DATABASE_URL: z
     .string()
-    .default('postgresql://greencraft:greencraft@localhost:5432/greencraft?schema=public'),
+    .default(
+      'postgresql://greencraft:greencraft@localhost:5432/greencraft?schema=public',
+    ),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   CART_SESSION_TTL_HOURS: z.coerce.number().int().positive().default(72),
   CART_RESERVATION_TTL_MINUTES: z.coerce.number().int().positive().default(30),
   BUNDLE_DISCOUNT_PERCENT: z.coerce.number().int().min(0).max(100).default(8),
-  RABBITMQ_URL: z.string().default('amqp://greencraft:greencraft@localhost:5672'),
+  VISUAL_SEARCH_VECTOR_DIMENSIONS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(192),
+  VISUAL_SEARCH_DEFAULT_LIMIT: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(24)
+    .default(8),
+  VISUAL_SEARCH_CACHE_TTL_MINUTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(360),
+  RABBITMQ_URL: z
+    .string()
+    .default('amqp://greencraft:greencraft@localhost:5672'),
   MEILISEARCH_HOST: z.string().default('http://localhost:7700'),
   MEILISEARCH_MASTER_KEY: z.string().default('greencraft-master-key'),
 });

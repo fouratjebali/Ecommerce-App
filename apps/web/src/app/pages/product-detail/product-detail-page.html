@@ -1,8 +1,12 @@
 @let detail = productDetail();
 @let currentNotice = notice();
+@let currentRecommendations = visualRecommendations();
 
 <section class="detail-page">
-  <a class="back-link" routerLink="/catalog">Back to catalog</a>
+  <div class="back-actions">
+    <a class="back-link" routerLink="/catalog">Back to catalog</a>
+    <a class="back-link" routerLink="/visual-search">Find by photo</a>
+  </div>
 
   @if (currentNotice) {
     <div class="detail-card notice" [class.is-error]="currentNotice.tone === 'error'">
@@ -91,5 +95,52 @@
         </div>
       </article>
     </div>
+
+    @if (currentRecommendations; as recommendations) {
+      @if (recommendations.items.length) {
+        <section class="recommendation-shell">
+          <div class="recommendation-heading">
+            <div>
+              <p class="eyebrow">Redis-backed recs</p>
+              <h2>Visually similar products</h2>
+            </div>
+            <a class="ghost-link" routerLink="/visual-search">Run a new photo search</a>
+          </div>
+
+          <div class="recommendation-grid">
+            @for (item of recommendations.items; track item.id) {
+              <article class="recommendation-card">
+                <div
+                  class="recommendation-image"
+                  [style.background-image]="
+                    item.imageUrl
+                      ? 'linear-gradient(rgba(22,51,45,.18), rgba(22,51,45,.08)), url(' +
+                        item.imageUrl +
+                        ')'
+                      : ''
+                  "
+                ></div>
+
+                <div class="recommendation-copy">
+                  <div class="recommendation-meta">
+                    <span>{{ item.artisan.studioName }}</span>
+                    <span>{{ item.category.name }}</span>
+                  </div>
+                  <h3>{{ item.name }}</h3>
+                  <p>{{ item.shortDescription }}</p>
+                  <div class="recommendation-footer">
+                    <strong>{{
+                      item.price.amountInCents / 100
+                        | currency: item.price.currency : 'symbol' : '1.0-0'
+                    }}</strong>
+                    <a [routerLink]="['/catalog', item.slug]">View product</a>
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    }
   }
 </section>

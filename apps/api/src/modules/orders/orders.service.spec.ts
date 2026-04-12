@@ -180,8 +180,9 @@ describe('OrdersService', () => {
       },
     };
     const prisma = {
-      $transaction: jest.fn(async (callback: (tx: typeof transactionClient) => unknown) =>
-        callback(transactionClient),
+      $transaction: jest.fn(
+        async (callback: (tx: typeof transactionClient) => unknown) =>
+          callback(transactionClient),
       ),
     };
     const cartService = {
@@ -213,11 +214,9 @@ describe('OrdersService', () => {
     });
 
     expect(cartService.clearCart).toHaveBeenCalledWith('session-123');
-    expect(inventoryReservationsService.consumeReservations).toHaveBeenCalledWith(
-      'session-123',
-      'order-1',
-      transactionClient,
-    );
+    expect(
+      inventoryReservationsService.consumeReservations,
+    ).toHaveBeenCalledWith('session-123', 'order-1', transactionClient);
     expect(result.order.totalInCents).toBe(11700);
     expect(eventEmitter.emit).toHaveBeenCalledWith(ORDER_CREATED_EVENT, {
       orderNumber: 'GC-20260412-1200',
@@ -259,8 +258,9 @@ describe('OrdersService', () => {
       order: {
         findFirst: jest.fn().mockResolvedValue(cancellableOrder),
       },
-      $transaction: jest.fn(async (callback: (tx: typeof transactionClient) => unknown) =>
-        callback(transactionClient),
+      $transaction: jest.fn(
+        async (callback: (tx: typeof transactionClient) => unknown) =>
+          callback(transactionClient),
       ),
     };
     const cartService = {

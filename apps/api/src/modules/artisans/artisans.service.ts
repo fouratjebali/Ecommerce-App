@@ -89,7 +89,9 @@ export class ArtisansService {
           shortDescription: product.shortDescription,
           category: product.category.name,
           impactScore: product.impactScore,
-          materials: product.materials.map((material) => material.materialTag.name),
+          materials: product.materials.map(
+            (material) => material.materialTag.name,
+          ),
         })),
       },
     };
@@ -114,8 +116,7 @@ export class ArtisansService {
       name: artisan.user.fullName,
       studio: artisan.studioName,
       location: artisan.location,
-      specialty:
-        artisan.products[0]?.category.name ?? artisan.headline,
+      specialty: artisan.products[0]?.category.name ?? artisan.headline,
       impactBadge: artisan.verified
         ? 'Verified sustainable studio'
         : artisan.verificationStatus,

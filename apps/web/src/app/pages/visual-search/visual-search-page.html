@@ -1,0 +1,264 @@
+@let currentFacets = facets();
+@let currentResults = results();
+@let currentNotice = notice();
+@let currentPreviewUrl = previewUrl();
+
+<section class="visual-search-page">
+  <header class="page-header panel">
+    <div>
+      <p class="eyebrow">Sprint 4 visual search</p>
+      <h1>Upload a photo and find the closest handmade matches with hybrid filtering.</h1>
+      <p>
+        This flow blends image similarity, product impact data, and Redis-backed fallback
+        recommendations when the vector match is still cold.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="ghost-link" routerLink="/">Home</a>
+      <a class="ghost-link" routerLink="/catalog">Catalog</a>
+      <a class="primary-link" routerLink="/cart">Cart</a>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
+
+  <div class="visual-layout">
+    <aside class="control-column">
+      <section class="panel upload-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Reference photo</p>
+            <h2>Find it from a photo</h2>
+          </div>
+        </div>
+
+        <label class="upload-dropzone">
+          @if (currentPreviewUrl) {
+            <div
+              class="preview-image"
+              [style.background-image]="'url(' + currentPreviewUrl + ')'"
+            ></div>
+          } @else {
+            <div class="drop-copy">
+              <strong>Drop a bowl, tote, lamp, or decor photo here</strong>
+              <span>PNG, JPG, or WEBP up to 5MB</span>
+            </div>
+          }
+
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+        </label>
+
+        @if (fileName()) {
+          <div class="file-row">
+            <span>{{ fileName() }}</span>
+            <button type="button" class="ghost-button" (click)="clearSelectedFile()">Clear</button>
+          </div>
+        }
+
+        <button type="button" class="primary-button" (click)="runSearch()" [disabled]="loading()">
+          {{ loading() ? 'Searching...' : 'Run visual search' }}
+        </button>
+      </section>
+
+      <section class="panel filter-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Hybrid filters</p>
+            <h2>Refine the match set</h2>
+          </div>
+        </div>
+
+        @if (loadingFacets()) {
+          <div class="loading-copy">Loading faceted options...</div>
+        } @else {
+          <div class="filter-card">
+            <strong>Categories</strong>
+
+            @for (category of currentFacets?.categories ?? []; track category.slug) {
+              <button
+                type="button"
+                class="pill"
+                [class.is-active]="filters().category?.includes(category.slug)"
+                (click)="toggleCategory(category.slug)"
+              >
+                {{ category.name }}
+              </button>
+            }
+          </div>
+
+          <div class="filter-card">
+            <strong>Materials</strong>
+
+            @for (material of currentFacets?.materials ?? []; track material.slug) {
+              <button
+                type="button"
+                class="pill"
+                [class.is-active]="filters().material?.includes(material.slug)"
+                (click)="toggleMaterial(material.slug)"
+              >
+                {{ material.name }}
+              </button>
+            }
+          </div>
+
+          <div class="filter-card">
+            <strong>Eco ratings</strong>
+
+            @for (eco of currentFacets?.ecoRatings ?? []; track eco.code) {
+              <button
+                type="button"
+                class="pill"
+                [class.is-active]="filters().ecoRating?.includes(eco.code)"
+                (click)="toggleEcoRating(eco.code)"
+              >
+                {{ eco.label }}
+              </button>
+            }
+          </div>
+
+          <div class="filter-card">
+            <strong>Artisans</strong>
+
+            @for (artisan of currentFacets?.artisans ?? []; track artisan.slug) {
+              <button
+                type="button"
+                class="pill"
+                [class.is-active]="filters().artisan?.includes(artisan.slug)"
+                (click)="toggleArtisan(artisan.slug)"
+              >
+                {{ artisan.studioName }}
+              </button>
+            }
+          </div>
+
+          <div class="filter-card">
+            <label>
+              <span>Minimum impact score</span>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                [ngModel]="filters().minImpactScore ?? 50"
+                (ngModelChange)="setMinImpactScore($event)"
+              />
+              <small>{{ filters().minImpactScore ?? 50 }}/100</small>
+            </label>
+
+            <label>
+              <span>Max price</span>
+              <select
+                [ngModel]="filters().maxPrice === null ? '' : filters().maxPrice"
+                (ngModelChange)="setMaxPrice($event)"
+              >
+                <option value="">Any price</option>
+                <option value="6000">Up to $60</option>
+                <option value="12000">Up to $120</option>
+                <option value="18000">Up to $180</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Result limit</span>
+              <select [ngModel]="filters().limit ?? 8" (ngModelChange)="setLimit($event)">
+                <option value="4">4 results</option>
+                <option value="6">6 results</option>
+                <option value="8">8 results</option>
+              </select>
+            </label>
+          </div>
+        }
+      </section>
+    </aside>
+
+    <section class="result-column">
+      @if (!currentResults) {
+        <div class="panel empty-state">
+          <h2>Visual search is ready.</h2>
+          <p>
+            Upload a product inspiration image and GreenCraft will compare it against the pgvector
+            index built from the current artisan catalog.
+          </p>
+        </div>
+      } @else {
+        <div class="panel result-summary">
+          <div>
+            <p class="eyebrow">Search summary</p>
+            <h2>{{ currentResults.items.length }} matches surfaced</h2>
+          </div>
+
+          <div class="summary-badges">
+            <span [style.background]="currentResults.query.dominantColorHex">
+              {{ currentResults.query.dominantColorHex }}
+            </span>
+            @if (currentResults.query.fallbackMode) {
+              <span class="fallback-chip">Cold-start fallback</span>
+            }
+          </div>
+        </div>
+
+        <div class="result-grid">
+          @for (item of currentResults.items; track item.id) {
+            <article class="result-card panel">
+              <div
+                class="result-image"
+                [style.background-image]="
+                  item.imageUrl
+                    ? 'linear-gradient(rgba(22,51,45,.18), rgba(22,51,45,.08)), url(' +
+                      item.imageUrl +
+                      ')'
+                    : ''
+                "
+              >
+                @if (item.visualMatch.similarity !== null) {
+                  <span class="match-badge">
+                    {{ item.visualMatch.similarity * 100 | number: '1.0-0' }}% match
+                  </span>
+                } @else {
+                  <span class="match-badge is-fallback">Fallback pick</span>
+                }
+              </div>
+
+              <div class="result-copy">
+                <div class="result-meta">
+                  <span>{{ item.artisan.studioName }}</span>
+                  <span>{{ item.category.name }}</span>
+                </div>
+
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.shortDescription }}</p>
+
+                <div class="reason-list">
+                  @for (reason of item.visualMatch.matchReasons; track reason) {
+                    <div>{{ reason }}</div>
+                  }
+                </div>
+
+                <div class="result-footer">
+                  <div>
+                    <strong>{{
+                      item.price.amountInCents / 100
+                        | currency: item.price.currency : 'symbol' : '1.0-0'
+                    }}</strong>
+                    <span>{{ item.impactScore }}/100 impact</span>
+                  </div>
+
+                  <div class="result-actions">
+                    <button type="button" class="ghost-button" (click)="addToCart(item.id)">
+                      Add to cart
+                    </button>
+                    <a [routerLink]="['/catalog', item.slug]">View product</a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

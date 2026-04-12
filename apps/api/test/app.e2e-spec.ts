@@ -47,6 +47,15 @@ describe('GreenCraft API (e2e)', () => {
     return request(app.getHttpServer()).get('/api/v1/cart').expect(400);
   });
 
+  it('/api/v1/visual-search/query (POST) rejects missing uploads', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/visual-search/query')
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body.message).toContain('Upload an image');
+      });
+  });
+
   afterEach(async () => {
     await app.close();
   });
