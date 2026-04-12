@@ -3,7 +3,8 @@ import { StorefrontSnapshot } from './storefront.types';
 export const storefrontSnapshot: StorefrontSnapshot = {
   hero: {
     eyebrow: 'Traceable handmade essentials',
-    title: 'The sustainable marketplace where every craft carries its impact story.',
+    title:
+      'The sustainable marketplace where every craft carries its impact story.',
     subtitle:
       'GreenCraft connects eco-conscious buyers with artisans using reclaimed, low-waste, and naturally sourced materials.',
     primaryCta: 'Explore the spring collection',
@@ -13,38 +14,44 @@ export const storefrontSnapshot: StorefrontSnapshot = {
     {
       label: 'Verified artisans',
       value: '64',
-      detail: 'Studios screened for sustainable sourcing and transparent storytelling.',
+      detail:
+        'Studios screened for sustainable sourcing and transparent storytelling.',
     },
     {
       label: 'CO2 saved this season',
       value: '1.8t',
-      detail: 'Compared with mass-produced alternatives across active catalogue items.',
+      detail:
+        'Compared with mass-produced alternatives across active catalogue items.',
     },
     {
       label: 'Average impact score',
       value: '92/100',
-      detail: 'Blends sourcing, packaging, durability, and regional delivery efficiency.',
+      detail:
+        'Blends sourcing, packaging, durability, and regional delivery efficiency.',
     },
   ],
   categories: [
     {
       slug: 'tableware',
       name: 'Tableware',
-      description: 'Hand-thrown ceramics and reusable serving pieces for slow living.',
+      description:
+        'Hand-thrown ceramics and reusable serving pieces for slow living.',
       materialFocus: 'Clay, plant-based glaze',
       impactHighlight: 'Local kiln partners cut shipping distance by 38%',
     },
     {
       slug: 'wearables',
       name: 'Wearables',
-      description: 'Repairable bags, scarves, and accessories made from deadstock textiles.',
+      description:
+        'Repairable bags, scarves, and accessories made from deadstock textiles.',
       materialFocus: 'Organic cotton, reclaimed canvas',
       impactHighlight: 'Deadstock-first sourcing prevents landfill overflow',
     },
     {
       slug: 'home-objects',
       name: 'Home Objects',
-      description: 'Statement decor built from salvaged wood and natural fibers.',
+      description:
+        'Statement decor built from salvaged wood and natural fibers.',
       materialFocus: 'Recovered oak, jute, cork',
       impactHighlight: 'Durability scoring rewards long-life craftsmanship',
     },
@@ -61,7 +68,8 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       currency: 'USD',
       co2SavedKg: 5.6,
       impactScore: 95,
-      storySnippet: 'Thrown in small batches and fired with an energy-sharing kiln schedule.',
+      storySnippet:
+        'Thrown in small batches and fired with an energy-sharing kiln schedule.',
       imageHint: 'Terracotta bowl with speckled glaze',
     },
     {
@@ -75,7 +83,8 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       currency: 'USD',
       co2SavedKg: 3.8,
       impactScore: 91,
-      storySnippet: 'Cut from reclaimed sailcloth remnants and reinforced for daily carry.',
+      storySnippet:
+        'Cut from reclaimed sailcloth remnants and reinforced for daily carry.',
       imageHint: 'Structured olive canvas tote bag',
     },
     {
@@ -89,7 +98,8 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       currency: 'USD',
       co2SavedKg: 9.4,
       impactScore: 96,
-      storySnippet: 'Woven over a lightweight ash frame finished with biodegradable oil.',
+      storySnippet:
+        'Woven over a lightweight ash frame finished with biodegradable oil.',
       imageHint: 'Warm woven lamp with organic shape',
     },
   ],

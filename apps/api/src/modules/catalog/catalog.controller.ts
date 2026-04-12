@@ -37,7 +37,9 @@ export class CatalogController {
   }
 
   @Get('highlights')
-  @ApiOperation({ summary: 'Get highlighted categories and products for the storefront' })
+  @ApiOperation({
+    summary: 'Get highlighted categories and products for the storefront',
+  })
   getHighlights() {
     return this.catalogService.getHighlights();
   }
@@ -46,7 +48,9 @@ export class CatalogController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ARTISAN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get vendor form metadata for product creation and editing' })
+  @ApiOperation({
+    summary: 'Get vendor form metadata for product creation and editing',
+  })
   getVendorAttributeOptions() {
     return this.catalogService.getVendorAttributeOptions();
   }
@@ -55,7 +59,9 @@ export class CatalogController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ARTISAN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get products belonging to the authenticated artisan' })
+  @ApiOperation({
+    summary: 'Get products belonging to the authenticated artisan',
+  })
   getVendorProducts(@CurrentUser() user: AuthenticatedUser) {
     return this.catalogService.getVendorProducts(user);
   }
@@ -76,7 +82,9 @@ export class CatalogController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ARTISAN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update a product owned by the authenticated artisan' })
+  @ApiOperation({
+    summary: 'Update a product owned by the authenticated artisan',
+  })
   updateVendorProduct(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id') productId: string,

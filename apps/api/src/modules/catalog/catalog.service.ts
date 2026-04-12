@@ -5,13 +5,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  Prisma,
-  ProductStatus,
-} from '@prisma/client';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Prisma, ProductStatus } from '@prisma/client';
 import { storefrontSnapshot } from '../storefront/storefront.data';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { PrismaService } from '../prisma/prisma.service';
+import { VISUAL_SEARCH_PRODUCT_UPSERTED_EVENT } from '../visual-search/visual-search.constants';
 import { CatalogQueryDto } from './dto/catalog-query.dto';
 import { UpsertProductDto } from './dto/upsert-product.dto';
 
@@ -47,7 +46,10 @@ type CatalogProductRecord = Prisma.ProductGetPayload<{
 
 @Injectable()
 export class CatalogService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async getHighlights() {
     const [featuredProducts, categories] = await Promise.all([
@@ -118,9 +120,7 @@ export class CatalogService {
       }),
     ]);
 
-    const countByKey = (
-      values: string[],
-    ): Record<string, number> =>
+    const countByKey = (values: string[]): Record<string, number> =>
       values.reduce<Record<string, number>>((acc, value) => {
         acc[value] = (acc[value] ?? 0) + 1;
         return acc;
@@ -281,10 +281,7 @@ export class CatalogService {
     };
   }
 
-  async createVendorProduct(
-    user: AuthenticatedUser,
-    dto: UpsertProductDto,
-  ) {
+  async createVendorProduct(user: AuthenticatedUser, dto: UpsertProductDto) {
     const artisanId = this.requireArtisanProfile(user);
     await this.ensureProductReferences(dto);
     await this.ensureSlugAvailable(dto.slug);
@@ -332,6 +329,10 @@ export class CatalogService {
         },
       },
       include: publicCatalogInclude,
+    });
+
+    this.eventEmitter.emit(VISUAL_SEARCH_PRODUCT_UPSERTED_EVENT, {
+      productId: product.id,
     });
 
     return {
@@ -406,6 +407,10 @@ export class CatalogService {
         },
       },
       include: publicCatalogInclude,
+    });
+
+    this.eventEmitter.emit(VISUAL_SEARCH_PRODUCT_UPSERTED_EVENT, {
+      productId: product.id,
     });
 
     return {
@@ -532,11 +537,20 @@ export class CatalogService {
   private resolvePublicSort(sort: CatalogQueryDto['sort']) {
     switch (sort) {
       case 'price-asc':
-        return [{ priceInCents: 'asc' as const }, { createdAt: 'desc' as const }];
+        return [
+          { priceInCents: 'asc' as const },
+          { createdAt: 'desc' as const },
+        ];
       case 'price-desc':
-        return [{ priceInCents: 'desc' as const }, { createdAt: 'desc' as const }];
+        return [
+          { priceInCents: 'desc' as const },
+          { createdAt: 'desc' as const },
+        ];
       case 'impact-desc':
-        return [{ impactScore: 'desc' as const }, { createdAt: 'desc' as const }];
+        return [
+          { impactScore: 'desc' as const },
+          { createdAt: 'desc' as const },
+        ];
       case 'newest':
         return [{ createdAt: 'desc' as const }];
       case 'featured':
@@ -562,8 +576,7 @@ export class CatalogService {
       co2SavedKg: product.co2SavedKg,
       impactScore: product.impactScore,
       storySnippet: product.story,
-      imageHint:
-        product.images[0]?.alt ?? product.shortDescription,
+      imageHint: product.images[0]?.alt ?? product.shortDescription,
     };
   }
 
@@ -658,9 +671,7 @@ export class CatalogService {
 
   private requireArtisanProfile(user: AuthenticatedUser) {
     if (!user.artisanProfileId) {
-      throw new ForbiddenException(
-        'This action requires an artisan account.',
-      );
+      throw new ForbiddenException('This action requires an artisan account.');
     }
 
     return user.artisanProfileId;

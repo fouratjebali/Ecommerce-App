@@ -28,7 +28,9 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ARTISAN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'List vendor order items for the authenticated artisan' })
+  @ApiOperation({
+    summary: 'List vendor order items for the authenticated artisan',
+  })
   listVendorOrderItems(@CurrentUser() user: AuthenticatedUser) {
     return this.ordersService.listVendorOrderItems(user);
   }
@@ -37,7 +39,9 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ARTISAN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update vendor order item status for the authenticated artisan' })
+  @ApiOperation({
+    summary: 'Update vendor order item status for the authenticated artisan',
+  })
   updateVendorOrderItemStatus(
     @CurrentUser() user: AuthenticatedUser,
     @Param('itemId') itemId: string,
