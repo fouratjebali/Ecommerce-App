@@ -33,6 +33,33 @@ enum AttributeKind {
   MULTI_SELECT
 }
 
+enum CouponType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum OrderStatus {
+  DRAFT
+  CONFIRMED
+  FULFILLING
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderItemStatus {
+  CONFIRMED
+  FULFILLING
+  SHIPPED
+  CANCELLED
+}
+
+enum InventoryReservationStatus {
+  ACTIVE
+  CONSUMED
+  RELEASED
+  EXPIRED
+}
+
 model User {
   id             String          @id @default(uuid())
   email          String          @unique
@@ -41,6 +68,7 @@ model User {
   role           UserRole        @default(BUYER)
   avatarUrl      String?
   artisanProfile ArtisanProfile?
+  orders         Order[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 }
@@ -61,6 +89,7 @@ model ArtisanProfile {
   totalSales         Int          @default(0)
   user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   products           Product[]
+  orderItems         OrderItem[]
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 }
@@ -116,6 +145,8 @@ model Product {
   images           ProductImage[]
   materials        ProductMaterial[]
   attributes       ProductAttributeValue[]
+  orderItems       OrderItem[]
+  reservations     InventoryReservation[]
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
 
@@ -180,4 +211,96 @@ model ProductAttributeValue {
   option       ProductAttributeOption?    @relation(fields: [optionId], references: [id], onDelete: SetNull)
 
   @@index([productId, definitionId])
+}
+
+model Coupon {
+  id                    String     @id @default(uuid())
+  code                  String     @unique
+  label                 String
+  description           String
+  type                  CouponType
+  percentOff            Int?
+  amountOffInCents      Int?
+  minimumSubtotalInCents Int       @default(0)
+  maxDiscountInCents    Int?
+  active                Boolean    @default(true)
+  startsAt              DateTime?
+  endsAt                DateTime?
+  usageLimit            Int?
+  timesRedeemed         Int        @default(0)
+  orders                Order[]
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+}
+
+model Order {
+  id                    String                @id @default(uuid())
+  orderNumber           String                @unique
+  buyerId               String
+  couponId              String?
+  cartSessionId         String
+  status                OrderStatus           @default(CONFIRMED)
+  currency              String                @default("USD")
+  subtotalInCents       Int
+  couponDiscountInCents Int                   @default(0)
+  bundleDiscountInCents Int                   @default(0)
+  totalInCents          Int
+  shippingName          String
+  shippingEmail         String
+  shippingAddressLine1  String
+  shippingAddressLine2  String?
+  shippingCity          String
+  shippingPostalCode    String
+  shippingCountry       String
+  notes                 String?
+  placedAt              DateTime              @default(now())
+  buyer                 User                  @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  coupon                Coupon?               @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  items                 OrderItem[]
+  reservations          InventoryReservation[]
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  @@index([buyerId, status])
+}
+
+model OrderItem {
+  id                 String          @id @default(uuid())
+  orderId            String
+  productId          String
+  artisanId          String
+  status             OrderItemStatus @default(CONFIRMED)
+  productName        String
+  artisanStudioName  String
+  unitPriceInCents   Int
+  quantity           Int
+  lineTotalInCents   Int
+  impactScore        Int
+  co2SavedKg         Float
+  currency           String          @default("USD")
+  order              Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product            Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  artisan            ArtisanProfile  @relation(fields: [artisanId], references: [id], onDelete: Restrict)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@index([orderId, status])
+  @@index([artisanId, status])
+}
+
+model InventoryReservation {
+  id         String                     @id @default(uuid())
+  sessionId  String
+  productId  String
+  orderId    String?
+  quantity   Int
+  status     InventoryReservationStatus @default(ACTIVE)
+  expiresAt  DateTime
+  product    Product                    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  order      Order?                     @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  createdAt  DateTime                   @default(now())
+  updatedAt  DateTime                   @updatedAt
+
+  @@index([productId, status, expiresAt])
+  @@index([sessionId, status, expiresAt])
 }

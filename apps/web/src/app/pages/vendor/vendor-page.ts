@@ -1,4 +1,4 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,9 +8,11 @@ import {
   VendorProduct,
   VendorProductPayload,
 } from '../../models/catalog';
+import { VendorOrderItemsResponse } from '../../models/orders';
 import { VendorDashboardResponse, VendorProfilePayload } from '../../models/vendor';
 import { AuthService } from '../../services/auth.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
+import { OrdersApiService } from '../../services/orders-api.service';
 import { VendorApiService } from '../../services/vendor-api.service';
 
 interface ProductAttributeDraft {
@@ -50,7 +52,7 @@ interface NoticeState {
 
 @Component({
   selector: 'app-vendor-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, DecimalPipe],
+  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, DatePipe, DecimalPipe],
   templateUrl: './vendor-page.html',
   styleUrl: './vendor-page.scss',
 })
@@ -59,6 +61,7 @@ export class VendorPageComponent {
 
   private readonly vendorApiService = inject(VendorApiService);
   private readonly catalogApiService = inject(CatalogApiService);
+  private readonly ordersApiService = inject(OrdersApiService);
   private readonly router = inject(Router);
 
   protected readonly loading = signal(true);
@@ -67,7 +70,9 @@ export class VendorPageComponent {
   protected readonly dashboard = signal<VendorDashboardResponse | null>(null);
   protected readonly options = signal<VendorAttributeOptionsResponse | null>(null);
   protected readonly products = signal<VendorProduct[]>([]);
+  protected readonly vendorOrderItems = signal<VendorOrderItemsResponse['items']>([]);
   protected readonly editingProductId = signal<string | null>(null);
+  protected readonly updatingOrderItemId = signal<string | null>(null);
   protected readonly notice = signal<NoticeState | null>(null);
 
   protected profileForm: VendorProfilePayload = {
@@ -259,6 +264,27 @@ export class VendorPageComponent {
     await this.router.navigateByUrl('/auth');
   }
 
+  protected async updateOrderItemStatus(itemId: string, status: string) {
+    this.updatingOrderItemId.set(itemId);
+    this.notice.set(null);
+
+    try {
+      await firstValueFrom(this.ordersApiService.updateVendorOrderItemStatus(itemId, status));
+      await this.loadVendorOrders();
+      this.notice.set({
+        tone: 'success',
+        text: 'Vendor order status updated.',
+      });
+    } catch {
+      this.notice.set({
+        tone: 'error',
+        text: 'The order item status could not be updated.',
+      });
+    } finally {
+      this.updatingOrderItemId.set(null);
+    }
+  }
+
   private async loadPage() {
     this.loading.set(true);
     this.notice.set(null);
@@ -277,7 +303,7 @@ export class VendorPageComponent {
       this.options.set(optionsResponse);
       this.productForm = this.createEmptyProductForm(optionsResponse);
 
-      await this.loadVendorProducts();
+      await Promise.all([this.loadVendorProducts(), this.loadVendorOrders()]);
     } catch {
       this.notice.set({
         tone: 'error',
@@ -301,6 +327,11 @@ export class VendorPageComponent {
   private async loadVendorProducts() {
     const response = await firstValueFrom(this.catalogApiService.getVendorProducts());
     this.products.set(response.items);
+  }
+
+  private async loadVendorOrders() {
+    const response = await firstValueFrom(this.ordersApiService.getVendorOrderItems());
+    this.vendorOrderItems.set(response.items);
   }
 
   private createEmptyProductForm(options = this.options()): ProductFormState {

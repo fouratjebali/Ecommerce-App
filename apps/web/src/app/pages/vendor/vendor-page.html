@@ -426,5 +426,113 @@
         </div>
       }
     </section>
+
+    <section class="panel orders-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Order management</p>
+          <h2>Vendor order queue</h2>
+        </div>
+        <span class="meta-chip">{{ vendorOrderItems().length }} order items</span>
+      </div>
+
+      @if (!vendorOrderItems().length) {
+        <div class="empty-state">
+          Buyer orders will appear here as soon as checkout starts flowing through this artisan
+          studio.
+        </div>
+      } @else {
+        <div class="order-list">
+          @for (item of vendorOrderItems(); track item.id) {
+            <article class="order-card">
+              <div class="order-card-header">
+                <div>
+                  <div class="order-badges">
+                    <span class="status-badge">{{ item.itemStatus }}</span>
+                    <span class="meta-chip">{{ item.orderStatus }}</span>
+                  </div>
+                  <h3>{{ item.productName }}</h3>
+                  <p>
+                    Order {{ item.orderNumber }} placed
+                    {{ item.placedAt | date: 'mediumDate' }}
+                  </p>
+                </div>
+
+                <a class="ghost-link" [routerLink]="['/catalog', item.productSlug]">
+                  View product
+                </a>
+              </div>
+
+              <div class="order-grid">
+                <div>
+                  <span>Buyer</span>
+                  <strong>{{ item.buyer.fullName }}</strong>
+                  <small>{{ item.buyer.email }}</small>
+                </div>
+
+                <div>
+                  <span>Destination</span>
+                  <strong>{{ item.shippingCity }}</strong>
+                  <small>{{ item.shippingCountry }}</small>
+                </div>
+
+                <div>
+                  <span>Quantity</span>
+                  <strong>{{ item.quantity }}</strong>
+                  <small>Units reserved</small>
+                </div>
+
+                <div>
+                  <span>Line total</span>
+                  <strong>{{
+                    item.lineTotalInCents / 100 | currency: item.currency : 'symbol' : '1.0-0'
+                  }}</strong>
+                  <small>Marketplace checkout value</small>
+                </div>
+              </div>
+
+              <div class="status-actions">
+                <button
+                  type="button"
+                  class="ghost-button"
+                  (click)="updateOrderItemStatus(item.id, 'CONFIRMED')"
+                  [disabled]="updatingOrderItemId() === item.id || item.itemStatus === 'CONFIRMED'"
+                >
+                  Confirm
+                </button>
+                <button
+                  type="button"
+                  class="ghost-button"
+                  (click)="updateOrderItemStatus(item.id, 'FULFILLING')"
+                  [disabled]="
+                    updatingOrderItemId() === item.id || item.itemStatus === 'FULFILLING'
+                  "
+                >
+                  Fulfilling
+                </button>
+                <button
+                  type="button"
+                  class="primary-button"
+                  (click)="updateOrderItemStatus(item.id, 'SHIPPED')"
+                  [disabled]="updatingOrderItemId() === item.id || item.itemStatus === 'SHIPPED'"
+                >
+                  {{ updatingOrderItemId() === item.id ? 'Saving...' : 'Ship item' }}
+                </button>
+                <button
+                  type="button"
+                  class="ghost-button danger-button"
+                  (click)="updateOrderItemStatus(item.id, 'CANCELLED')"
+                  [disabled]="
+                    updatingOrderItemId() === item.id || item.itemStatus === 'CANCELLED'
+                  "
+                >
+                  Cancel item
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
   }
 </section>

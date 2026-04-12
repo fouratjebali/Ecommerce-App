@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { buyerGuard } from './guards/buyer.guard';
 import { vendorGuard } from './guards/vendor.guard';
 
 export const routes: Routes = [
@@ -25,6 +26,27 @@ export const routes: Routes = [
     path: 'auth',
     loadComponent: () =>
       import('./pages/auth/auth-page').then((module) => module.AuthPageComponent),
+  },
+  {
+    path: 'cart',
+    loadComponent: () =>
+      import('./pages/cart/cart-page').then((module) => module.CartPageComponent),
+  },
+  {
+    path: 'checkout',
+    canActivate: [buyerGuard],
+    loadComponent: () =>
+      import('./pages/checkout/checkout-page').then(
+        (module) => module.CheckoutPageComponent,
+      ),
+  },
+  {
+    path: 'orders',
+    canActivate: [buyerGuard],
+    loadComponent: () =>
+      import('./pages/orders/orders-page').then(
+        (module) => module.OrdersPageComponent,
+      ),
   },
   {
     path: 'vendor',

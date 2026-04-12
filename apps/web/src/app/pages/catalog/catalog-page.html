@@ -1,5 +1,6 @@
 @let currentCatalog = catalog();
 @let currentFacets = facets();
+@let currentNotice = notice();
 
 <section class="catalog-page">
   <header class="catalog-header">
@@ -14,9 +15,16 @@
 
     <div class="header-actions">
       <a class="ghost-link" routerLink="/">Home</a>
+      <a class="ghost-link" routerLink="/cart">Cart</a>
       <a class="primary-link" routerLink="/vendor">Vendor workspace</a>
     </div>
   </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
 
   <div class="catalog-layout">
     <aside class="filter-panel">
@@ -186,7 +194,12 @@
                     product.price.amountInCents / 100
                       | currency: product.price.currency : 'symbol' : '1.0-0'
                   }}</strong>
-                  <a [routerLink]="['/catalog', product.slug]">View details</a>
+                  <div class="product-actions">
+                    <button type="button" class="card-button" (click)="addToCart(product.id)">
+                      Add to cart
+                    </button>
+                    <a [routerLink]="['/catalog', product.slug]">View details</a>
+                  </div>
                 </div>
               </div>
             </article>

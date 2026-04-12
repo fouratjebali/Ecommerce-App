@@ -1,0 +1,102 @@
+@let currentNotice = notice();
+
+<section class="orders-page">
+  <header class="page-header panel">
+    <div>
+      <p class="eyebrow">Buyer orders</p>
+      <h1>Track confirmed handmade orders, bundled savings, and current fulfillment status.</h1>
+      <p>
+        Sprint 3 introduces a buyer order timeline backed by the new OMS and reservation flow.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="ghost-link" routerLink="/catalog">Catalog</a>
+      <a class="ghost-link" routerLink="/cart">Cart</a>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice is-error">{{ currentNotice.text }}</div>
+  }
+
+  @if (loading()) {
+    <div class="panel empty-state">Loading your orders...</div>
+  } @else if (!orders().length) {
+    <div class="panel empty-state">
+      <h2>No buyer orders yet.</h2>
+      <p>Complete checkout from the cart and your first Sprint 3 order will appear here.</p>
+      <a class="primary-link" routerLink="/catalog">Shop the catalog</a>
+    </div>
+  } @else {
+    <div class="order-list">
+      @for (order of orders(); track order.id) {
+        <article class="order-card panel">
+          <div class="order-header">
+            <div>
+              <p class="eyebrow">{{ order.status }}</p>
+              <h2>{{ order.orderNumber }}</h2>
+            </div>
+            <div class="order-meta">
+              <span>{{ order.placedAt | date: 'mediumDate' }}</span>
+              <strong>{{
+                order.totalInCents / 100 | currency: order.currency : 'symbol' : '1.0-0'
+              }}</strong>
+            </div>
+          </div>
+
+          <div class="order-summary">
+            <div>
+              <span>Shipping</span>
+              <strong>{{ order.shipping.city }}, {{ order.shipping.country }}</strong>
+            </div>
+            <div>
+              <span>Bundle savings</span>
+              <strong>{{
+                order.bundleDiscountInCents / 100 | currency: order.currency : 'symbol' : '1.0-0'
+              }}</strong>
+            </div>
+            <div>
+              <span>Coupon savings</span>
+              <strong>{{
+                order.couponDiscountInCents / 100 | currency: order.currency : 'symbol' : '1.0-0'
+              }}</strong>
+            </div>
+          </div>
+
+          <div class="order-items">
+            @for (item of order.items; track item.id) {
+              <div class="order-item">
+                <div>
+                  <strong>{{ item.productName }}</strong>
+                  <span>{{ item.artisanStudioName }} | {{ item.artisanLocation }}</span>
+                </div>
+                <div class="order-item-meta">
+                  <span>{{ item.status }}</span>
+                  <strong>{{
+                    item.lineTotalInCents / 100 | currency: item.currency : 'symbol' : '1.0-0'
+                  }}</strong>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (order.status !== 'COMPLETED' && order.status !== 'CANCELLED') {
+            <button
+              type="button"
+              class="ghost-button"
+              (click)="cancelOrder(order.orderNumber)"
+              [disabled]="cancellingOrderNumber() === order.orderNumber"
+            >
+              {{
+                cancellingOrderNumber() === order.orderNumber
+                  ? 'Cancelling...'
+                  : 'Cancel order'
+              }}
+            </button>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>
