@@ -10,7 +10,8 @@
 
 .panel,
 .notice,
-.inventory-card {
+.inventory-card,
+.order-card {
   border: 1px solid rgba(34, 69, 61, 0.08);
   border-radius: 1.9rem;
   background: rgba(255, 255, 255, 0.78);
@@ -22,7 +23,10 @@
 .header-actions,
 .inventory-header,
 .inventory-metrics,
-.material-row {
+.material-row,
+.order-card-header,
+.order-badges,
+.status-actions {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -49,8 +53,10 @@
 .vendor-header p,
 .metric-card p,
 .inventory-card p,
+.order-card p,
 .block-heading span,
-.empty-state {
+.empty-state,
+.order-grid small {
   color: var(--ink-700);
   line-height: 1.75;
 }
@@ -170,7 +176,8 @@
 
 .profile-panel,
 .composer-panel,
-.inventory-panel {
+.inventory-panel,
+.orders-panel {
   padding: 1.5rem;
 }
 
@@ -280,7 +287,8 @@
   margin-top: 1rem;
 }
 
-.product-list {
+.product-list,
+.order-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
@@ -332,9 +340,66 @@
   font-size: 0.88rem;
 }
 
+.orders-panel {
+  margin-top: 1rem;
+}
+
+.order-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+}
+
+.order-card-header {
+  align-items: flex-start;
+}
+
+.order-badges {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+.order-card h3 {
+  margin: 0;
+}
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.order-grid div {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: rgba(247, 241, 229, 0.66);
+}
+
+.order-grid span {
+  color: var(--ink-700);
+  font-size: 0.92rem;
+}
+
+.order-grid strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.status-actions {
+  flex-wrap: wrap;
+}
+
+.danger-button {
+  color: #a44935;
+}
+
 @media (max-width: 1180px) {
   .metrics-grid,
-  .product-list {
+  .product-list,
+  .order-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -348,7 +413,8 @@
   .panel-heading,
   .inventory-header,
   .header-actions,
-  .inventory-metrics {
+  .inventory-metrics,
+  .order-card-header {
     flex-direction: column;
   }
 
@@ -356,7 +422,9 @@
   .grid-four,
   .grid-three,
   .attribute-grid,
-  .product-list {
+  .product-list,
+  .order-list,
+  .order-grid {
     grid-template-columns: 1fr;
   }
 }

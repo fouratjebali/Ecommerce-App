@@ -1,0 +1,211 @@
+@let currentCart = cart();
+@let currentNotice = notice();
+@let currentUser = authService.user();
+
+<section class="cart-page">
+  <header class="page-header panel">
+    <div>
+      <p class="eyebrow">Smart cart</p>
+      <h1>Build an intentional bundle, hold inventory in real time, and prep for checkout.</h1>
+      <p>
+        Sprint 3 adds Redis-backed cart sessions, bundle savings, coupon handling, and stock
+        reservation windows.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="ghost-link" routerLink="/catalog">Catalog</a>
+      <a class="ghost-link" routerLink="/auth">Account</a>
+      <a class="primary-link" routerLink="/orders">Orders</a>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel empty-state">Loading the cart session...</div>
+  } @else if (currentCart; as cart) {
+    @if (!cart.items.length) {
+      <div class="panel empty-state">
+        <h2>Your cart is empty.</h2>
+        <p>
+          Browse the catalog, add a few handmade pieces, and the bundle summary will appear here.
+        </p>
+        <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+      </div>
+    } @else {
+      <div class="cart-layout">
+        <section class="cart-items panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Reserved products</p>
+              <h2>{{ cart.summary.itemCount }} items in your build</h2>
+            </div>
+            <span class="meta-chip">Session {{ cart.sessionId.slice(0, 8) }}</span>
+          </div>
+
+          <div class="coupon-card">
+            <div>
+              <strong>Coupon engine</strong>
+              <p>Try `WELCOME10` or `STUDIOBUNDLE` against the seeded catalog.</p>
+            </div>
+
+            <div class="coupon-actions">
+              <input type="text" placeholder="Enter code" [(ngModel)]="couponCode" />
+              <button
+                type="button"
+                class="ghost-button"
+                (click)="applyCoupon()"
+                [disabled]="applyingCoupon()"
+              >
+                {{ applyingCoupon() ? 'Applying...' : 'Apply' }}
+              </button>
+              @if (cart.coupon) {
+                <button type="button" class="ghost-button" (click)="clearCoupon()">Clear</button>
+              }
+            </div>
+          </div>
+
+          <div class="item-list">
+            @for (item of cart.items; track item.productId) {
+              <article class="item-card">
+                <div
+                  class="item-image"
+                  [style.background-image]="
+                    item.imageUrl
+                      ? 'linear-gradient(rgba(22,51,45,.16), rgba(22,51,45,.06)), url(' +
+                        item.imageUrl +
+                        ')'
+                      : ''
+                  "
+                ></div>
+
+                <div class="item-copy">
+                  <div class="item-meta">
+                    <span>{{ item.artisan.studioName }}</span>
+                    <a [routerLink]="['/catalog', item.slug]">View product</a>
+                  </div>
+
+                  <h3>{{ item.name }}</h3>
+
+                  <div class="quantity-row">
+                    <button
+                      type="button"
+                      class="ghost-button"
+                      (click)="decrement(item.productId, item.quantity)"
+                      [disabled]="updatingProductId() === item.productId"
+                    >
+                      -
+                    </button>
+                    <strong>{{ item.quantity }}</strong>
+                    <button
+                      type="button"
+                      class="ghost-button"
+                      (click)="increment(item.productId, item.quantity)"
+                      [disabled]="updatingProductId() === item.productId"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div class="item-footer">
+                    <div>
+                      <span>Reserved until</span>
+                      <strong>{{
+                        item.reservationExpiresAt
+                          ? (item.reservationExpiresAt | date: 'shortTime')
+                          : 'Not held'
+                      }}</strong>
+                    </div>
+                    <div>
+                      <span>Line total</span>
+                      <strong>{{
+                        item.lineTotalInCents / 100
+                          | currency: item.price.currency : 'symbol' : '1.0-0'
+                      }}</strong>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="remove-button"
+                    (click)="removeItem(item.productId)"
+                    [disabled]="updatingProductId() === item.productId"
+                  >
+                    Remove item
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+
+        <aside class="cart-summary panel">
+          <p class="eyebrow">Bundle builder</p>
+          <h2>Checkout preview</h2>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Bundle savings</span>
+            <strong>{{
+              cart.summary.bundleDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+            }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Coupon savings</span>
+            <strong>{{
+              cart.summary.couponDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+            }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Tracked CO2 saved</span>
+            <strong>{{ cart.summary.totalCo2SavedKg }}kg</strong>
+          </div>
+
+          <div class="summary-total">
+            <span>Estimated checkout total</span>
+            <strong>{{ cart.summary.totalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+
+          @if (cart.summary.bundleEligible) {
+            <div class="callout">
+              {{ cart.summary.bundleDiscountPercent }}% bundle savings are active on this
+              multi-item cart.
+            </div>
+          }
+
+          @if (cart.coupon) {
+            <div class="callout">
+              {{ cart.coupon.label }} is applied with {{
+                cart.coupon.discountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+              }} off.
+            </div>
+          }
+
+          <a
+            class="primary-link checkout-link"
+            [routerLink]="currentUser?.role === 'BUYER' ? '/checkout' : '/auth'"
+          >
+            {{ currentUser?.role === 'BUYER' ? 'Continue to checkout' : 'Sign in as buyer' }}
+          </a>
+        </aside>
+      </div>
+    }
+  } @else {
+    <div class="panel empty-state">
+      <h2>Your cart is empty.</h2>
+      <p>Browse the catalog, add a few handmade pieces, and the bundle summary will appear here.</p>
+      <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+    </div>
+  }
+</section>

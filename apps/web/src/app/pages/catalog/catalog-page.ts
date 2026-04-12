@@ -4,7 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CatalogFacetsResponse, CatalogFilters, CatalogResponse } from '../../models/catalog';
+import { CartApiService } from '../../services/cart-api.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
+
+interface NoticeState {
+  tone: 'success' | 'error';
+  text: string;
+}
 
 @Component({
   selector: 'app-catalog-page',
@@ -14,10 +20,12 @@ import { CatalogApiService } from '../../services/catalog-api.service';
 })
 export class CatalogPageComponent {
   private readonly catalogApiService = inject(CatalogApiService);
+  private readonly cartApiService = inject(CartApiService);
 
   protected readonly facets = signal<CatalogFacetsResponse | null>(null);
   protected readonly catalog = signal<CatalogResponse | null>(null);
   protected readonly loading = signal(true);
+  protected readonly notice = signal<NoticeState | null>(null);
 
   protected readonly filters = signal<CatalogFilters>({
     q: '',
@@ -94,6 +102,23 @@ export class CatalogPageComponent {
       madeToOrder: null,
       sort: 'featured',
     });
+  }
+
+  protected async addToCart(productId: string) {
+    this.notice.set(null);
+
+    try {
+      await firstValueFrom(this.cartApiService.addItem(productId, 1));
+      this.notice.set({
+        tone: 'success',
+        text: 'Product added to the cart session.',
+      });
+    } catch {
+      this.notice.set({
+        tone: 'error',
+        text: 'This product could not be added to the cart right now.',
+      });
+    }
   }
 
   private async loadFacets() {

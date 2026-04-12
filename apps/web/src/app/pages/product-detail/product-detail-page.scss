@@ -62,6 +62,17 @@
   line-height: 1.8;
 }
 
+.notice {
+  margin-bottom: 1rem;
+  padding: 1rem 1.2rem;
+}
+
+.notice.is-error {
+  color: #a44935;
+  border-color: rgba(164, 73, 53, 0.18);
+  background: rgba(255, 243, 240, 0.92);
+}
+
 .metric-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -90,6 +101,52 @@
   margin-top: 0.9rem;
 }
 
+.purchase-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin: 1rem 0 1.4rem;
+}
+
+.purchase-strip label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.purchase-strip span {
+  color: var(--ink-700);
+  font-size: 0.9rem;
+}
+
+.purchase-strip input {
+  min-width: 110px;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid rgba(34, 69, 61, 0.12);
+  border-radius: 1rem;
+}
+
+.primary-link,
+.ghost-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 999px;
+}
+
+.primary-link {
+  border: 0;
+  background: linear-gradient(135deg, var(--pine-950), var(--pine-700));
+  color: white;
+  font: inherit;
+}
+
+.ghost-link {
+  border: 1px solid rgba(34, 69, 61, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+}
+
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -115,6 +172,10 @@
 }
 
 @media (max-width: 680px) {
+  .purchase-strip {
+    flex-direction: column;
+  }
+
   .metric-strip,
   .attribute-grid {
     grid-template-columns: 1fr;

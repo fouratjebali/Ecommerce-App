@@ -1,7 +1,14 @@
 @let detail = productDetail();
+@let currentNotice = notice();
 
 <section class="detail-page">
   <a class="back-link" routerLink="/catalog">Back to catalog</a>
+
+  @if (currentNotice) {
+    <div class="detail-card notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
 
   @if (loading()) {
     <div class="detail-card">Loading product details...</div>
@@ -41,6 +48,15 @@
             <span>CO2 saved</span>
             <strong>{{ detail.product.co2SavedKg }}kg</strong>
           </div>
+        </div>
+
+        <div class="purchase-strip">
+          <label>
+            <span>Quantity</span>
+            <input type="number" min="1" name="quantity" [(ngModel)]="quantity" />
+          </label>
+          <button type="button" class="primary-link" (click)="addToCart()">Add to cart</button>
+          <a class="ghost-link" routerLink="/cart">View cart</a>
         </div>
 
         <div class="detail-section">
