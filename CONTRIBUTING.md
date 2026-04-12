@@ -22,6 +22,10 @@
 - `sprint-2/vendors-catalog`
 - `sprint-2/frontend-flow`
 - `sprint-2/docs`
+- `sprint-3/order-domain`
+- `sprint-3/cart-oms-backend`
+- `sprint-3/frontend-buyer-flow`
+- `sprint-3/docs`
 
 ## Commit style
 
@@ -36,6 +40,7 @@
 - Database schema: `npm run db:push`
 - Database seed: `npm run db:seed`
 - Frontend: `npm run build:web`
+- Frontend tests: `npm run test:web -- --watch=false --browsers=ChromeHeadless`
 - Backend: `npm run build:api`
 - Backend tests: `npm run test:api`
 - Backend e2e: `cd apps/api && npm run test:e2e`

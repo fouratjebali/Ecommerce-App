@@ -34,10 +34,24 @@
 - `GET /api/v1/artisans`
 - `GET /api/v1/artisans/:slug`
 
+## Sprint 3 live endpoints
+
+- `GET /api/v1/cart`
+- `POST /api/v1/cart/items`
+- `PATCH /api/v1/cart/items/:productId`
+- `DELETE /api/v1/cart/items/:productId`
+- `POST /api/v1/cart/coupons/apply`
+- `DELETE /api/v1/cart/coupons`
+- `DELETE /api/v1/cart`
+- `GET /api/v1/orders`
+- `GET /api/v1/orders/:orderNumber`
+- `POST /api/v1/orders/checkout`
+- `POST /api/v1/orders/:orderNumber/cancel`
+- `GET /api/v1/orders/vendor/items`
+- `PATCH /api/v1/orders/vendor/items/:itemId/status`
+
 ## Planned endpoint families
 
-- `/api/v1/carts`
-- `/api/v1/orders`
 - `/api/v1/payments`
 - `/api/v1/search`
 - `/api/v1/admin`
@@ -46,9 +60,16 @@
 
 The homepage endpoint is intentionally aggregate-oriented. It gives the Angular storefront a single response containing hero content, metrics, category highlights, featured products, artisan stories, and roadmap initiatives.
 
-## Integration notes
+## Sprint 3 integration notes
+
+- Cart requests are keyed by the `x-cart-session` header and prefer Redis for session persistence
+- Stock reservations are written to PostgreSQL so cart holds can be consumed or released transactionally
+- Checkout converts the cart snapshot into order and order-item records, decrements inventory, and emits commerce domain events
+- Buyer and artisan order flows share the same order module, with RBAC and endpoint shape separating responsibilities
+
+## Future integration notes
 
 - Stripe webhooks will land in a dedicated payment module and publish internal order events
 - Visual search will call an embeddings service and query `pgvector` with cosine similarity
 - Meilisearch remains the primary faceted retrieval engine, with PostgreSQL as the source of truth
-- Prisma currently owns the source-of-truth catalog and identity schema used by the Angular and NestJS Sprint 2 flows
+- Prisma currently owns the source-of-truth catalog, identity, and order schema used by the Angular and NestJS Sprint 3 flows

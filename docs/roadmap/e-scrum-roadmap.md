@@ -14,13 +14,15 @@
 - Angular auth, catalog, product detail, and vendor workspace flows
 - Prisma schema, seed data, and guarded vendor APIs
 
-## Sprint 3 Next
+## Sprint 3 Complete
 
-- Redis-backed cart sessions
-- Stock reservation workflow
-- Order lifecycle and coupon engine
+- Redis-backed cart sessions with in-memory fallback for local work and tests
+- Coupon engine with seeded offer codes and cart-level pricing summaries
+- Stock reservation workflow tied to cart updates and checkout consumption
+- Buyer checkout, buyer order history, and buyer cancellation flow
+- Artisan OMS queue inside the vendor dashboard with order-item status updates
 
-## Sprint 4 Planned
+## Sprint 4 Next
 
 - Visual search using embeddings and `pgvector`
 - Hybrid search filtering
