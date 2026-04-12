@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ProductDetailResponse } from '../../models/catalog';
+import { VisualSearchRecommendationsResponse } from '../../models/visual-search';
 import { CartApiService } from '../../services/cart-api.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
+import { VisualSearchApiService } from '../../services/visual-search-api.service';
 
 interface NoticeState {
   tone: 'success' | 'error';
@@ -22,8 +24,11 @@ export class ProductDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly catalogApiService = inject(CatalogApiService);
   private readonly cartApiService = inject(CartApiService);
+  private readonly visualSearchApiService = inject(VisualSearchApiService);
 
   protected readonly productDetail = signal<ProductDetailResponse | null>(null);
+  protected readonly visualRecommendations =
+    signal<VisualSearchRecommendationsResponse | null>(null);
   protected readonly loading = signal(true);
   protected readonly notice = signal<NoticeState | null>(null);
   protected quantity = 1;
@@ -64,9 +69,16 @@ export class ProductDetailPageComponent {
     }
 
     try {
-      this.productDetail.set(
-        await firstValueFrom(this.catalogApiService.getProduct(slug)),
-      );
+      const detail = await firstValueFrom(this.catalogApiService.getProduct(slug));
+      this.productDetail.set(detail);
+
+      try {
+        this.visualRecommendations.set(
+          await firstValueFrom(this.visualSearchApiService.getRecommendations(slug, 4)),
+        );
+      } catch {
+        this.visualRecommendations.set(null);
+      }
     } finally {
       this.loading.set(false);
     }
