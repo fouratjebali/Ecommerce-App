@@ -74,10 +74,10 @@
       </div>
     </section>
 
-    <section class="quick-link-strip" aria-label="Sprint 2 shortcuts">
+    <section class="quick-link-strip" aria-label="Marketplace shortcuts">
       @for (link of quickLinks; track link.route) {
         <a class="quick-link-card" [routerLink]="link.route">
-          <span class="card-label">Sprint 2</span>
+          <span class="card-label">Marketplace</span>
           <strong>{{ link.label }}</strong>
         </a>
       }
@@ -259,6 +259,10 @@
               <li>{{ point }}</li>
             }
           </ul>
+
+          <a class="button button-primary innovation-cta" [routerLink]="activePanel().ctaRoute">
+            {{ activePanel().ctaLabel }}
+          </a>
         </article>
       </div>
     </section>

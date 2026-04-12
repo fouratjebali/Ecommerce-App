@@ -23,6 +23,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'visual-search',
+    loadComponent: () =>
+      import('./pages/visual-search/visual-search-page').then(
+        (module) => module.VisualSearchPageComponent,
+      ),
+  },
+  {
     path: 'auth',
     loadComponent: () =>
       import('./pages/auth/auth-page').then((module) => module.AuthPageComponent),

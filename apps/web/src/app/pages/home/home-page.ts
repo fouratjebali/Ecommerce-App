@@ -14,6 +14,8 @@ interface InnovationPanel {
   summary: string;
   highlight: string;
   points: string[];
+  ctaLabel: string;
+  ctaRoute: string;
 }
 
 @Component({
@@ -39,6 +41,7 @@ export class HomePageComponent {
 
   protected readonly quickLinks = [
     { label: 'Shop catalog', route: '/catalog' },
+    { label: 'Find by photo', route: '/visual-search' },
     { label: 'Artisan sign in', route: '/auth' },
     { label: 'Vendor workspace', route: '/vendor' },
   ];
@@ -84,6 +87,8 @@ export class HomePageComponent {
         'Hybrid filtering by material, artisan, price, and impact score',
         'Cold-start fallback recommendations cached in Redis',
       ],
+      ctaLabel: 'Try visual search',
+      ctaRoute: '/visual-search',
     },
     craftmind: {
       eyebrow: 'CraftMind assistant',
@@ -96,6 +101,8 @@ export class HomePageComponent {
         'Buyer chat with impact-aware recommendations',
         'Catalog knowledge retrieval before checkout or vendor publishing',
       ],
+      ctaLabel: 'Open vendor workspace',
+      ctaRoute: '/vendor',
     },
   };
 
