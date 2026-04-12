@@ -8,15 +8,13 @@ import { StorefrontService } from '../../services/storefront.service';
 
 type InnovationMode = 'visual-search' | 'craftmind';
 
-interface InnovationPanel {
+type InnovationPanelViewModel = {
   eyebrow: string;
   title: string;
   summary: string;
   highlight: string;
   points: string[];
-  ctaLabel: string;
-  ctaRoute: string;
-}
+};
 
 @Component({
   selector: 'app-home-page',
@@ -75,7 +73,7 @@ export class HomePageComponent {
     };
   });
 
-  protected readonly innovationPanels: Record<InnovationMode, InnovationPanel> = {
+  protected readonly innovationPanels = {
     'visual-search': {
       eyebrow: 'Visual search',
       title: 'Find sustainable matches from a single inspiration photo.',
@@ -87,8 +85,6 @@ export class HomePageComponent {
         'Hybrid filtering by material, artisan, price, and impact score',
         'Cold-start fallback recommendations cached in Redis',
       ],
-      ctaLabel: 'Try visual search',
-      ctaRoute: '/visual-search',
     },
     craftmind: {
       eyebrow: 'CraftMind assistant',
@@ -101,12 +97,12 @@ export class HomePageComponent {
         'Buyer chat with impact-aware recommendations',
         'Catalog knowledge retrieval before checkout or vendor publishing',
       ],
-      ctaLabel: 'Open vendor workspace',
-      ctaRoute: '/vendor',
     },
-  };
+  } satisfies Record<InnovationMode, InnovationPanelViewModel>;
 
-  protected readonly activePanel = computed(() => this.innovationPanels[this.activeInnovation()]);
+  protected readonly activePanel = computed<InnovationPanelViewModel>(
+    () => this.innovationPanels[this.activeInnovation()],
+  );
 
   protected setInnovation(mode: InnovationMode) {
     this.activeInnovation.set(mode);

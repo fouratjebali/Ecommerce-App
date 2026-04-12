@@ -248,22 +248,27 @@
           </button>
         </div>
 
-        <article class="innovation-card">
-          <p class="card-label">{{ activePanel().eyebrow }}</p>
-          <h3>{{ activePanel().title }}</h3>
-          <p>{{ activePanel().summary }}</p>
-          <div class="innovation-highlight">{{ activePanel().highlight }}</div>
+        @if (activePanel(); as panel) {
+          <article class="innovation-card">
+            <p class="card-label">{{ panel.eyebrow }}</p>
+            <h3>{{ panel.title }}</h3>
+            <p>{{ panel.summary }}</p>
+            <div class="innovation-highlight">{{ panel.highlight }}</div>
 
-          <ul class="innovation-points">
-            @for (point of activePanel().points; track point) {
-              <li>{{ point }}</li>
-            }
-          </ul>
+            <ul class="innovation-points">
+              @for (point of panel.points; track point) {
+                <li>{{ point }}</li>
+              }
+            </ul>
 
-          <a class="button button-primary innovation-cta" [routerLink]="activePanel().ctaRoute">
-            {{ activePanel().ctaLabel }}
-          </a>
-        </article>
+            <a
+              class="button button-primary innovation-cta"
+              [routerLink]="activeInnovation() === 'visual-search' ? '/visual-search' : '/vendor'"
+            >
+              {{ activeInnovation() === 'visual-search' ? 'Try visual search' : 'Open vendor workspace' }}
+            </a>
+          </article>
+        }
       </div>
     </section>
 
