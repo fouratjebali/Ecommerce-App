@@ -2,7 +2,7 @@
 
 GreenCraft Marketplace is a sustainable handmade goods platform that connects eco-conscious artisans with buyers who care about provenance, low-impact materials, and transparent storytelling.
 
-Sprint 2 is now in place in development mode. The repo includes local auth, vendor tooling, product management, and a Prisma-backed catalog, but it is still not configured for production deployment.
+Sprint 3 is now in place in development mode. The repo includes local auth, vendor tooling, product management, Redis-aware cart sessions, stock reservation, a coupon engine, and an order management foundation, but it is still not configured for production deployment.
 
 ## Stack
 
@@ -23,11 +23,35 @@ Sprint 2 is now in place in development mode. The repo includes local auth, vend
 
 Docker Desktop or a compatible local Docker engine is required for the infrastructure services.
 
+## Sprint 3 buyer flow
+
+1. Start the stack from the quick start section
+2. Sign in as the seeded buyer account
+3. Visit `/catalog` or `/catalog/:slug`
+4. Add products to `/cart`
+5. Apply `WELCOME10` or `STUDIOBUNDLE`
+6. Continue to `/checkout`
+7. Place the order and review `/orders`
+
+## Sprint 3 artisan flow
+
+1. Sign in as the seeded artisan account
+2. Open `/vendor`
+3. Update the studio profile or publish products
+4. Review vendor order items in the OMS panel
+5. Move items through `CONFIRMED`, `FULFILLING`, `SHIPPED`, or `CANCELLED`
+
 ## Seeded demo accounts
 
 - Artisan: `noura@greencraft.local / Artisan@1234`
 - Buyer: `buyer@greencraft.local / Buyer@1234`
 - Admin: `admin@greencraft.local / Admin@1234`
+
+## Seeded Sprint 3 data
+
+- Coupons: `WELCOME10`, `STUDIOBUNDLE`
+- Seeded buyer order: `GC-20260412-0001`
+- Seeded catalog still includes artisan products ready for bundle and checkout testing
 
 ## Useful scripts
 
@@ -35,6 +59,7 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 - `npm run dev:api`
 - `npm run build:web`
 - `npm run build:api`
+- `npm run test:web -- --watch=false --browsers=ChromeHeadless`
 - `npm run test:api`
 - `cd apps/api && npm run test:e2e`
 - `npm run infra:up`
@@ -58,6 +83,10 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 - `sprint-2/vendors-catalog`
 - `sprint-2/frontend-flow`
 - `sprint-2/docs`
+- `sprint-3/order-domain`
+- `sprint-3/cart-oms-backend`
+- `sprint-3/frontend-buyer-flow`
+- `sprint-3/docs`
 
 ## Sprint 1 outcomes
 
@@ -74,12 +103,23 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 - Artisan vendor dashboard with profile editing, inventory overview, and product create/update flows
 - Angular storefront routes for `/auth`, `/catalog`, `/catalog/:slug`, and `/vendor`
 
+## Sprint 3 outcomes
+
+- Redis-backed cart sessions with an in-memory fallback for local development and tests
+- Cart API for add, update, remove, coupon apply/remove, and checkout snapshots
+- Inventory reservations that hold stock during cart activity and convert to consumed reservations on checkout
+- OMS foundation with buyer checkout, buyer order history, buyer cancellation, and artisan order-item status management
+- Angular buyer routes for `/cart`, `/checkout`, and `/orders`
+- Artisan OMS panel inside `/vendor` for order item progression
+- Backend unit and e2e tests for cart and order workflows plus frontend service specs for Sprint 3 browser behavior
+
 ## Documentation index
 
 - `docs/architecture/system-overview.md`
 - `docs/domain/domain-model.md`
 - `docs/api/api-design.md`
 - `docs/api/sprint-2-api-guide.md`
+- `docs/api/sprint-3-api-guide.md`
 - `docs/api/openapi-sprint-1.yaml`
 - `docs/roadmap/e-scrum-roadmap.md`
 - `CONTRIBUTING.md`
