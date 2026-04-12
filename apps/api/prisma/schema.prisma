@@ -301,7 +301,6 @@ model InventoryReservation {
   createdAt  DateTime                   @default(now())
   updatedAt  DateTime                   @updatedAt
 
-  @@unique([sessionId, productId, status])
   @@index([productId, status, expiresAt])
   @@index([sessionId, status, expiresAt])
 }
