@@ -22,13 +22,14 @@
 - Buyer checkout, buyer order history, and buyer cancellation flow
 - Artisan OMS queue inside the vendor dashboard with order-item status updates
 
-## Sprint 4 Next
+## Sprint 4 Complete
 
 - Visual search using embeddings and `pgvector`
-- Hybrid search filtering
-- Redis-backed recommendation fallback
+- Hybrid search filtering across category, artisan, material, price, and impact
+- Redis-backed recommendation fallback and similar-product cache
+- Angular upload flow and product-detail recommendation surface
 
-## Sprint 5 Planned
+## Sprint 5 Next
 
 - CraftMind chat experience
 - AI listing generation for artisans
