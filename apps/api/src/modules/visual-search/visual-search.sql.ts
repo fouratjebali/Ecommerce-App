@@ -4,7 +4,9 @@ export function buildEnsureVisualSearchStorageStatements(
   vectorDimensions: number,
 ) {
   if (!Number.isInteger(vectorDimensions) || vectorDimensions <= 0) {
-    throw new Error('Visual search vector dimensions must be a positive integer.');
+    throw new Error(
+      'Visual search vector dimensions must be a positive integer.',
+    );
   }
 
   const vectorType = `vector(${vectorDimensions})`;

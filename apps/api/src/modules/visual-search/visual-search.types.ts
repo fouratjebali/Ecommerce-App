@@ -6,6 +6,18 @@ export interface VisualEmbedding {
   source: VisualEmbeddingSource;
 }
 
+export interface VisualSearchIndexInput {
+  productId: string;
+  slug: string;
+  name: string;
+  imageUrl: string | null;
+  categorySlug: string;
+  ecoRatingCode: string;
+  artisanSlug: string;
+  colorFamily: string | null;
+  materialNames: string[];
+}
+
 export interface VisualSearchFilters {
   category?: string[];
   material?: string[];

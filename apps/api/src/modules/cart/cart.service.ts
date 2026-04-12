@@ -70,7 +70,9 @@ export class CartService {
     await this.assertPublishedProduct(dto.productId);
 
     const cart = await this.loadCart(sessionId);
-    const currentItem = cart.items.find((item) => item.productId === dto.productId);
+    const currentItem = cart.items.find(
+      (item) => item.productId === dto.productId,
+    );
     const nextQuantity = (currentItem?.quantity ?? 0) + dto.quantity;
 
     await this.inventoryReservationsService.syncReservation(
@@ -102,7 +104,9 @@ export class CartService {
   ) {
     this.assertSessionId(sessionId);
     const cart = await this.loadCart(sessionId);
-    const existingItem = cart.items.find((item) => item.productId === productId);
+    const existingItem = cart.items.find(
+      (item) => item.productId === productId,
+    );
 
     if (!existingItem) {
       throw new NotFoundException('Cart item not found.');
@@ -236,7 +240,9 @@ export class CartService {
       include: cartProductInclude,
     });
 
-    const productMap = new Map(products.map((product) => [product.id, product]));
+    const productMap = new Map(
+      products.map((product) => [product.id, product]),
+    );
     const invalidProductIds = rawCart.items
       .filter((item) => !productMap.has(item.productId))
       .map((item) => item.productId);
@@ -456,7 +462,9 @@ export class CartService {
   }
 
   private async loadCart(sessionId: string): Promise<CartSessionRecord> {
-    const rawValue = await this.cartStoreService.get(this.buildCartKey(sessionId));
+    const rawValue = await this.cartStoreService.get(
+      this.buildCartKey(sessionId),
+    );
 
     if (!rawValue) {
       return this.createEmptyCartRecord();
@@ -532,7 +540,9 @@ export class CartService {
     return `greencraft:cart:${sessionId}`;
   }
 
-  private assertSessionId(sessionId: string | undefined): asserts sessionId is string {
+  private assertSessionId(
+    sessionId: string | undefined,
+  ): asserts sessionId is string {
     if (!sessionId?.trim()) {
       throw new BadRequestException(
         'The x-cart-session header is required for cart operations.',

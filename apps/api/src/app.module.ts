@@ -13,6 +13,7 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { StorefrontModule } from './modules/storefront/storefront.module';
 import { UsersModule } from './modules/users/users.module';
+import { VisualSearchModule } from './modules/visual-search/visual-search.module';
 import { VendorsModule } from './modules/vendors/vendors.module';
 
 @Module({
@@ -33,6 +34,7 @@ import { VendorsModule } from './modules/vendors/vendors.module';
     ArtisansModule,
     VendorsModule,
     CommerceEventsModule,
+    VisualSearchModule,
     PlatformModule,
     StorefrontModule,
   ],

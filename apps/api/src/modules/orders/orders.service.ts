@@ -6,12 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  OrderItemStatus,
-  OrderStatus,
-  Prisma,
-  UserRole,
-} from '@prisma/client';
+import { OrderItemStatus, OrderStatus, Prisma, UserRole } from '@prisma/client';
 import { randomInt } from 'node:crypto';
 import {
   ORDER_CANCELLED_EVENT,
@@ -61,11 +56,7 @@ export class OrdersService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async checkout(
-    user: AuthenticatedUser,
-    sessionId: string,
-    dto: CheckoutDto,
-  ) {
+  async checkout(user: AuthenticatedUser, sessionId: string, dto: CheckoutDto) {
     this.requireBuyer(user);
 
     const snapshot = await this.cartService.getCheckoutSnapshot(sessionId);
@@ -100,7 +91,9 @@ export class OrdersService {
           },
         },
       });
-      const productMap = new Map(products.map((product) => [product.id, product]));
+      const productMap = new Map(
+        products.map((product) => [product.id, product]),
+      );
 
       const order = await tx.order.create({
         data: {
