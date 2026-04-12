@@ -31,6 +31,22 @@ describe('GreenCraft API (e2e)', () => {
       });
   });
 
+  it('/api/v1/cart (GET) returns an empty cart for a new session', () => {
+    return request(app.getHttpServer())
+      .get('/api/v1/cart')
+      .set('x-cart-session', 'e2e-session')
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.sessionId).toBe('e2e-session');
+        expect(body.summary.itemCount).toBe(0);
+        expect(body.summary.totalInCents).toBe(0);
+      });
+  });
+
+  it('/api/v1/cart (GET) rejects missing cart sessions', () => {
+    return request(app.getHttpServer()).get('/api/v1/cart').expect(400);
+  });
+
   afterEach(async () => {
     await app.close();
   });
