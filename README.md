@@ -2,7 +2,7 @@
 
 GreenCraft Marketplace is a sustainable handmade goods platform that connects eco-conscious artisans with buyers who care about provenance, low-impact materials, and transparent storytelling.
 
-Sprint 4 is now in place in development mode. The repo includes local auth, vendor tooling, product management, Redis-aware cart sessions, stock reservation, an order management foundation, and a visual search workflow powered by `pgvector`, hybrid filtering, and Redis-backed fallbacks, but it is still not configured for production deployment.
+Sprint 5 is now in place in development mode. The repo includes local auth, vendor tooling, product management, Redis-aware cart sessions, stock reservation, an order management foundation, visual search powered by `pgvector`, and a CraftMind assistant for vendor-side chat plus listing generation, but it is still not configured for production deployment.
 
 ## Stack
 
@@ -44,13 +44,15 @@ Docker Desktop or a compatible local Docker engine is required for the infrastru
 
 The visual index is prepared lazily on the first visual-search request, so the first query may take a little longer while product embeddings are generated and cached.
 
-## Sprint 3 artisan flow
+## Sprint 5 artisan flow
 
 1. Sign in as the seeded artisan account
 2. Open `/vendor`
 3. Update the studio profile or publish products
-4. Review vendor order items in the OMS panel
-5. Move items through `CONFIRMED`, `FULFILLING`, `SHIPPED`, or `CANCELLED`
+4. Use the CraftMind panel to stream copy suggestions or generate a listing draft from the current form
+5. Apply the generated draft into the product composer
+6. Review vendor order items in the OMS panel
+7. Move items through `CONFIRMED`, `FULFILLING`, `SHIPPED`, or `CANCELLED`
 
 ## Seeded demo accounts
 
@@ -102,6 +104,10 @@ The visual index is prepared lazily on the first visual-search request, so the f
 - `sprint-4/backend-visual-search`
 - `sprint-4/frontend-visual-search`
 - `sprint-4/docs`
+- `sprint-5/ai-foundation`
+- `sprint-5/backend-craftmind`
+- `sprint-5/frontend-craftmind`
+- `sprint-5/docs`
 
 ## Sprint 1 outcomes
 
@@ -139,6 +145,14 @@ The visual index is prepared lazily on the first visual-search request, so the f
 - Product detail recommendations sourced from the Redis visual cache
 - Backend tests for the extractor, ranking, and API surface plus a frontend service spec for upload requests
 
+## Sprint 5 outcomes
+
+- CraftMind API under `/api/v1/craftmind` with protected artisan chat, streamed replies, and listing draft generation
+- Catalog-aware retrieval that grounds CraftMind responses in artisan profile data, vendor products, marketplace products, materials, and publishing guidance
+- Provider abstraction with a local deterministic fallback and optional Anthropic integration through environment variables
+- Angular vendor workspace integration for live CraftMind prompts, streamed chat replies, retrieved context inspection, and apply-to-form listing drafts
+- Backend tests for CraftMind provider and service orchestration plus a frontend service spec for vendor-side API calls
+
 ## Documentation index
 
 - `docs/architecture/system-overview.md`
@@ -147,6 +161,7 @@ The visual index is prepared lazily on the first visual-search request, so the f
 - `docs/api/sprint-2-api-guide.md`
 - `docs/api/sprint-3-api-guide.md`
 - `docs/api/sprint-4-api-guide.md`
+- `docs/api/sprint-5-api-guide.md`
 - `docs/api/openapi-sprint-1.yaml`
 - `docs/roadmap/e-scrum-roadmap.md`
 - `CONTRIBUTING.md`

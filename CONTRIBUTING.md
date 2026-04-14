@@ -30,6 +30,10 @@
 - `sprint-4/backend-visual-search`
 - `sprint-4/frontend-visual-search`
 - `sprint-4/docs`
+- `sprint-5/ai-foundation`
+- `sprint-5/backend-craftmind`
+- `sprint-5/frontend-craftmind`
+- `sprint-5/docs`
 
 ## Commit style
 
