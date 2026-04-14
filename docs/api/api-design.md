@@ -55,6 +55,12 @@
 - `POST /api/v1/visual-search/query`
 - `GET /api/v1/visual-search/recommendations/:slug`
 
+## Sprint 5 live endpoints
+
+- `POST /api/v1/craftmind/chat`
+- `POST /api/v1/craftmind/chat/stream`
+- `POST /api/v1/craftmind/listing-drafts`
+
 ## Planned endpoint families
 
 - `/api/v1/payments`
@@ -79,8 +85,16 @@ The homepage endpoint is intentionally aggregate-oriented. It gives the Angular 
 - Redis keeps visually similar product IDs and category fallback sets warm for the storefront
 - The Angular storefront now consumes both direct visual-search results and product-detail recommendation caches
 
+## Sprint 5 integration notes
+
+- CraftMind is currently scoped to authenticated artisan users inside the vendor workspace
+- Chat responses are retrieval-augmented with artisan profile, vendor products, public catalog products, material references, and marketplace guidance
+- The API can stream vendor chat replies through `text/event-stream` while still supporting standard JSON chat and listing-draft endpoints
+- Provider selection is environment-driven, with a deterministic local fallback and optional Anthropic message generation when credentials are configured
+- The Angular vendor workspace can apply generated listing drafts back into the existing product composer
+
 ## Future integration notes
 
 - Stripe webhooks will land in a dedicated payment module and publish internal order events
 - Meilisearch remains the primary faceted retrieval engine, with PostgreSQL as the source of truth
-- Prisma currently owns the source-of-truth catalog, identity, and order schema used by the Angular and NestJS Sprint 4 flows
+- Prisma currently owns the source-of-truth catalog, identity, and order schema used by the Angular and NestJS Sprint 5 flows

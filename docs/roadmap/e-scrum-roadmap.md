@@ -29,13 +29,14 @@
 - Redis-backed recommendation fallback and similar-product cache
 - Angular upload flow and product-detail recommendation surface
 
-## Sprint 5 Next
+## Sprint 5 Complete
 
-- CraftMind chat experience
-- AI listing generation for artisans
-- RAG over catalog and artisan knowledge
+- CraftMind chat experience inside the vendor workspace
+- AI listing generation for artisans with apply-to-form drafting
+- RAG over catalog, artisan profile, material references, and marketplace guidance
+- Streamed vendor replies plus provider fallback support for local development
 
-## Sprint 6 Planned
+## Sprint 6 Next
 
 - Stripe checkout with 3DS2
 - Webhook-driven order confirmation
