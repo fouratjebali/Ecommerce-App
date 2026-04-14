@@ -10,13 +10,28 @@ import {
   VendorStatus,
 } from '@prisma/client';
 import { hash } from 'bcryptjs';
+import { readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const prisma = new PrismaClient();
+const seedFileDirectory = dirname(fileURLToPath(import.meta.url));
+const visualSearchAssetDirectory = resolve(
+  seedFileDirectory,
+  '../../../docs/test-assets/visual-search',
+);
 
 async function main() {
   const adminPassword = await hash('Admin@1234', 10);
   const artisanPassword = await hash('Artisan@1234', 10);
   const buyerPassword = await hash('Buyer@1234', 10);
+  const [bowlImageUrl, toteImageUrl, lampImageUrl, cupsImageUrl] =
+    await Promise.all([
+      readSvgAssetAsDataUrl('bloom-serving-bowl-test.svg'),
+      readSvgAssetAsDataUrl('cinder-market-tote-test.svg'),
+      readSvgAssetAsDataUrl('luna-reed-lamp-test.svg'),
+      readSvgAssetAsDataUrl('ripple-stacking-cups-test.svg'),
+    ]);
 
   await prisma.inventoryReservation.deleteMany();
   await prisma.orderItem.deleteMany();
@@ -357,7 +372,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://images.unsplash.com/photo-1516224498413-84ecf3a1e4fd?auto=format&fit=crop&w=1200&q=80',
+              url: bowlImageUrl,
               alt: 'Bloom Serving Bowl',
             },
           ],
@@ -387,7 +402,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80',
+              url: toteImageUrl,
               alt: 'Cinder Market Tote',
             },
           ],
@@ -417,7 +432,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1200&q=80',
+              url: lampImageUrl,
               alt: 'Luna Reed Lamp',
             },
           ],
@@ -447,7 +462,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80',
+              url: cupsImageUrl,
               alt: 'Ripple Stacking Cups',
             },
           ],
@@ -619,6 +634,11 @@ async function main() {
   console.log('Artisan login: noura@greencraft.local / Artisan@1234');
   console.log('Buyer login: buyer@greencraft.local / Buyer@1234');
   console.log(`Coupons: ${welcomeTen.code}, ${studioBundle.code}`);
+}
+
+async function readSvgAssetAsDataUrl(filename: string) {
+  const svg = await readFile(resolve(visualSearchAssetDirectory, filename), 'utf8');
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
 main()
