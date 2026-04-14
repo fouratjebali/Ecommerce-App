@@ -38,6 +38,13 @@ const environmentSchema = z.object({
     .int()
     .positive()
     .default(360),
+  CRAFTMIND_PROVIDER: z.enum(['local', 'anthropic']).default('local'),
+  CRAFTMIND_MODEL: z.string().default('claude-sonnet-4-5'),
+  CRAFTMIND_MAX_TOKENS: z.coerce.number().int().positive().max(4096).default(900),
+  CRAFTMIND_RETRIEVAL_LIMIT: z.coerce.number().int().positive().max(10).default(4),
+  CRAFTMIND_STREAM_DELAY_MS: z.coerce.number().int().min(0).max(250).default(18),
+  ANTHROPIC_API_KEY: z.string().optional(),
+  ANTHROPIC_API_URL: z.string().url().default('https://api.anthropic.com/v1/messages'),
   RABBITMQ_URL: z
     .string()
     .default('amqp://greencraft:greencraft@localhost:5672'),
