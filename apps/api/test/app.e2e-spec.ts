@@ -56,6 +56,15 @@ describe('GreenCraft API (e2e)', () => {
       });
   });
 
+  it('/api/v1/craftmind/chat (POST) requires authentication', () => {
+    return request(app.getHttpServer())
+      .post('/api/v1/craftmind/chat')
+      .send({
+        prompt: 'Help me write a product story.',
+      })
+      .expect(401);
+  });
+
   afterEach(async () => {
     await app.close();
   });

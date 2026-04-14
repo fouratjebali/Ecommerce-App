@@ -7,6 +7,7 @@ import { ArtisansModule } from './modules/artisans/artisans.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CommerceEventsModule } from './modules/commerce-events/commerce-events.module';
+import { CraftmindModule } from './modules/craftmind/craftmind.module';
 import { HealthModule } from './modules/health/health.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PlatformModule } from './modules/platform/platform.module';
@@ -30,6 +31,7 @@ import { VendorsModule } from './modules/vendors/vendors.module';
     HealthModule,
     CatalogModule,
     CartModule,
+    CraftmindModule,
     OrdersModule,
     ArtisansModule,
     VendorsModule,

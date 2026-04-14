@@ -2,7 +2,7 @@ import { UserRole } from '@prisma/client';
 
 export type CraftmindProvider = 'local' | 'anthropic';
 
-export type CraftmindMessageRole = 'system' | 'user' | 'assistant';
+export type CraftmindMessageRole = 'user' | 'assistant';
 
 export interface CraftmindMessage {
   role: CraftmindMessageRole;
@@ -57,4 +57,10 @@ export interface CraftmindListingRequest {
   ecoRatingLabel?: string | null;
   materialNames: string[];
   context: CraftmindContextBundle;
+}
+
+export interface CraftmindListingResponse {
+  provider: CraftmindProvider;
+  model: string;
+  draft: CraftmindListingDraft;
 }
