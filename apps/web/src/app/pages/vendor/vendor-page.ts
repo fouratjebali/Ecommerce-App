@@ -1,17 +1,23 @@
 import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import {
   VendorAttributeOptionsResponse,
   VendorProduct,
   VendorProductPayload,
 } from '../../models/catalog';
+import {
+  CraftmindContextDocument,
+  CraftmindListingDraft,
+  CraftmindMessage,
+} from '../../models/craftmind';
 import { VendorOrderItemsResponse } from '../../models/orders';
 import { VendorDashboardResponse, VendorProfilePayload } from '../../models/vendor';
 import { AuthService } from '../../services/auth.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
+import { CraftmindApiService } from '../../services/craftmind-api.service';
 import { OrdersApiService } from '../../services/orders-api.service';
 import { VendorApiService } from '../../services/vendor-api.service';
 
@@ -50,6 +56,10 @@ interface NoticeState {
   text: string;
 }
 
+interface CraftmindThreadMessage extends CraftmindMessage {
+  id: string;
+}
+
 @Component({
   selector: 'app-vendor-page',
   imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, DatePipe, DecimalPipe],
@@ -61,8 +71,11 @@ export class VendorPageComponent {
 
   private readonly vendorApiService = inject(VendorApiService);
   private readonly catalogApiService = inject(CatalogApiService);
+  private readonly craftmindApiService = inject(CraftmindApiService);
   private readonly ordersApiService = inject(OrdersApiService);
   private readonly router = inject(Router);
+  private craftmindStreamSubscription: Subscription | null = null;
+  private craftmindMessageSequence = 0;
 
   protected readonly loading = signal(true);
   protected readonly savingProfile = signal(false);
@@ -74,6 +87,26 @@ export class VendorPageComponent {
   protected readonly editingProductId = signal<string | null>(null);
   protected readonly updatingOrderItemId = signal<string | null>(null);
   protected readonly notice = signal<NoticeState | null>(null);
+  protected readonly craftmindLoading = signal(false);
+  protected readonly generatingListingDraft = signal(false);
+  protected readonly craftmindMessages = signal<CraftmindThreadMessage[]>([
+    {
+      id: 'assistant-welcome',
+      role: 'assistant',
+      content:
+        'CraftMind is ready to help with catalog-aware product copy, sourcing language, and listing draft generation.',
+    },
+  ]);
+  protected readonly craftmindStreamingReply = signal('');
+  protected readonly craftmindContextDocuments = signal<CraftmindContextDocument[]>([]);
+  protected readonly craftmindContextSummary = signal<string | null>(null);
+  protected readonly craftmindSuggestedPrompts = signal<string[]>([
+    'Generate a warmer artisan-led product title.',
+    'Help me rewrite this description with stronger sourcing details.',
+    'What claims should I verify before publishing this listing?',
+  ]);
+  protected readonly craftmindDraft = signal<CraftmindListingDraft | null>(null);
+  protected readonly craftmindProviderSummary = signal<string | null>(null);
 
   protected profileForm: VendorProfilePayload = {
     studioName: '',
@@ -84,9 +117,14 @@ export class VendorPageComponent {
   };
 
   protected productForm: ProductFormState = this.createEmptyProductForm();
+  protected craftmindPrompt = '';
 
   constructor() {
     void this.loadPage();
+  }
+
+  ngOnDestroy() {
+    this.craftmindStreamSubscription?.unsubscribe();
   }
 
   protected async saveProfile() {
@@ -259,6 +297,168 @@ export class VendorPageComponent {
     }
   }
 
+  protected seedCraftmindPromptFromProductForm() {
+    this.craftmindPrompt = this.composeCraftmindBrief();
+  }
+
+  protected askCraftmind(prompt: string) {
+    this.craftmindPrompt = prompt;
+    void this.sendCraftmindPrompt();
+  }
+
+  protected async sendCraftmindPrompt() {
+    const prompt = (this.craftmindPrompt.trim() || this.composeCraftmindBrief()).trim();
+
+    if (!prompt) {
+      this.notice.set({
+        tone: 'error',
+        text: 'Add a CraftMind prompt or seed one from the current product form first.',
+      });
+      return;
+    }
+
+    const history = this.buildCraftmindHistory();
+
+    this.craftmindStreamSubscription?.unsubscribe();
+    this.craftmindLoading.set(true);
+    this.craftmindStreamingReply.set('');
+    this.craftmindDraft.set(null);
+    this.notice.set(null);
+    this.appendCraftmindMessage('user', prompt);
+    this.craftmindPrompt = '';
+
+    this.craftmindStreamSubscription = this.craftmindApiService
+      .streamChat({
+        prompt,
+        history,
+      })
+      .subscribe({
+        next: (event) => {
+          if (event.type === 'token') {
+            this.craftmindStreamingReply.update((current) =>
+              current ? `${current} ${event.chunk}` : event.chunk,
+            );
+            return;
+          }
+
+          const assistantReply = this.craftmindStreamingReply().trim();
+
+          if (assistantReply) {
+            this.appendCraftmindMessage('assistant', assistantReply);
+          }
+
+          this.craftmindStreamingReply.set('');
+          this.craftmindContextDocuments.set(event.context.documents);
+          this.craftmindContextSummary.set(event.context.summary);
+          this.craftmindSuggestedPrompts.set(event.suggestedPrompts);
+          this.craftmindProviderSummary.set(`${event.provider} · ${event.model}`);
+        },
+        error: () => {
+          this.craftmindStreamingReply.set('');
+          this.notice.set({
+            tone: 'error',
+            text: 'CraftMind could not stream a response right now.',
+          });
+          this.craftmindLoading.set(false);
+        },
+        complete: () => {
+          this.craftmindLoading.set(false);
+          this.craftmindStreamSubscription = null;
+        },
+      });
+  }
+
+  protected async generateDraftWithCraftmind() {
+    const prompt = (this.craftmindPrompt.trim() || this.composeCraftmindBrief()).trim();
+
+    if (!prompt) {
+      this.notice.set({
+        tone: 'error',
+        text: 'Add a CraftMind brief or use the current product form to generate one.',
+      });
+      return;
+    }
+
+    this.generatingListingDraft.set(true);
+    this.notice.set(null);
+
+    try {
+      const response = await firstValueFrom(
+        this.craftmindApiService.generateListingDraft({
+          prompt,
+          categoryId: this.productForm.categoryId || undefined,
+          ecoRatingId: this.productForm.ecoRatingId || undefined,
+          materialIds: this.productForm.materialIds,
+        }),
+      );
+
+      this.craftmindDraft.set(response.draft);
+      this.craftmindContextDocuments.set(response.context.documents);
+      this.craftmindContextSummary.set(response.context.summary);
+      this.craftmindProviderSummary.set(`${response.provider} · ${response.model}`);
+      this.notice.set({
+        tone: 'success',
+        text: 'CraftMind generated a listing draft from your current brief.',
+      });
+    } catch {
+      this.notice.set({
+        tone: 'error',
+        text: 'CraftMind could not generate a listing draft right now.',
+      });
+    } finally {
+      this.generatingListingDraft.set(false);
+    }
+  }
+
+  protected applyCraftmindDraft() {
+    const draft = this.craftmindDraft();
+
+    if (!draft) {
+      return;
+    }
+
+    const matchedMaterialIds = this.options()
+      ?.materials.filter((material) =>
+        draft.materials.some(
+          (name) => name.trim().toLowerCase() === material.name.trim().toLowerCase(),
+        ),
+      )
+      .map((material) => material.id);
+
+    this.productForm = {
+      ...this.productForm,
+      name: draft.name,
+      slug: draft.slug,
+      shortDescription: draft.shortDescription,
+      description: draft.description,
+      story: draft.story,
+      materialIds:
+        matchedMaterialIds?.length ? matchedMaterialIds : this.productForm.materialIds,
+    };
+
+    this.notice.set({
+      tone: 'success',
+      text: 'CraftMind draft applied to the product form. Review and adjust before saving.',
+    });
+  }
+
+  protected formatCraftmindDocumentKind(kind: CraftmindContextDocument['kind']) {
+    switch (kind) {
+      case 'artisan-profile':
+        return 'Studio';
+      case 'vendor-product':
+        return 'Your product';
+      case 'catalog-product':
+        return 'Marketplace';
+      case 'material':
+        return 'Material';
+      case 'policy':
+        return 'Guide';
+      default:
+        return 'Reference';
+    }
+  }
+
   protected async logout() {
     this.authService.logout();
     await this.router.navigateByUrl('/auth');
@@ -401,6 +601,52 @@ export class VendorPageComponent {
       ...this.productForm,
       attributeValues: nextAttributes,
     };
+  }
+
+  private buildCraftmindHistory() {
+    return this.craftmindMessages()
+      .slice(-6)
+      .map((message) => ({
+        role: message.role,
+        content: message.content,
+      }));
+  }
+
+  private appendCraftmindMessage(role: CraftmindMessage['role'], content: string) {
+    this.craftmindMessages.update((messages) => [
+      ...messages,
+      {
+        id: `${role}-${++this.craftmindMessageSequence}`,
+        role,
+        content,
+      },
+    ]);
+  }
+
+  private composeCraftmindBrief() {
+    const materialNames = this.productForm.materialIds
+      .map((materialId) => this.materialName(materialId))
+      .join(', ');
+    const categoryName =
+      this.options()?.categories.find((category) => category.id === this.productForm.categoryId)
+        ?.name ?? 'handmade goods';
+    const ecoRatingLabel =
+      this.options()?.ecoRatings.find((ecoRating) => ecoRating.id === this.productForm.ecoRatingId)
+        ?.label ?? 'current eco rating';
+
+    return [
+      `Create or improve a GreenCraft listing for a ${categoryName.toLowerCase()}.`,
+      this.productForm.name ? `Current name: ${this.productForm.name}.` : null,
+      this.productForm.shortDescription
+        ? `Current short description: ${this.productForm.shortDescription}.`
+        : null,
+      this.productForm.story ? `Current story: ${this.productForm.story}.` : null,
+      materialNames ? `Materials in scope: ${materialNames}.` : null,
+      `Target eco rating: ${ecoRatingLabel}.`,
+      `Impact score target: ${this.productForm.impactScore}/100.`,
+    ]
+      .filter(Boolean)
+      .join(' ');
   }
 
   private buildProductPayload(): VendorProductPayload {
