@@ -2,15 +2,16 @@
 @let currentOptions = options();
 @let currentUser = authService.user();
 @let currentNotice = notice();
+@let currentCraftmindDraft = craftmindDraft();
 
 <section class="vendor-page">
   <header class="vendor-header panel">
     <div>
       <p class="eyebrow">Vendor dashboard</p>
-      <h1>Manage your artisan studio, catalog entries, and Sprint 2 profile data.</h1>
+      <h1>Manage your artisan studio, publish products, and work with CraftMind.</h1>
       <p>
-        This workspace is connected to protected NestJS endpoints for vendor profile updates and
-        product publishing.
+        This workspace is connected to protected NestJS endpoints for vendor profile updates,
+        product publishing, and Sprint 5 CraftMind guidance.
       </p>
     </div>
 
@@ -371,6 +372,165 @@
         </form>
       </article>
     </div>
+
+    <section class="panel craftmind-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">CraftMind studio</p>
+          <h2>Catalog-aware chat and listing generation</h2>
+        </div>
+
+        <div class="craftmind-header-actions">
+          @if (craftmindProviderSummary()) {
+            <span class="meta-chip">{{ craftmindProviderSummary() }}</span>
+          }
+          <button type="button" class="ghost-button" (click)="seedCraftmindPromptFromProductForm()">
+            Use current form
+          </button>
+        </div>
+      </div>
+
+      <div class="craftmind-layout">
+        <div class="craftmind-chat-column">
+          <label class="craftmind-prompt">
+            <span>Brief or question</span>
+            <textarea
+              rows="4"
+              name="craftmindPrompt"
+              [(ngModel)]="craftmindPrompt"
+              placeholder="Ask CraftMind to improve a title, sharpen the sustainability story, or generate a full listing draft."
+            ></textarea>
+          </label>
+
+          <div class="craftmind-actions">
+            <button
+              type="button"
+              class="primary-button"
+              (click)="sendCraftmindPrompt()"
+              [disabled]="craftmindLoading()"
+            >
+              {{ craftmindLoading() ? 'Streaming reply...' : 'Stream reply' }}
+            </button>
+
+            <button
+              type="button"
+              class="ghost-button"
+              (click)="generateDraftWithCraftmind()"
+              [disabled]="generatingListingDraft()"
+            >
+              {{
+                generatingListingDraft() ? 'Generating draft...' : 'Generate listing draft'
+              }}
+            </button>
+          </div>
+
+          @if (craftmindSuggestedPrompts().length) {
+            <div class="craftmind-suggestions">
+              @for (prompt of craftmindSuggestedPrompts(); track prompt) {
+                <button type="button" class="ghost-button" (click)="askCraftmind(prompt)">
+                  {{ prompt }}
+                </button>
+              }
+            </div>
+          }
+
+          <div class="craftmind-thread">
+            @for (message of craftmindMessages(); track message.id) {
+              <article class="craftmind-message" [class.is-user]="message.role === 'user'">
+                <span class="card-label">{{ message.role === 'user' ? 'You' : 'CraftMind' }}</span>
+                <p>{{ message.content }}</p>
+              </article>
+            }
+
+            @if (craftmindLoading() || craftmindStreamingReply()) {
+              <article class="craftmind-message">
+                <span class="card-label">CraftMind</span>
+                <p>{{ craftmindStreamingReply() || 'Building a grounded reply...' }}</p>
+              </article>
+            }
+          </div>
+        </div>
+
+        <aside class="craftmind-side-column">
+          <section class="craftmind-context panel-surface">
+            <div class="block-heading">
+              <strong>Retrieved context</strong>
+              <span>{{
+                craftmindContextSummary() ?? 'CraftMind will surface artisan and catalog references here.'
+              }}</span>
+            </div>
+
+            @if (!craftmindContextDocuments().length) {
+              <div class="empty-state compact-empty-state">
+                Ask a question or generate a draft to inspect the RAG context bundle.
+              </div>
+            } @else {
+              <div class="craftmind-context-list">
+                @for (document of craftmindContextDocuments(); track document.id) {
+                  <article class="craftmind-context-card">
+                    <div class="context-card-header">
+                      <span class="meta-chip">{{
+                        formatCraftmindDocumentKind(document.kind)
+                      }}</span>
+                      <strong>{{ document.title }}</strong>
+                    </div>
+                    <p>{{ document.snippet }}</p>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+
+          <section class="craftmind-draft panel-surface">
+            <div class="block-heading">
+              <strong>Listing draft</strong>
+              <span>Generate a draft, review it, then apply the copy into the composer.</span>
+            </div>
+
+            @if (!currentCraftmindDraft) {
+              <div class="empty-state compact-empty-state">
+                No CraftMind draft yet. Generate one from the current form or a custom brief.
+              </div>
+            } @else {
+              <div class="draft-preview">
+                <div class="draft-copy">
+                  <span class="card-label">Suggested name</span>
+                  <h3>{{ currentCraftmindDraft.name }}</h3>
+                  <p>{{ currentCraftmindDraft.shortDescription }}</p>
+                </div>
+
+                <div class="draft-copy">
+                  <span class="card-label">Story direction</span>
+                  <p>{{ currentCraftmindDraft.story }}</p>
+                </div>
+
+                <div class="draft-tags">
+                  @for (tag of currentCraftmindDraft.tags; track tag) {
+                    <span>{{ tag }}</span>
+                  }
+                </div>
+
+                <div class="draft-checklist">
+                  <span class="card-label">Launch checklist</span>
+                  <ul>
+                    @for (
+                      checklistItem of currentCraftmindDraft.launchChecklist;
+                      track checklistItem
+                    ) {
+                      <li>{{ checklistItem }}</li>
+                    }
+                  </ul>
+                </div>
+
+                <button type="button" class="primary-button" (click)="applyCraftmindDraft()">
+                  Apply draft to product form
+                </button>
+              </div>
+            }
+          </section>
+        </aside>
+      </div>
+    </section>
 
     <section class="panel inventory-panel">
       <div class="panel-heading">
