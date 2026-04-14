@@ -58,8 +58,9 @@
 
 .detail-copy h1 {
   margin: 0;
+  max-width: 19ch;
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 4vw, 4.2rem);
+  font-size: clamp(2rem, 4vw, 4rem);
   line-height: 0.98;
 }
 

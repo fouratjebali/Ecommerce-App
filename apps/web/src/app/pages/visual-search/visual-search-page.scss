@@ -57,8 +57,8 @@
 }
 
 .page-header h1 {
-  max-width: 14ch;
-  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  max-width: 19ch;
+  font-size: clamp(1.95rem, 3.8vw, 3.85rem);
 }
 
 .page-header p,
@@ -114,12 +114,17 @@
 
 .visual-layout {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
-  gap: 1rem;
+  gap: 1.25rem;
   margin-top: 1rem;
 }
 
-.control-column,
+.search-workbench {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(360px, 1.05fr);
+  gap: 1rem;
+  align-items: start;
+}
+
 .result-column {
   display: grid;
   gap: 1rem;
@@ -183,9 +188,19 @@
 .filter-panel {
   display: grid;
   gap: 1rem;
+  align-content: start;
+  max-height: 31rem;
+  overflow: auto;
 }
 
-.filter-card {
+.filter-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.filter-control,
+.filter-group {
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
@@ -193,13 +208,23 @@
   background: rgba(247, 241, 229, 0.66);
 }
 
-.filter-card label {
+.filter-control {
+  align-content: start;
+}
+
+.filter-control span,
+.filter-group strong {
+  color: var(--pine-950);
+}
+
+.filter-control label,
+.filter-group label {
   display: grid;
   gap: 0.35rem;
 }
 
-.filter-card input,
-.filter-card select {
+.filter-control input,
+.filter-control select {
   width: 100%;
   padding: 0.85rem 0.95rem;
   border: 1px solid rgba(34, 69, 61, 0.12);
@@ -207,13 +232,51 @@
 }
 
 .pill {
-  justify-content: flex-start;
-  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.6rem 0.9rem;
+  justify-content: center;
+  width: auto;
 }
 
 .pill.is-active {
   background: rgba(34, 69, 61, 0.92);
   color: white;
+}
+
+.pill-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.filter-group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.filter-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.filter-group[open] summary {
+  margin-bottom: 0.15rem;
+}
+
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  background: rgba(34, 69, 61, 0.1);
+  color: var(--pine-950);
+  font-weight: 700;
 }
 
 .summary-badges {
@@ -306,7 +369,7 @@
 }
 
 @media (max-width: 1100px) {
-  .visual-layout {
+  .search-workbench {
     grid-template-columns: 1fr;
   }
 }
@@ -322,6 +385,10 @@
   }
 
   .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-quick-grid {
     grid-template-columns: 1fr;
   }
 }
