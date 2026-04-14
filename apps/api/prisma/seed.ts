@@ -25,10 +25,10 @@ async function main() {
   const buyerPassword = await hash('Buyer@1234', 10);
   const [bowlImageUrl, toteImageUrl, lampImageUrl, cupsImageUrl] =
     await Promise.all([
-      readSvgAssetAsDataUrl('bloom-serving-bowl-test.svg'),
-      readSvgAssetAsDataUrl('cinder-market-tote-test.svg'),
-      readSvgAssetAsDataUrl('luna-reed-lamp-test.svg'),
-      readSvgAssetAsDataUrl('ripple-stacking-cups-test.svg'),
+      readRasterAssetAsDataUrl('bloom-serving-bowl-test.jpg'),
+      readRasterAssetAsDataUrl('cinder-market-tote-test.jpg'),
+      readRasterAssetAsDataUrl('luna-reed-lamp-test.jpg'),
+      readRasterAssetAsDataUrl('ripple-stacking-cups-test.jpg'),
     ]);
 
   await prisma.inventoryReservation.deleteMany();
@@ -634,9 +634,9 @@ async function main() {
   console.log(`Coupons: ${welcomeTen.code}, ${studioBundle.code}`);
 }
 
-async function readSvgAssetAsDataUrl(filename: string) {
-  const svg = await readFile(resolve(visualSearchAssetDirectory, filename), 'utf8');
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+async function readRasterAssetAsDataUrl(filename: string) {
+  const image = await readFile(resolve(visualSearchAssetDirectory, filename));
+  return `data:image/jpeg;base64,${image.toString('base64')}`;
 }
 
 main()
