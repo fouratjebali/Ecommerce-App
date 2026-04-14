@@ -24,6 +24,8 @@ export interface StorefrontProduct {
   co2SavedKg: number;
   impactScore: number;
   storySnippet: string;
+  imageUrl: string | null;
+  imageAlt: string;
   imageHint: string;
 }
 

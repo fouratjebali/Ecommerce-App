@@ -62,6 +62,8 @@ export const fallbackStorefront: StorefrontHomepage = {
       co2SavedKg: 5.6,
       impactScore: 95,
       storySnippet: 'Thrown in small batches and fired with an energy-sharing kiln schedule.',
+      imageUrl: null,
+      imageAlt: 'Bloom Serving Bowl',
       imageHint: 'Terracotta bowl with speckled glaze',
     },
     {
@@ -76,6 +78,8 @@ export const fallbackStorefront: StorefrontHomepage = {
       co2SavedKg: 3.8,
       impactScore: 91,
       storySnippet: 'Cut from reclaimed sailcloth remnants and reinforced for daily carry.',
+      imageUrl: null,
+      imageAlt: 'Cinder Market Tote',
       imageHint: 'Structured olive canvas tote bag',
     },
     {
@@ -90,6 +94,8 @@ export const fallbackStorefront: StorefrontHomepage = {
       co2SavedKg: 9.4,
       impactScore: 96,
       storySnippet: 'Woven over a lightweight ash frame finished with biodegradable oil.',
+      imageUrl: null,
+      imageAlt: 'Luna Reed Lamp',
       imageHint: 'Warm woven lamp with organic shape',
     },
   ],

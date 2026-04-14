@@ -501,6 +501,13 @@
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 8rem),
     linear-gradient(145deg, rgba(34, 69, 61, 0.18), rgba(219, 163, 125, 0.28));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.product-visual.has-image {
+  background-color: rgba(34, 69, 61, 0.08);
 }
 
 .product-visual span {
@@ -521,6 +528,11 @@
   border-radius: 40% 60% 56% 44%;
   border: 1px solid rgba(34, 69, 61, 0.12);
   background: rgba(255, 255, 255, 0.46);
+}
+
+.product-visual.has-image::after {
+  background: rgba(255, 250, 243, 0.72);
+  backdrop-filter: blur(8px);
 }
 
 .product-badge {

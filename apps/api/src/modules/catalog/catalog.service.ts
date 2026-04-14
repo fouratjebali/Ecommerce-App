@@ -576,6 +576,8 @@ export class CatalogService {
       co2SavedKg: product.co2SavedKg,
       impactScore: product.impactScore,
       storySnippet: product.story,
+      imageUrl: product.images[0]?.url ?? null,
+      imageAlt: product.images[0]?.alt ?? product.name,
       imageHint: product.images[0]?.alt ?? product.shortDescription,
     };
   }

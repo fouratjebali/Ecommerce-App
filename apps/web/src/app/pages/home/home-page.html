@@ -126,8 +126,21 @@
       <div class="featured-grid">
         @for (product of storefront.featuredProducts; track product.id) {
           <article class="product-card">
-            <div class="product-visual">
-              <span>{{ product.imageHint }}</span>
+            <div
+              class="product-visual"
+              [class.has-image]="!!product.imageUrl"
+              [attr.aria-label]="product.imageAlt"
+              [style.background-image]="
+                product.imageUrl
+                  ? 'linear-gradient(rgba(14, 34, 29, 0.14), rgba(14, 34, 29, 0.04)), url(' +
+                    product.imageUrl +
+                    ')'
+                  : ''
+              "
+            >
+              @if (!product.imageUrl) {
+                <span>{{ product.imageHint }}</span>
+              }
               <div class="product-badge">+{{ product.co2SavedKg | number: '1.1-1' }}kg CO2</div>
             </div>
 
