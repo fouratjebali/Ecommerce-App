@@ -14,7 +14,7 @@ export function buildEnsureVisualSearchStorageStatements(
   return [
     `
       CREATE TABLE IF NOT EXISTS ${VISUAL_SEARCH_EMBEDDING_TABLE} (
-        "productId" UUID PRIMARY KEY REFERENCES "Product"("id") ON DELETE CASCADE,
+        "productId" TEXT PRIMARY KEY REFERENCES "Product"("id") ON DELETE CASCADE,
         "embedding" ${vectorType} NOT NULL,
         "embeddingVersion" TEXT NOT NULL,
         "sourceStrategy" TEXT NOT NULL,

@@ -11,14 +11,12 @@ import {
 } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 
 const prisma = new PrismaClient();
-const seedFileDirectory = dirname(fileURLToPath(import.meta.url));
 const visualSearchAssetDirectory = resolve(
-  seedFileDirectory,
-  '../../../docs/test-assets/visual-search',
+  process.cwd(),
+  '../../docs/test-assets/visual-search',
 );
 
 async function main() {

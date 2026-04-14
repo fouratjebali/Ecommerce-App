@@ -299,7 +299,7 @@ export class VisualSearchService {
         "updatedAt"
       )
       VALUES (
-        '${quoteLiteral(product.id)}'::uuid,
+        '${quoteLiteral(product.id)}',
         '${vectorLiteral}'::vector,
         '${quoteLiteral(VISUAL_SEARCH_FEATURE_VERSION)}',
         '${quoteLiteral(embedding.source)}',
@@ -328,7 +328,7 @@ export class VisualSearchService {
     }
 
     const productIdList = activeProductIds
-      .map((productId) => `'${quoteLiteral(productId)}'::uuid`)
+      .map((productId) => `'${quoteLiteral(productId)}'`)
       .join(', ');
 
     await this.prisma.$executeRawUnsafe(`
@@ -343,7 +343,7 @@ export class VisualSearchService {
     const limit = this.resolveLimit(query.limit);
     const vectorLiteral = Prisma.raw(`'${toVectorLiteral(vector)}'::vector`);
     const filters: Prisma.Sql[] = [
-      Prisma.sql`p."status" = ${ProductStatus.PUBLISHED}`,
+      Prisma.sql`p."status" = CAST(${ProductStatus.PUBLISHED} AS "ProductStatus")`,
     ];
 
     if (query.category?.length) {
