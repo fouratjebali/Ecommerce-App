@@ -261,8 +261,8 @@ async function main() {
             slug: 'noura-clay-studio',
             studioName: 'Noura Clay Studio',
             headline: 'Small-batch ceramics made from reclaimed clay.',
-            bio: 'Noura shapes thoughtful tableware and serving pieces in Tangier with reclaimed clay blends and shared kiln schedules.',
-            location: 'Tangier, Morocco',
+            bio: 'Noura shapes thoughtful tableware and serving pieces in Nabeul with reclaimed clay blends and shared kiln schedules.',
+            location: 'Nabeul, Tunisia',
             impactStatement:
               'Kiln co-op partner using reclaimed clay and low-waste firing coordination.',
             verificationStatus: VendorStatus.ACTIVE,
@@ -288,8 +288,8 @@ async function main() {
             slug: 'atelier-olive',
             studioName: 'Atelier Olive',
             headline: 'Repairable accessories cut from deadstock fabrics.',
-            bio: 'Selene rescues marine canvas and textile surplus to create durable bags and everyday carry essentials.',
-            location: 'Marseille, France',
+            bio: 'Selene rescues textile surplus and deadstock canvas in Sousse to create durable bags and everyday carry essentials.',
+            location: 'Sousse, Tunisia',
             impactStatement:
               'Deadstock-first sourcing with repair-focused construction and minimal packaging.',
             verificationStatus: VendorStatus.ACTIVE,
@@ -315,8 +315,8 @@ async function main() {
             slug: 'nile-loom-works',
             studioName: 'Nile Loom Works',
             headline: 'Natural-fiber lighting and decorative forms.',
-            bio: 'Khaled works with regional reed harvesters and salvaged wood workshops to build warm, sculptural lighting pieces.',
-            location: 'Aswan, Egypt',
+            bio: 'Khaled works with regional reed harvesters and salvaged wood workshops in Tozeur to build warm, sculptural lighting pieces.',
+            location: 'Tozeur, Tunisia',
             impactStatement:
               'Regional natural-fiber supply chain with transparent sourcing notes on every listing.',
             verificationStatus: VendorStatus.ACTIVE,
@@ -360,6 +360,7 @@ async function main() {
           'Designed for everyday gatherings, the Bloom Serving Bowl balances a generous silhouette with durable stoneware construction and a naturally varied glaze finish.',
         story:
           'Thrown in small batches using reclaimed clay offcuts and fired in an energy-sharing kiln schedule with neighboring ceramic studios.',
+        currency: 'TND',
         priceInCents: 5800,
         inventoryCount: 14,
         impactScore: 95,
@@ -390,6 +391,7 @@ async function main() {
           'This tote is reinforced for groceries, laptops, and weekend essentials with repair-friendly seams and a soft organic cotton lining.',
         story:
           'Cut from reclaimed sailcloth remnants and deadstock canvas, then finished with replaceable straps for a longer product life.',
+        currency: 'TND',
         priceInCents: 7200,
         inventoryCount: 10,
         impactScore: 91,
@@ -420,6 +422,7 @@ async function main() {
           'Woven from locally harvested reed over a lightweight salvaged oak frame, the Luna Reed Lamp adds warmth while keeping materials transparent and repairable.',
         story:
           'Built with natural reed from the Nile basin and finished with biodegradable oils for a long-lasting, low-impact home object.',
+        currency: 'TND',
         priceInCents: 13800,
         inventoryCount: 6,
         impactScore: 96,
@@ -450,6 +453,7 @@ async function main() {
           'A set of stackable cups with a textured exterior and a smooth hand-finished lip.',
         story:
           'Made from small-batch reclaimed clay blends that reduce waste between larger ceramic runs.',
+        currency: 'TND',
         priceInCents: 4600,
         inventoryCount: 22,
         impactScore: 87,
@@ -468,6 +472,17 @@ async function main() {
       },
     }),
   ]);
+
+  await prisma.product.updateMany({
+    where: {
+      id: {
+        in: [bowl.id, tote.id, lamp.id, cups.id],
+      },
+    },
+    data: {
+      currency: 'TND',
+    },
+  });
 
   const optionFor = (
     definition: { options: { value: string; id: string }[] },
@@ -561,7 +576,7 @@ async function main() {
       couponId: welcomeTen.id,
       cartSessionId: 'seed-session-jordan',
       status: OrderStatus.CONFIRMED,
-      currency: 'USD',
+      currency: 'TND',
       subtotalInCents: 13000,
       couponDiscountInCents: 1300,
       bundleDiscountInCents: 0,
@@ -569,9 +584,9 @@ async function main() {
       shippingName: 'Jordan Lee',
       shippingEmail: 'buyer@greencraft.local',
       shippingAddressLine1: '18 Palm Court',
-      shippingCity: 'Casablanca',
-      shippingPostalCode: '20000',
-      shippingCountry: 'Morocco',
+      shippingCity: 'Tunis',
+      shippingPostalCode: '1000',
+      shippingCountry: 'Tunisia',
       notes: 'Seeded Sprint 3 order for buyer dashboard and OMS workflows.',
       items: {
         create: [
@@ -586,7 +601,7 @@ async function main() {
             lineTotalInCents: bowl.priceInCents,
             impactScore: bowl.impactScore,
             co2SavedKg: bowl.co2SavedKg,
-            currency: bowl.currency,
+            currency: 'TND',
           },
           {
             productId: tote.id,
@@ -599,7 +614,7 @@ async function main() {
             lineTotalInCents: tote.priceInCents,
             impactScore: tote.impactScore,
             co2SavedKg: tote.co2SavedKg,
-            currency: tote.currency,
+            currency: 'TND',
           },
         ],
       },

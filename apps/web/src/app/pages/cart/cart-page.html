@@ -150,20 +150,20 @@
 
           <div class="summary-row">
             <span>Subtotal</span>
-            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
           </div>
 
           <div class="summary-row">
             <span>Bundle savings</span>
             <strong>{{
-              cart.summary.bundleDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+              cart.summary.bundleDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
             }}</strong>
           </div>
 
           <div class="summary-row">
             <span>Coupon savings</span>
             <strong>{{
-              cart.summary.couponDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+              cart.summary.couponDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
             }}</strong>
           </div>
 
@@ -174,7 +174,7 @@
 
           <div class="summary-total">
             <span>Estimated checkout total</span>
-            <strong>{{ cart.summary.totalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+            <strong>{{ cart.summary.totalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
           </div>
 
           @if (cart.summary.bundleEligible) {
@@ -187,7 +187,7 @@
           @if (cart.coupon) {
             <div class="callout">
               {{ cart.coupon.label }} is applied with {{
-                cart.coupon.discountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+                cart.coupon.discountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
               }} off.
             </div>
           }

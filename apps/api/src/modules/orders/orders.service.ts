@@ -102,7 +102,7 @@ export class OrdersService {
           couponId: snapshot.couponForOrder?.id,
           cartSessionId: sessionId,
           status: OrderStatus.CONFIRMED,
-          currency: snapshot.items[0]?.price.currency ?? 'USD',
+          currency: snapshot.items[0]?.price.currency ?? 'TND',
           subtotalInCents: snapshot.summary.subtotalInCents,
           couponDiscountInCents: snapshot.summary.couponDiscountInCents,
           bundleDiscountInCents: snapshot.summary.bundleDiscountInCents,

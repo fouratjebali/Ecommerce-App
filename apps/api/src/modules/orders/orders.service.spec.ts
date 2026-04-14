@@ -31,7 +31,7 @@ describe('OrdersService', () => {
         imageAlt: 'Bowl',
         price: {
           amountInCents: 5800,
-          currency: 'USD',
+          currency: 'TND',
         },
         quantity: 1,
         lineTotalInCents: 5800,
@@ -52,7 +52,7 @@ describe('OrdersService', () => {
         imageAlt: 'Tote',
         price: {
           amountInCents: 7200,
-          currency: 'USD',
+          currency: 'TND',
         },
         quantity: 1,
         lineTotalInCents: 7200,
@@ -90,7 +90,7 @@ describe('OrdersService', () => {
     id: 'order-1',
     orderNumber: 'GC-20260412-1200',
     status: OrderStatus.CONFIRMED,
-    currency: 'USD',
+    currency: 'TND',
     subtotalInCents: 13000,
     couponDiscountInCents: 1300,
     bundleDiscountInCents: 0,
@@ -100,9 +100,9 @@ describe('OrdersService', () => {
     shippingEmail: 'buyer@greencraft.local',
     shippingAddressLine1: '18 Palm Court',
     shippingAddressLine2: null,
-    shippingCity: 'Casablanca',
-    shippingPostalCode: '20000',
-    shippingCountry: 'Morocco',
+    shippingCity: 'Tunis',
+    shippingPostalCode: '1000',
+    shippingCountry: 'Tunisia',
     coupon: {
       code: 'WELCOME10',
       label: 'Welcome 10%',
@@ -118,14 +118,14 @@ describe('OrdersService', () => {
         lineTotalInCents: 5800,
         impactScore: 95,
         co2SavedKg: 5.6,
-        currency: 'USD',
+        currency: 'TND',
         product: {
           slug: 'bloom-serving-bowl',
         },
         artisan: {
           slug: 'noura-clay-studio',
           studioName: 'Noura Clay Studio',
-          location: 'Tangier, Morocco',
+          location: 'Nabeul, Tunisia',
         },
       },
       {
@@ -138,14 +138,14 @@ describe('OrdersService', () => {
         lineTotalInCents: 7200,
         impactScore: 91,
         co2SavedKg: 3.8,
-        currency: 'USD',
+        currency: 'TND',
         product: {
           slug: 'cinder-market-tote',
         },
         artisan: {
           slug: 'atelier-olive',
           studioName: 'Atelier Olive',
-          location: 'Marseille, France',
+          location: 'Sousse, Tunisia',
         },
       },
     ],
@@ -208,9 +208,9 @@ describe('OrdersService', () => {
       shippingName: 'Jordan Lee',
       shippingEmail: 'buyer@greencraft.local',
       shippingAddressLine1: '18 Palm Court',
-      shippingCity: 'Casablanca',
-      shippingPostalCode: '20000',
-      shippingCountry: 'Morocco',
+      shippingCity: 'Tunis',
+      shippingPostalCode: '1000',
+      shippingCountry: 'Tunisia',
     });
 
     expect(cartService.clearCart).toHaveBeenCalledWith('session-123');

@@ -37,9 +37,9 @@ describe('OrdersApiService', () => {
         shippingName: 'Buyer Example',
         shippingEmail: 'buyer@example.com',
         shippingAddressLine1: '12 Eco Street',
-        shippingCity: 'Casablanca',
-        shippingPostalCode: '20000',
-        shippingCountry: 'Morocco',
+        shippingCity: 'Tunis',
+        shippingPostalCode: '1000',
+        shippingCountry: 'Tunisia',
       })
       .subscribe();
 

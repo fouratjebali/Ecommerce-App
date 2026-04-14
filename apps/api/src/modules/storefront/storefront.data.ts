@@ -2,11 +2,11 @@ import { StorefrontSnapshot } from './storefront.types';
 
 export const storefrontSnapshot: StorefrontSnapshot = {
   hero: {
-    eyebrow: 'Traceable handmade essentials',
+    eyebrow: 'Traceable Tunisian handmade essentials',
     title:
-      'The sustainable marketplace where every craft carries its impact story.',
+      'The Tunisian sustainable marketplace where every craft carries its impact story.',
     subtitle:
-      'GreenCraft connects eco-conscious buyers with artisans using reclaimed, low-waste, and naturally sourced materials.',
+      'GreenCraft Tunisia connects eco-conscious buyers with artisans across Nabeul, Sousse, Tozeur, and beyond using reclaimed, low-waste, and naturally sourced materials.',
     primaryCta: 'Explore the spring collection',
     secondaryCta: 'Meet the artisans',
   },
@@ -62,10 +62,10 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       slug: 'bloom-bowl',
       name: 'Bloom Serving Bowl',
       artisanName: 'Noura Clay Studio',
-      region: 'Tangier, Morocco',
+      region: 'Nabeul, Tunisia',
       material: 'Recycled stoneware',
       price: 58,
-      currency: 'USD',
+      currency: 'TND',
       co2SavedKg: 5.6,
       impactScore: 95,
       storySnippet:
@@ -77,10 +77,10 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       slug: 'cinder-tote',
       name: 'Cinder Market Tote',
       artisanName: 'Atelier Olive',
-      region: 'Marseille, France',
+      region: 'Sousse, Tunisia',
       material: 'Deadstock canvas',
       price: 72,
-      currency: 'USD',
+      currency: 'TND',
       co2SavedKg: 3.8,
       impactScore: 91,
       storySnippet:
@@ -92,10 +92,10 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       slug: 'luna-lamp',
       name: 'Luna Reed Lamp',
       artisanName: 'Nile Loom Works',
-      region: 'Aswan, Egypt',
+      region: 'Tozeur, Tunisia',
       material: 'River reed and ash wood',
       price: 138,
-      currency: 'USD',
+      currency: 'TND',
       co2SavedKg: 9.4,
       impactScore: 96,
       storySnippet:
@@ -108,7 +108,7 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       id: 'artisan-noura',
       name: 'Noura Benali',
       studio: 'Noura Clay Studio',
-      location: 'Tangier, Morocco',
+      location: 'Nabeul, Tunisia',
       specialty: 'Small-batch ceramics',
       impactBadge: 'Kiln co-op partner',
       story:
@@ -118,7 +118,7 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       id: 'artisan-selene',
       name: 'Selene Marchand',
       studio: 'Atelier Olive',
-      location: 'Marseille, France',
+      location: 'Sousse, Tunisia',
       specialty: 'Textile upcycling',
       impactBadge: 'Deadstock rescue leader',
       story:
@@ -128,7 +128,7 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       id: 'artisan-khaled',
       name: 'Khaled Fares',
       studio: 'Nile Loom Works',
-      location: 'Aswan, Egypt',
+      location: 'Tozeur, Tunisia',
       specialty: 'Natural fiber lighting',
       impactBadge: 'Low-waste weaving',
       story:

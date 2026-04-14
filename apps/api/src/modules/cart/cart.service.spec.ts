@@ -33,7 +33,7 @@ describe('CartService', () => {
     ],
     materials: [],
     priceInCents: overrides.priceInCents ?? 4000,
-    currency: overrides.currency ?? 'USD',
+    currency: overrides.currency ?? 'TND',
     impactScore: overrides.impactScore ?? 88,
     co2SavedKg: overrides.co2SavedKg ?? 3.2,
     inventoryCount: overrides.inventoryCount ?? 12,

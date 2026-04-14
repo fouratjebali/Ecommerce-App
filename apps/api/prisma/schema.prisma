@@ -131,7 +131,7 @@ model Product {
   shortDescription String
   description      String                @db.Text
   story            String                @db.Text
-  currency         String                @default("USD")
+  currency         String                @default("TND")
   priceInCents     Int
   inventoryCount   Int
   impactScore      Int
@@ -240,7 +240,7 @@ model Order {
   couponId              String?
   cartSessionId         String
   status                OrderStatus           @default(CONFIRMED)
-  currency              String                @default("USD")
+  currency              String                @default("TND")
   subtotalInCents       Int
   couponDiscountInCents Int                   @default(0)
   bundleDiscountInCents Int                   @default(0)
@@ -277,7 +277,7 @@ model OrderItem {
   lineTotalInCents   Int
   impactScore        Int
   co2SavedKg         Float
-  currency           String          @default("USD")
+  currency           String          @default("TND")
   order              Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product            Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
   artisan            ArtisanProfile  @relation(fields: [artisanId], references: [id], onDelete: Restrict)

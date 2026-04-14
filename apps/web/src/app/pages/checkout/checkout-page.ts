@@ -37,7 +37,7 @@ export class CheckoutPageComponent {
     shippingAddressLine2: '',
     shippingCity: '',
     shippingPostalCode: '',
-    shippingCountry: 'Morocco',
+    shippingCountry: 'Tunisia',
     notes: '',
   };
 

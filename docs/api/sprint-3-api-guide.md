@@ -51,9 +51,9 @@ Sprint 3 introduces the first transactional commerce flow in GreenCraft Marketpl
   "shippingEmail": "buyer@example.com",
   "shippingAddressLine1": "12 Eco Street",
   "shippingAddressLine2": "Unit 4",
-  "shippingCity": "Casablanca",
-  "shippingPostalCode": "20000",
-  "shippingCountry": "Morocco",
+  "shippingCity": "Tunis",
+  "shippingPostalCode": "1000",
+  "shippingCountry": "Tunisia",
   "notes": "Leave at concierge"
 }
 ```

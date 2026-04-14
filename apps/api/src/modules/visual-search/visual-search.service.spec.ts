@@ -12,7 +12,7 @@ const makeProduct = (overrides: Record<string, unknown> = {}) => ({
   name: 'Bloom Serving Bowl',
   shortDescription: 'Handmade bowl',
   status: ProductStatus.PUBLISHED,
-  currency: 'USD',
+  currency: 'TND',
   priceInCents: 5800,
   impactScore: 95,
   co2SavedKg: 5.6,
@@ -24,7 +24,7 @@ const makeProduct = (overrides: Record<string, unknown> = {}) => ({
   artisan: {
     slug: 'noura-clay-studio',
     studioName: 'Noura Clay Studio',
-    location: 'Tangier, Morocco',
+    location: 'Nabeul, Tunisia',
   },
   category: {
     slug: 'tableware',

@@ -128,26 +128,26 @@
 
           <div class="summary-row">
             <span>Subtotal</span>
-            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
           </div>
 
           <div class="summary-row">
             <span>Bundle discount</span>
             <strong>{{
-              cart.summary.bundleDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+              cart.summary.bundleDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
             }}</strong>
           </div>
 
           <div class="summary-row">
             <span>Coupon discount</span>
             <strong>{{
-              cart.summary.couponDiscountInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0'
+              cart.summary.couponDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
             }}</strong>
           </div>
 
           <div class="summary-total">
             <span>Total</span>
-            <strong>{{ cart.summary.totalInCents / 100 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+            <strong>{{ cart.summary.totalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
           </div>
         </aside>
       </div>
