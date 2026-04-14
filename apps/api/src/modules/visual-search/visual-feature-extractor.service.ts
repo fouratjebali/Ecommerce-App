@@ -22,7 +22,7 @@ export class VisualFeatureExtractorService {
     const fittedVector = this.fitVectorDimensions(flattenedVector);
 
     return {
-      vector: normalizeVector(fittedVector),
+      vector: toSearchVector(fittedVector),
       dominantColorHex: toHexColor(fittedVector),
       source: 'image',
     };
@@ -36,7 +36,7 @@ export class VisualFeatureExtractorService {
 
     if (!imageUrl) {
       return {
-        vector: normalizeVector(syntheticVector),
+        vector: toSearchVector(syntheticVector),
         dominantColorHex: toHexColor(syntheticVector),
         source: 'synthetic',
       };
@@ -55,17 +55,17 @@ export class VisualFeatureExtractorService {
       const blendedVector = blendVectors(
         fittedImageVector,
         syntheticVector,
-        0.78,
+        0.9,
       );
 
       return {
-        vector: normalizeVector(blendedVector),
+        vector: toSearchVector(blendedVector),
         dominantColorHex: toHexColor(blendedVector),
         source: 'hybrid',
       };
     } catch {
       return {
-        vector: normalizeVector(syntheticVector),
+        vector: toSearchVector(syntheticVector),
         dominantColorHex: toHexColor(syntheticVector),
         source: 'synthetic',
       };
@@ -198,6 +198,24 @@ function normalizeVector(vector: number[]) {
   }
 
   return vector.map((value) => value / magnitude);
+}
+
+function toSearchVector(vector: number[]) {
+  const centeredVector = centerVector(vector);
+  const normalizedCenteredVector = normalizeVector(centeredVector);
+
+  if (normalizedCenteredVector.some((value) => Math.abs(value) > 0.000001)) {
+    return normalizedCenteredVector;
+  }
+
+  return normalizeVector(vector.map((value) => value - 0.5));
+}
+
+function centerVector(vector: number[]) {
+  const mean =
+    vector.reduce((sum, value) => sum + value, 0) / Math.max(vector.length, 1);
+
+  return vector.map((value) => value - mean);
 }
 
 function toHexColor(vector: number[]) {

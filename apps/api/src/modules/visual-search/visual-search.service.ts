@@ -69,6 +69,11 @@ interface RankedVisualMatch {
   matchReasons: string[];
 }
 
+interface RankedVisualSearchItem {
+  product: VisualSearchProductRecord;
+  match: RankedVisualMatch;
+}
+
 @Injectable()
 export class VisualSearchService {
   private readonly logger = new Logger(VisualSearchService.name);
@@ -103,7 +108,7 @@ export class VisualSearchService {
       await this.visualFeatureExtractorService.extractFromBuffer(file.buffer);
     const matches = await this.runVectorSearch(queryEmbedding.vector, query);
 
-    if (!matches.length || (matches[0]?.similarity ?? 0) < 0.55) {
+    if (!matches.length) {
       return this.buildFallbackResponse(
         query,
         queryEmbedding,
@@ -115,6 +120,15 @@ export class VisualSearchService {
       matches.map((match) => match.productId),
     );
     const rankedMatches = this.rankMatches(products, matches, query);
+    const relevantMatches = this.selectRelevantMatches(rankedMatches, query);
+
+    if (!relevantMatches.length) {
+      return this.buildFallbackResponse(
+        query,
+        queryEmbedding,
+        matches[0]?.similarity ?? null,
+      );
+    }
 
     return {
       query: {
@@ -122,7 +136,7 @@ export class VisualSearchService {
         filtersApplied: this.mapFiltersApplied(query),
         fallbackMode: null,
       },
-      items: rankedMatches.map(({ product, match }) =>
+      items: relevantMatches.map(({ product, match }) =>
         this.mapVisualSearchProduct(product, match),
       ),
     };
@@ -533,7 +547,7 @@ export class VisualSearchService {
     products: VisualSearchProductRecord[],
     matches: RawVectorMatchRow[],
     query: VisualSearchFilters,
-  ) {
+  ): RankedVisualSearchItem[] {
     const matchMap = new Map(matches.map((match) => [match.productId, match]));
 
     return products
@@ -564,6 +578,33 @@ export class VisualSearchService {
 
         return (right.match.similarity ?? 0) - (left.match.similarity ?? 0);
       });
+  }
+
+  private selectRelevantMatches(
+    rankedMatches: RankedVisualSearchItem[],
+    query: VisualSearchFilters,
+  ) {
+    const topSimilarity = rankedMatches[0]?.match.similarity ?? 0;
+
+    if (topSimilarity < 0.18) {
+      return [];
+    }
+
+    const similarityFloor = Math.max(
+      0.22,
+      topSimilarity - (topSimilarity >= 0.85 ? 0.08 : 0.14),
+    );
+    const maxResults = Math.min(this.resolveLimit(query.limit), 3);
+
+    return rankedMatches
+      .filter(({ match }, index) => {
+        if (index === 0) {
+          return true;
+        }
+
+        return (match.similarity ?? 0) >= similarityFloor;
+      })
+      .slice(0, maxResults);
   }
 
   private calculateHybridScore(

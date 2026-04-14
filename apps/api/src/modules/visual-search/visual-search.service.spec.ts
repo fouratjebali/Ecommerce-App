@@ -184,6 +184,67 @@ describe('VisualSearchService', () => {
     expect(result.items[0]?.visualMatch.hybridScore).toBeGreaterThan(0.9);
   });
 
+  it('keeps only the dominant product when other matches fall well behind it', async () => {
+    jest
+      .spyOn(service as never, 'ensureCatalogIndex')
+      .mockResolvedValue(undefined);
+    extractor.extractFromBuffer.mockResolvedValue({
+      vector: new Array(192).fill(0.1),
+      dominantColorHex: '#aa7744',
+      source: 'image',
+    });
+    prisma.$queryRaw.mockResolvedValue([
+      {
+        productId: 'product-1',
+        similarity: 0.97,
+        sourceStrategy: 'hybrid',
+      },
+      {
+        productId: 'product-2',
+        similarity: 0.42,
+        sourceStrategy: 'hybrid',
+      },
+      {
+        productId: 'product-3',
+        similarity: 0.35,
+        sourceStrategy: 'hybrid',
+      },
+    ]);
+    prisma.product.findMany.mockResolvedValue([
+      makeProduct(),
+      makeProduct({
+        id: 'product-2',
+        slug: 'cinder-market-tote',
+        name: 'Cinder Market Tote',
+        category: {
+          slug: 'bags-and-accessories',
+          name: 'Bags & Accessories',
+        },
+      }),
+      makeProduct({
+        id: 'product-3',
+        slug: 'luna-reed-lamp',
+        name: 'Luna Reed Lamp',
+        category: {
+          slug: 'lighting-and-decor',
+          name: 'Lighting & Decor',
+        },
+      }),
+    ]);
+
+    const result = await service.searchByImage(
+      {
+        buffer: Buffer.from('image'),
+        mimetype: 'image/png',
+      } as Express.Multer.File,
+      {},
+    );
+
+    expect(result.query.fallbackMode).toBeNull();
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]?.slug).toBe('bloom-serving-bowl');
+  });
+
   it('falls back to cached category recommendations when similarity is weak', async () => {
     jest
       .spyOn(service as never, 'ensureCatalogIndex')
@@ -196,7 +257,7 @@ describe('VisualSearchService', () => {
     prisma.$queryRaw.mockResolvedValue([
       {
         productId: 'product-1',
-        similarity: 0.31,
+        similarity: 0.12,
         sourceStrategy: 'synthetic',
       },
     ]);
