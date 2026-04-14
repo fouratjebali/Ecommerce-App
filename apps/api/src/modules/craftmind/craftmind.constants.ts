@@ -1,0 +1,12 @@
+export const CRAFTMIND_PROVIDER_LOCAL = 'local';
+export const CRAFTMIND_PROVIDER_ANTHROPIC = 'anthropic';
+
+export const CRAFTMIND_PROVIDER_VALUES = [
+  CRAFTMIND_PROVIDER_LOCAL,
+  CRAFTMIND_PROVIDER_ANTHROPIC,
+] as const;
+
+export const CRAFTMIND_STREAM_EVENT_TOKEN = 'token';
+export const CRAFTMIND_STREAM_EVENT_DONE = 'done';
+
+export const CRAFTMIND_MAX_HISTORY_MESSAGES = 8;

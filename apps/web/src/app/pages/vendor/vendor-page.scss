@@ -176,6 +176,7 @@
 
 .profile-panel,
 .composer-panel,
+.craftmind-panel,
 .inventory-panel,
 .orders-panel {
   padding: 1.5rem;
@@ -285,6 +286,141 @@
 
 .inventory-panel {
   margin-top: 1rem;
+}
+
+.craftmind-panel {
+  margin-top: 1rem;
+}
+
+.craftmind-header-actions,
+.craftmind-actions,
+.craftmind-suggestions,
+.draft-tags,
+.context-card-header {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.craftmind-header-actions,
+.craftmind-actions {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.craftmind-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+  gap: 1rem;
+}
+
+.craftmind-chat-column,
+.craftmind-side-column,
+.craftmind-prompt,
+.craftmind-thread,
+.craftmind-context-list,
+.draft-preview,
+.draft-checklist {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.craftmind-prompt textarea {
+  min-height: 7.5rem;
+}
+
+.craftmind-suggestions {
+  flex-wrap: wrap;
+}
+
+.craftmind-suggestions .ghost-button {
+  min-height: 2.65rem;
+  padding-inline: 0.95rem;
+  text-align: left;
+}
+
+.craftmind-thread {
+  padding: 1rem;
+  border-radius: 1.4rem;
+  background: rgba(247, 241, 229, 0.66);
+}
+
+.craftmind-message,
+.craftmind-context-card,
+.panel-surface {
+  border-radius: 1.35rem;
+}
+
+.craftmind-message {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 92%;
+  padding: 1rem 1.05rem;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.craftmind-message.is-user {
+  margin-left: auto;
+  background: linear-gradient(135deg, rgba(34, 69, 61, 0.92), rgba(52, 99, 88, 0.9));
+  color: white;
+}
+
+.craftmind-message p,
+.craftmind-context-card p,
+.draft-preview p,
+.draft-checklist li {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.craftmind-message.is-user .card-label {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.panel-surface {
+  padding: 1rem;
+  background: rgba(247, 241, 229, 0.66);
+}
+
+.craftmind-context-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.95rem;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.context-card-header {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.draft-preview h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+}
+
+.draft-tags {
+  flex-wrap: wrap;
+}
+
+.draft-tags span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(34, 69, 61, 0.08);
+  color: var(--ink-700);
+  font-size: 0.88rem;
+}
+
+.draft-checklist ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.compact-empty-state {
+  margin-top: 0;
+  padding: 1rem;
 }
 
 .product-list,
@@ -403,7 +539,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .vendor-layout {
+  .vendor-layout,
+  .craftmind-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -414,7 +551,9 @@
   .inventory-header,
   .header-actions,
   .inventory-metrics,
-  .order-card-header {
+  .order-card-header,
+  .craftmind-header-actions,
+  .context-card-header {
     flex-direction: column;
   }
 
