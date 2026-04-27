@@ -1,9 +1,11 @@
-import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CatalogFacetsResponse } from '../../models/catalog';
+import { MarketLabelPipe } from '../../pipes/market-label.pipe';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { VisualSearchFilters, VisualSearchResponse } from '../../models/visual-search';
 import { CartApiService } from '../../services/cart-api.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
@@ -16,7 +18,7 @@ interface NoticeState {
 
 @Component({
   selector: 'app-visual-search-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, DecimalPipe],
+  imports: [CommonModule, FormsModule, RouterLink, DecimalPipe, TndCurrencyPipe, MarketLabelPipe],
   templateUrl: './visual-search-page.html',
   styleUrl: './visual-search-page.scss',
 })
@@ -71,7 +73,7 @@ export class VisualSearchPageComponent implements OnDestroy {
     if (!this.selectedFile) {
       this.notice.set({
         tone: 'error',
-        text: 'Choose a photo before starting visual search.',
+        text: 'Choisissez une photo avant de lancer la recherche visuelle.',
       });
       return;
     }
@@ -88,7 +90,7 @@ export class VisualSearchPageComponent implements OnDestroy {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The visual search request could not be completed right now.',
+        text: "La recherche visuelle n'a pas pu aboutir pour le moment.",
       });
     } finally {
       this.loading.set(false);
@@ -139,12 +141,12 @@ export class VisualSearchPageComponent implements OnDestroy {
       await firstValueFrom(this.cartApiService.addItem(productId, 1));
       this.notice.set({
         tone: 'success',
-        text: 'Matched product added to the cart session.',
+        text: 'Le produit correspondant a ete ajoute a votre panier.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The matched product could not be added to the cart.',
+        text: "Impossible d'ajouter le produit correspondant au panier.",
       });
     }
   }

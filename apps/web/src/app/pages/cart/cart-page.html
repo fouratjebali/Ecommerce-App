@@ -5,18 +5,18 @@
 <section class="cart-page">
   <header class="page-header panel">
     <div>
-      <p class="eyebrow">Smart cart</p>
-      <h1>Build an intentional bundle, hold inventory in real time, and prep for checkout.</h1>
+      <p class="eyebrow">Panier</p>
+      <h1>Rassemblez vos trouvailles artisanales, gardez-les reservees et composez un lot reflechi.</h1>
       <p>
-        Sprint 3 adds Redis-backed cart sessions, bundle savings, coupon handling, and stock
-        reservation windows.
+        Votre panier conserve les pieces reservees, affiche les economies du lot et vous donne un
+        apercu clair avant la commande.
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="ghost-link" routerLink="/catalog">Catalog</a>
-      <a class="ghost-link" routerLink="/auth">Account</a>
-      <a class="primary-link" routerLink="/orders">Orders</a>
+      <a class="ghost-link" routerLink="/catalog">Catalogue</a>
+      <a class="ghost-link" routerLink="/auth">Compte</a>
+      <a class="primary-link" routerLink="/orders">Commandes</a>
     </div>
   </header>
 
@@ -27,45 +27,46 @@
   }
 
   @if (loading()) {
-    <div class="panel empty-state">Loading the cart session...</div>
+    <div class="panel empty-state">Ouverture de votre panier...</div>
   } @else if (currentCart; as cart) {
     @if (!cart.items.length) {
       <div class="panel empty-state">
-        <h2>Your cart is empty.</h2>
+        <h2>Votre panier est vide.</h2>
         <p>
-          Browse the catalog, add a few handmade pieces, and the bundle summary will appear here.
+          Parcourez le catalogue, ajoutez quelques pieces artisanales, et le resume du lot
+          apparaitra ici.
         </p>
-        <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+        <a class="primary-link" routerLink="/catalog">Parcourir le catalogue</a>
       </div>
     } @else {
       <div class="cart-layout">
         <section class="cart-items panel">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Reserved products</p>
-              <h2>{{ cart.summary.itemCount }} items in your build</h2>
+              <p class="eyebrow">Articles reserves</p>
+              <h2><span class="stat-number">{{ cart.summary.itemCount }}</span> articles dans votre lot</h2>
             </div>
-            <span class="meta-chip">Session {{ cart.sessionId.slice(0, 8) }}</span>
+            <span class="meta-chip">Session <span class="numeric">{{ cart.sessionId.slice(0, 8) }}</span></span>
           </div>
 
           <div class="coupon-card">
             <div>
-              <strong>Coupon engine</strong>
-              <p>Try `WELCOME10` or `STUDIOBUNDLE` against the seeded catalog.</p>
+              <strong>Market offers</strong>
+              <p>Essayez `WELCOME10` ou `STUDIOBUNDLE` pour tester le parcours promotionnel.</p>
             </div>
 
             <div class="coupon-actions">
-              <input type="text" placeholder="Enter code" [(ngModel)]="couponCode" />
+              <input type="text" placeholder="Saisissez un code" [(ngModel)]="couponCode" />
               <button
                 type="button"
                 class="ghost-button"
                 (click)="applyCoupon()"
                 [disabled]="applyingCoupon()"
               >
-                {{ applyingCoupon() ? 'Applying...' : 'Apply' }}
+                {{ applyingCoupon() ? 'Application...' : 'Appliquer' }}
               </button>
               @if (cart.coupon) {
-                <button type="button" class="ghost-button" (click)="clearCoupon()">Clear</button>
+                <button type="button" class="ghost-button" (click)="clearCoupon()">Retirer</button>
               }
             </div>
           </div>
@@ -87,7 +88,7 @@
                 <div class="item-copy">
                   <div class="item-meta">
                     <span>{{ item.artisan.studioName }}</span>
-                    <a [routerLink]="['/catalog', item.slug]">View product</a>
+                    <a [routerLink]="['/catalog', item.slug]">Voir le produit</a>
                   </div>
 
                   <h3>{{ item.name }}</h3>
@@ -101,7 +102,7 @@
                     >
                       -
                     </button>
-                    <strong>{{ item.quantity }}</strong>
+                    <strong class="quantity">{{ item.quantity }}</strong>
                     <button
                       type="button"
                       class="ghost-button"
@@ -114,19 +115,16 @@
 
                   <div class="item-footer">
                     <div>
-                      <span>Reserved until</span>
+                      <span>Reserve jusqu a</span>
                       <strong>{{
                         item.reservationExpiresAt
                           ? (item.reservationExpiresAt | date: 'shortTime')
-                          : 'Not held'
+                          : 'Non reserve'
                       }}</strong>
                     </div>
                     <div>
-                      <span>Line total</span>
-                      <strong>{{
-                        item.lineTotalInCents / 100
-                          | currency: item.price.currency : 'symbol' : '1.0-0'
-                      }}</strong>
+                      <span>Total ligne</span>
+                      <strong class="price">{{ item.lineTotalInCents / 100 | tndCurrency }}</strong>
                     </div>
                   </div>
 
@@ -136,7 +134,7 @@
                     (click)="removeItem(item.productId)"
                     [disabled]="updatingProductId() === item.productId"
                   >
-                    Remove item
+                    Retirer l'article
                   </button>
                 </div>
               </article>
@@ -145,50 +143,45 @@
         </section>
 
         <aside class="cart-summary panel">
-          <p class="eyebrow">Bundle builder</p>
-          <h2>Checkout preview</h2>
+          <p class="eyebrow">Composeur de lot</p>
+          <h2>Apercu avant commande</h2>
 
           <div class="summary-row">
-            <span>Subtotal</span>
-            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+            <span>Sous-total</span>
+            <strong class="cart-total">{{ cart.summary.subtotalInCents / 100 | tndCurrency }}</strong>
           </div>
 
           <div class="summary-row">
-            <span>Bundle savings</span>
-            <strong>{{
-              cart.summary.bundleDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
-            }}</strong>
+            <span>Economies du lot</span>
+            <strong class="amount">{{ cart.summary.bundleDiscountInCents / 100 | tndCurrency }}</strong>
           </div>
 
           <div class="summary-row">
-            <span>Coupon savings</span>
-            <strong>{{
-              cart.summary.couponDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
-            }}</strong>
+            <span>Reduction promo</span>
+            <strong class="amount">{{ cart.summary.couponDiscountInCents / 100 | tndCurrency }}</strong>
           </div>
 
           <div class="summary-row">
-            <span>Tracked CO2 saved</span>
-            <strong>{{ cart.summary.totalCo2SavedKg }}kg</strong>
+            <span>CO2 economise</span>
+            <strong class="amount">{{ cart.summary.totalCo2SavedKg | number: '1.1-1' }} kg</strong>
           </div>
 
           <div class="summary-total">
-            <span>Estimated checkout total</span>
-            <strong>{{ cart.summary.totalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+            <span>Total estime</span>
+            <strong class="cart-total">{{ cart.summary.totalInCents / 100 | tndCurrency }}</strong>
           </div>
 
           @if (cart.summary.bundleEligible) {
             <div class="callout">
-              {{ cart.summary.bundleDiscountPercent }}% bundle savings are active on this
-              multi-item cart.
+              <span class="numeric">{{ cart.summary.bundleDiscountPercent }} %</span> de remise lot
+              sont actifs sur ce panier multi-articles.
             </div>
           }
 
           @if (cart.coupon) {
             <div class="callout">
-              {{ cart.coupon.label }} is applied with {{
-                cart.coupon.discountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
-              }} off.
+              {{ cart.coupon.label }} est applique avec une remise de
+              <span class="amount">{{ cart.coupon.discountInCents / 100 | tndCurrency }}</span>.
             </div>
           }
 
@@ -196,16 +189,20 @@
             class="primary-link checkout-link"
             [routerLink]="currentUser?.role === 'BUYER' ? '/checkout' : '/auth'"
           >
-            {{ currentUser?.role === 'BUYER' ? 'Continue to checkout' : 'Sign in as buyer' }}
+            {{
+              currentUser?.role === 'BUYER'
+                ? 'Continuer vers la commande'
+                : 'Se connecter comme acheteur'
+            }}
           </a>
         </aside>
       </div>
     }
   } @else {
     <div class="panel empty-state">
-      <h2>Your cart is empty.</h2>
-      <p>Browse the catalog, add a few handmade pieces, and the bundle summary will appear here.</p>
-      <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+      <h2>Votre panier est vide.</h2>
+      <p>Parcourez le catalogue, ajoutez quelques pieces artisanales, et le resume du lot apparaitra ici.</p>
+      <a class="primary-link" routerLink="/catalog">Parcourir le catalogue</a>
     </div>
   }
 </section>

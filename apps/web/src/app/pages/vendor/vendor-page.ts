@@ -1,5 +1,5 @@
-import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
-import { Component, inject, OnDestroy, signal } from '@angular/core';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom, Subscription } from 'rxjs';
@@ -15,11 +15,14 @@ import {
 } from '../../models/craftmind';
 import { VendorOrderItemsResponse } from '../../models/orders';
 import { VendorDashboardResponse, VendorProfilePayload } from '../../models/vendor';
+import { MarketLabelPipe } from '../../pipes/market-label.pipe';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { AuthService } from '../../services/auth.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
 import { CraftmindApiService } from '../../services/craftmind-api.service';
 import { OrdersApiService } from '../../services/orders-api.service';
 import { VendorApiService } from '../../services/vendor-api.service';
+import { translateMarketLabel } from '../../utils/market-labels';
 
 interface ProductAttributeDraft {
   definitionId: string;
@@ -62,7 +65,15 @@ interface CraftmindThreadMessage extends CraftmindMessage {
 
 @Component({
   selector: 'app-vendor-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, DatePipe, DecimalPipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    DatePipe,
+    DecimalPipe,
+    TndCurrencyPipe,
+    MarketLabelPipe,
+  ],
   templateUrl: './vendor-page.html',
   styleUrl: './vendor-page.scss',
 })
@@ -94,16 +105,16 @@ export class VendorPageComponent {
       id: 'assistant-welcome',
       role: 'assistant',
       content:
-        'CraftMind is ready to help with catalog-aware product copy, sourcing language, and listing draft generation.',
+        "CraftMind est pret a vous aider pour la redaction des fiches produit, le langage de sourcing et la generation de brouillons de mise en ligne.",
     },
   ]);
   protected readonly craftmindStreamingReply = signal('');
   protected readonly craftmindContextDocuments = signal<CraftmindContextDocument[]>([]);
   protected readonly craftmindContextSummary = signal<string | null>(null);
   protected readonly craftmindSuggestedPrompts = signal<string[]>([
-    'Generate a warmer artisan-led product title.',
-    'Help me rewrite this description with stronger sourcing details.',
-    'What claims should I verify before publishing this listing?',
+    "Proposez un titre plus chaleureux et artisanal pour ce produit.",
+    'Aidez-moi a renforcer cette description avec plus de details sur le sourcing.',
+    'Quelles affirmations dois-je verifier avant de publier cette fiche ?',
   ]);
   protected readonly craftmindDraft = signal<CraftmindListingDraft | null>(null);
   protected readonly craftmindProviderSummary = signal<string | null>(null);
@@ -137,12 +148,12 @@ export class VendorPageComponent {
       await this.loadVendorOverview();
       this.notice.set({
         tone: 'success',
-        text: 'Studio profile saved for the current sprint workspace.',
+        text: "Le profil de l'atelier a ete enregistre pour cet espace de travail.",
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The studio profile could not be saved right now.',
+        text: "Le profil de l'atelier n'a pas pu etre enregistre pour le moment.",
       });
     } finally {
       this.savingProfile.set(false);
@@ -248,16 +259,17 @@ export class VendorPageComponent {
   }
 
   protected materialName(materialId: string) {
-    return (
-      this.options()?.materials.find((material) => material.id === materialId)?.name ?? materialId
-    );
+    const materialName =
+      this.options()?.materials.find((material) => material.id === materialId)?.name ?? materialId;
+
+    return translateMarketLabel(materialName);
   }
 
   protected async saveProduct() {
     if (!this.productForm.materialIds.length) {
       this.notice.set({
         tone: 'error',
-        text: 'Select at least one material before saving a product.',
+        text: 'Veuillez selectionner au moins une matiere avant d enregistrer un produit.',
       });
       return;
     }
@@ -284,13 +296,13 @@ export class VendorPageComponent {
       this.notice.set({
         tone: 'success',
         text: editingProductId
-          ? 'Product updated in the artisan catalog.'
-          : 'Product created and added to the artisan catalog.',
+          ? 'Le produit a ete mis a jour dans le catalogue artisan.'
+          : 'Le produit a ete cree et ajoute au catalogue artisan.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The product payload was rejected. Check the required fields and try again.',
+        text: 'Le produit n a pas pu etre enregistre. Verifiez les champs obligatoires puis reessayez.',
       });
     } finally {
       this.savingProduct.set(false);
@@ -312,7 +324,7 @@ export class VendorPageComponent {
     if (!prompt) {
       this.notice.set({
         tone: 'error',
-        text: 'Add a CraftMind prompt or seed one from the current product form first.',
+        text: 'Ajoutez une consigne CraftMind ou utilisez d abord les informations du formulaire actuel.',
       });
       return;
     }
@@ -351,13 +363,13 @@ export class VendorPageComponent {
           this.craftmindContextDocuments.set(event.context.documents);
           this.craftmindContextSummary.set(event.context.summary);
           this.craftmindSuggestedPrompts.set(event.suggestedPrompts);
-          this.craftmindProviderSummary.set(`${event.provider} · ${event.model}`);
+          this.craftmindProviderSummary.set(`${event.provider} - ${event.model}`);
         },
         error: () => {
           this.craftmindStreamingReply.set('');
           this.notice.set({
             tone: 'error',
-            text: 'CraftMind could not stream a response right now.',
+            text: 'CraftMind ne peut pas diffuser une reponse pour le moment.',
           });
           this.craftmindLoading.set(false);
         },
@@ -374,7 +386,7 @@ export class VendorPageComponent {
     if (!prompt) {
       this.notice.set({
         tone: 'error',
-        text: 'Add a CraftMind brief or use the current product form to generate one.',
+        text: 'Ajoutez un brief CraftMind ou utilisez le formulaire actuel pour en generer un.',
       });
       return;
     }
@@ -395,15 +407,15 @@ export class VendorPageComponent {
       this.craftmindDraft.set(response.draft);
       this.craftmindContextDocuments.set(response.context.documents);
       this.craftmindContextSummary.set(response.context.summary);
-      this.craftmindProviderSummary.set(`${response.provider} · ${response.model}`);
+      this.craftmindProviderSummary.set(`${response.provider} - ${response.model}`);
       this.notice.set({
         tone: 'success',
-        text: 'CraftMind generated a listing draft from your current brief.',
+        text: 'CraftMind a genere un brouillon de fiche a partir de votre brief actuel.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'CraftMind could not generate a listing draft right now.',
+        text: 'CraftMind ne peut pas generer de brouillon de fiche pour le moment.',
       });
     } finally {
       this.generatingListingDraft.set(false);
@@ -438,20 +450,20 @@ export class VendorPageComponent {
 
     this.notice.set({
       tone: 'success',
-      text: 'CraftMind draft applied to the product form. Review and adjust before saving.',
+      text: 'Le brouillon CraftMind a ete applique au formulaire produit. Verifiez-le avant enregistrement.',
     });
   }
 
   protected formatCraftmindDocumentKind(kind: CraftmindContextDocument['kind']) {
     switch (kind) {
       case 'artisan-profile':
-        return 'Studio';
+        return 'Atelier';
       case 'vendor-product':
-        return 'Your product';
+        return 'Votre produit';
       case 'catalog-product':
-        return 'Marketplace';
+        return 'Catalogue';
       case 'material':
-        return 'Material';
+        return 'Matiere';
       case 'policy':
         return 'Guide';
       default:
@@ -473,12 +485,12 @@ export class VendorPageComponent {
       await this.loadVendorOrders();
       this.notice.set({
         tone: 'success',
-        text: 'Vendor order status updated.',
+        text: 'Le statut de la ligne de commande a ete mis a jour.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The order item status could not be updated.',
+        text: "Le statut de la ligne de commande n'a pas pu etre mis a jour.",
       });
     } finally {
       this.updatingOrderItemId.set(null);
@@ -507,7 +519,7 @@ export class VendorPageComponent {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The vendor workspace could not be loaded. Sign in again if the session expired.',
+        text: "L'espace vendeur n'a pas pu etre charge. Reconnectez-vous si la session a expire.",
       });
     } finally {
       this.loading.set(false);
@@ -553,7 +565,7 @@ export class VendorPageComponent {
       isFeatured: false,
       imageUrl:
         'https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=1200&q=80',
-      imageAlt: 'GreenCraft studio product image',
+      imageAlt: 'Image produit GreenCraft',
       materialIds: options?.materials[0] ? [options.materials[0].id] : [],
       attributeValues: this.buildAttributeDrafts(options?.attributeDefinitions ?? []),
     };
@@ -629,21 +641,21 @@ export class VendorPageComponent {
       .join(', ');
     const categoryName =
       this.options()?.categories.find((category) => category.id === this.productForm.categoryId)
-        ?.name ?? 'handmade goods';
+        ?.name ?? 'objets artisanaux';
     const ecoRatingLabel =
       this.options()?.ecoRatings.find((ecoRating) => ecoRating.id === this.productForm.ecoRatingId)
-        ?.label ?? 'current eco rating';
+        ?.label ?? 'note eco actuelle';
 
     return [
-      `Create or improve a GreenCraft listing for a ${categoryName.toLowerCase()}.`,
-      this.productForm.name ? `Current name: ${this.productForm.name}.` : null,
+      `Creez ou ameliorez une fiche GreenCraft pour ${translateMarketLabel(categoryName).toLowerCase()}.`,
+      this.productForm.name ? `Nom actuel : ${this.productForm.name}.` : null,
       this.productForm.shortDescription
-        ? `Current short description: ${this.productForm.shortDescription}.`
+        ? `Description courte actuelle : ${this.productForm.shortDescription}.`
         : null,
-      this.productForm.story ? `Current story: ${this.productForm.story}.` : null,
-      materialNames ? `Materials in scope: ${materialNames}.` : null,
-      `Target eco rating: ${ecoRatingLabel}.`,
-      `Impact score target: ${this.productForm.impactScore}/100.`,
+      this.productForm.story ? `Histoire actuelle : ${this.productForm.story}.` : null,
+      materialNames ? `Matieres concernees : ${materialNames}.` : null,
+      `Note eco cible : ${translateMarketLabel(ecoRatingLabel)}.`,
+      `Objectif de score d'impact : ${this.productForm.impactScore}/100.`,
     ]
       .filter(Boolean)
       .join(' ');

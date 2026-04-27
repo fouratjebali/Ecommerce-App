@@ -78,7 +78,7 @@ export class AuthPageComponent {
       await this.router.navigateByUrl('/vendor');
     } catch {
       this.errorMessage.set(
-        'The request could not be completed. Double-check the form fields or try another account.',
+        "La demande n'a pas pu etre traitee. Verifiez les champs du formulaire ou essayez un autre compte.",
       );
     } finally {
       this.isSubmitting.set(false);

@@ -35,9 +35,9 @@ describe('StorefrontService', () => {
   it('returns the Sprint 2 homepage payload', async () => {
     const homepage = await storefrontService.getHomepage();
 
-    expect(homepage.hero.title).toContain('sustainable marketplace');
+    expect(homepage.hero.title).toContain('marketplace');
     expect(homepage.categories).toHaveLength(3);
     expect(homepage.featuredProducts[0].impactScore).toBeGreaterThan(90);
-    expect(homepage.artisans[1].impactBadge).toBe('Deadstock rescue leader');
+    expect(homepage.artisans[1].impactBadge).toBe('Leader du deadstock revalorise');
   });
 });

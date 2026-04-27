@@ -74,7 +74,7 @@ describe('CraftmindService', () => {
       'Help me improve this product title.',
     );
     expect(result.reply.content).toContain('grounded product description');
-    expect(result.suggestedPrompts[0]).toContain('Rewrite this title');
+    expect(result.suggestedPrompts[0]).toContain('Reecrivez ce titre');
   });
 
   it('streams chat chunks as server-sent events', async () => {

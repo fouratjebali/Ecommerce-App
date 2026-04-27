@@ -5,19 +5,19 @@
 <section class="catalog-page">
   <header class="catalog-header">
     <div>
-      <p class="eyebrow">Catalog & PIM</p>
-      <h1>Browse sustainable goods with faceted discovery, impact data, and artisan context.</h1>
+      <p class="eyebrow">Catalogue du marche</p>
+      <h1>Parcourez les creations artisanales avec des filtres riches, des histoires d'atelier et des details d'impact clairs.</h1>
       <p>
-        Sprint 4 layers in visual search, so buyers can move between faceted discovery and
-        photo-based matching without leaving the marketplace.
+        Explorez la marketplace comme un ancien catalogue d'artisanat, puis passez a la recherche
+        par photo lorsque vous voulez chercher par inspiration plutot que par nom.
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="ghost-link" routerLink="/">Home</a>
-      <a class="ghost-link" routerLink="/visual-search">Find by photo</a>
-      <a class="ghost-link" routerLink="/cart">Cart</a>
-      <a class="primary-link" routerLink="/vendor">Vendor workspace</a>
+      <a class="ghost-link" routerLink="/">Accueil</a>
+      <a class="ghost-link" routerLink="/visual-search">Chercher par photo</a>
+      <a class="ghost-link" routerLink="/cart">Panier</a>
+      <a class="primary-link" routerLink="/vendor">Espace vendeur</a>
     </div>
   </header>
 
@@ -31,12 +31,12 @@
     <aside class="filter-panel">
       <div class="filter-card">
         <label class="search-field">
-          <span>Search</span>
+          <span>Recherche</span>
           <input
             type="text"
             [ngModel]="filters().q"
             (ngModelChange)="updateSearch($event)"
-            placeholder="Bowls, totes, lamps..."
+            placeholder="Bols, sacs, lampes..."
           />
         </label>
       </div>
@@ -44,7 +44,7 @@
       <div class="filter-card">
         <div class="filter-heading">
           <strong>Categories</strong>
-          <button type="button" (click)="resetFilters()">Reset</button>
+          <button type="button" (click)="resetFilters()">Reinitialiser</button>
         </div>
 
         @for (category of currentFacets?.categories ?? []; track category.slug) {
@@ -54,13 +54,13 @@
             [class.is-active]="filters().category?.includes(category.slug)"
             (click)="toggleCategory(category.slug)"
           >
-            {{ category.name }} <span>{{ category.count }}</span>
+            {{ category.name | marketLabel }} <span class="numeric">{{ category.count }}</span>
           </button>
         }
       </div>
 
       <div class="filter-card">
-        <strong>Materials</strong>
+        <strong>Matieres</strong>
 
         @for (material of currentFacets?.materials ?? []; track material.slug) {
           <button
@@ -69,13 +69,13 @@
             [class.is-active]="filters().material?.includes(material.slug)"
             (click)="toggleMaterial(material.slug)"
           >
-            {{ material.name }}
+            {{ material.name | marketLabel }}
           </button>
         }
       </div>
 
       <div class="filter-card">
-        <strong>Eco ratings</strong>
+        <strong>Notes eco</strong>
 
         @for (eco of currentFacets?.ecoRatings ?? []; track eco.code) {
           <button
@@ -84,7 +84,7 @@
             [class.is-active]="filters().ecoRating?.includes(eco.code)"
             (click)="toggleEcoRating(eco.code)"
           >
-            {{ eco.label }} <span>{{ eco.score }}</span>
+            {{ eco.label | marketLabel }} <span class="numeric">{{ eco.score }}</span>
           </button>
         }
       </div>
@@ -99,16 +99,16 @@
             [class.is-active]="filters().artisan?.includes(artisan.slug)"
             (click)="toggleArtisan(artisan.slug)"
           >
-            {{ artisan.studioName }} <span>{{ artisan.count }}</span>
+            {{ artisan.studioName }} <span class="numeric">{{ artisan.count }}</span>
           </button>
         }
       </div>
 
       <div class="filter-card">
-        <strong>Impact filters</strong>
+        <strong>Filtres d'impact</strong>
 
         <label>
-          <span>Minimum impact score</span>
+          <span>Score d'impact minimum</span>
           <input
             type="range"
             min="0"
@@ -116,31 +116,31 @@
             [ngModel]="filters().minImpactScore ?? 0"
             (ngModelChange)="setMinImpactScore($event)"
           />
-          <small>{{ filters().minImpactScore ?? 0 }}/100</small>
+          <small class="numeric">{{ filters().minImpactScore ?? 0 }}/100</small>
         </label>
 
         <label>
-          <span>Made to order</span>
+          <span>Fabrication</span>
           <select
             [ngModel]="
               filters().madeToOrder === null ? '' : filters().madeToOrder ? 'true' : 'false'
             "
             (ngModelChange)="setMadeToOrder($event)"
           >
-            <option value="">All items</option>
-            <option value="true">Made to order only</option>
-            <option value="false">Ready to ship only</option>
+            <option value="">Tous les articles</option>
+            <option value="true">Uniquement sur commande</option>
+            <option value="false">Uniquement pret a expedier</option>
           </select>
         </label>
 
         <label>
-          <span>Sort by</span>
+          <span>Trier par</span>
           <select [ngModel]="filters().sort" (ngModelChange)="setSort($event)">
-            <option value="featured">Featured</option>
-            <option value="impact-desc">Impact score</option>
-            <option value="price-asc">Price: low to high</option>
-            <option value="price-desc">Price: high to low</option>
-            <option value="newest">Newest</option>
+            <option value="featured">Selection</option>
+            <option value="impact-desc">Score d'impact</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix decroissant</option>
+            <option value="newest">Plus recent</option>
           </select>
         </label>
       </div>
@@ -149,15 +149,15 @@
     <div class="catalog-results">
       <div class="results-toolbar">
         <div>
-          <strong>{{ currentCatalog?.total ?? 0 }} items</strong>
-          <p>Live from the Nest catalog service, with Sprint 4 visual discovery now available.</p>
+          <strong class="stat-number">{{ currentCatalog?.total ?? 0 }} articles</strong>
+          <p>Pieces artisanales pretes a etre explorees, filtrees et comparees par histoire, matiere et impact.</p>
         </div>
       </div>
 
       @if (loading()) {
-        <div class="empty-state">Loading the catalog...</div>
+        <div class="empty-state">Ouverture des etageres du marche...</div>
       } @else if (!currentCatalog?.items?.length) {
-        <div class="empty-state">No products match the current filters.</div>
+        <div class="empty-state">Aucune piece ne correspond a ces filtres pour le moment.</div>
       } @else {
         <div class="product-grid">
           @for (product of currentCatalog?.items ?? []; track product.id) {
@@ -172,7 +172,7 @@
                     : ''
                 "
               >
-                <span class="impact-badge">{{ product.impactScore }}/100</span>
+                <span class="impact-badge numeric">{{ product.impactScore }}/100</span>
               </div>
 
               <div class="product-copy">
@@ -186,20 +186,17 @@
 
                 <div class="material-strip">
                   @for (material of product.materials; track material.id) {
-                    <span>{{ material.name }}</span>
+                    <span>{{ material.name | marketLabel }}</span>
                   }
                 </div>
 
                 <div class="product-footer">
-                  <strong>{{
-                    product.price.amountInCents / 100
-                      | currency: product.price.currency : 'symbol' : '1.0-0'
-                  }}</strong>
+                  <strong class="price">{{ product.price.amountInCents / 100 | tndCurrency }}</strong>
                   <div class="product-actions">
                     <button type="button" class="card-button" (click)="addToCart(product.id)">
-                      Add to cart
+                      Ajouter au panier
                     </button>
-                    <a [routerLink]="['/catalog', product.slug]">View details</a>
+                    <a [routerLink]="['/catalog', product.slug]">Voir le detail</a>
                   </div>
                 </div>
               </div>

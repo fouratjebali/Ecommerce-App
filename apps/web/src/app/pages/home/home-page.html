@@ -1,309 +1,467 @@
 @let storefront = homepage();
-@let bundle = bundleSummary();
-@let spotlightProduct = heroProduct();
+@let currentNotice = notice();
+@let heroProduct = heroSpotlight();
 @let spotlightArtisan = leadArtisan();
+@let featured = featuredProducts();
+@let arrivals = newArrivalProducts();
+@let recommended = recommendedProducts();
 
 <div class="page-shell">
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="GreenCraft home">
-      <span class="brand-mark">GC</span>
-      <span class="brand-copy">
-        <strong>GreenCraft</strong>
-        <small>Marketplace</small>
-      </span>
-    </a>
+    <div class="header-top">
+      <a class="brand" href="#top" aria-label="Accueil GreenCraft">
+        <span class="brand-mark">GC</span>
+        <span class="brand-copy">
+          <strong>GreenCraft</strong>
+          <small>Marche artisanal</small>
+        </span>
+      </a>
 
-    <nav class="site-nav" aria-label="Section navigation">
-      @for (item of navigation; track item.href) {
+      <form class="header-search" (ngSubmit)="applySearch()">
+        <label class="search-field">
+          <span class="sr-only">Rechercher sur l'accueil</span>
+          <input
+            type="search"
+            name="homeSearch"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="updateSearch($event)"
+            placeholder="Rechercher un bol, un sac, un atelier..."
+          />
+        </label>
+
+        @if (searchQuery()) {
+          <button type="button" class="search-clear" (click)="clearSearch()">Effacer</button>
+        }
+
+        <button type="submit" class="search-submit">Rechercher</button>
+      </form>
+
+      <div class="header-actions">
+        <a class="utility-link" href="#categories">Categories</a>
+        <a class="utility-link" routerLink="/cart">
+          <span class="utility-icon is-bag" aria-hidden="true"></span>
+          <span>Panier</span>
+        </a>
+        <a class="utility-link" [routerLink]="accountRoute()">
+          <span class="utility-icon is-user" aria-hidden="true"></span>
+          <span>{{ accountLabel() }}</span>
+        </a>
+        <a class="seller-button" routerLink="/vendor">{{ sellerLabel() }}</a>
+      </div>
+    </div>
+
+    <nav class="market-nav" aria-label="Navigation de l'accueil">
+      @for (item of headerLinks; track item.href) {
         <a [href]="item.href">{{ item.label }}</a>
       }
     </nav>
-
-    <a class="header-cta" routerLink="/catalog">Shop the catalog</a>
   </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
 
   <main class="page-content">
     <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="eyebrow">{{ storefront.hero.eyebrow }}</p>
-        <h1>{{ storefront.hero.title }}</h1>
-        <p class="hero-description">{{ storefront.hero.subtitle }}</p>
+        <p class="eyebrow">Marketplace artisanale tunisienne</p>
+        <h1>Decouvrez des creations faites main en Tunisie dans une boutique claire, chaleureuse et pensee pour l'achat.</h1>
+        <p class="hero-description">
+          Parcourez des objets d'artisanat, explorez les ateliers, comparez les pieces en dinar
+          tunisien et choisissez des produits racontes avec soin.
+        </p>
 
         <div class="hero-actions">
-          <a class="button button-primary" routerLink="/catalog">
-            {{ storefront.hero.primaryCta }}
-          </a>
-          <a class="button button-secondary" routerLink="/vendor">
-            {{ storefront.hero.secondaryCta }}
-          </a>
+          <a class="button button-primary" routerLink="/catalog">Explorer la boutique</a>
+          <a class="button button-secondary" routerLink="/vendor">Vendre mes creations</a>
         </div>
 
-        <div class="material-ribbon" aria-label="Highlighted materials">
-          @for (material of materialPills(); track material) {
-            <span>{{ material }}</span>
+        <div class="hero-badges">
+          <span>Fait main en Tunisie</span>
+          <span>Paiement en TND</span>
+          <span>Artisans verifies</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <a
+          class="hero-media"
+          [routerLink]="['/catalog', heroProduct.slug]"
+          [attr.aria-label]="heroProduct.imageAlt"
+          [style.background-image]="
+            heroProduct.imageUrl
+              ? 'linear-gradient(rgba(20, 47, 42, 0.14), rgba(20, 47, 42, 0.04)), url(' +
+                heroProduct.imageUrl +
+                ')'
+              : ''
+          "
+        >
+          @if (!heroProduct.imageUrl) {
+            <span>{{ heroProduct.imageHint }}</span>
           }
-        </div>
-      </div>
-
-      <div class="hero-stage">
-        <article class="passport-card">
-          <p class="card-label">Impact passport</p>
-          <div class="passport-score">
-            <span>{{ spotlightProduct.impactScore }}</span>
-            <small>Impact score</small>
-          </div>
-          <div class="passport-details">
-            <p>{{ spotlightProduct.name }}</p>
-            <strong> +{{ spotlightProduct.co2SavedKg | number: '1.1-1' }}kg CO2 saved </strong>
-            <span>{{ spotlightProduct.material }}</span>
-          </div>
-        </article>
-
-        <article class="story-card">
-          <p class="card-label">Artisan spotlight</p>
-          <h2>{{ spotlightArtisan.studio }}</h2>
-          <p>{{ spotlightArtisan.story }}</p>
-          <div class="story-meta">
-            <span>{{ spotlightArtisan.location }}</span>
-            <span>{{ spotlightArtisan.impactBadge }}</span>
-          </div>
-        </article>
-
-        <div class="floating-chip floating-chip-one">Carbon tracked</div>
-        <div class="floating-chip floating-chip-two">Bundle ready</div>
-      </div>
-    </section>
-
-    <section class="quick-link-strip" aria-label="Marketplace shortcuts">
-      @for (link of quickLinks; track link.route) {
-        <a class="quick-link-card" [routerLink]="link.route">
-          <span class="card-label">Marketplace</span>
-          <strong>{{ link.label }}</strong>
         </a>
-      }
+
+        <article class="hero-passport">
+          <p class="card-label">Piece mise en avant</p>
+          <h2>{{ heroProduct.name }}</h2>
+          <div class="passport-row">
+            <span>Prix</span>
+            <strong class="price">{{ heroProduct.price | tndCurrency }}</strong>
+          </div>
+          <div class="passport-row">
+            <span>Impact</span>
+            <strong class="stat-number">{{ heroProduct.impactScore }}/100</strong>
+          </div>
+          <div class="passport-row">
+            <span>CO2 economise</span>
+            <strong class="amount">{{ heroProduct.co2SavedKg | number: '1.1-1' }} kg</strong>
+          </div>
+        </article>
+
+        <article class="hero-artisan">
+          <p class="card-label">Atelier en lumiere</p>
+          <h3>{{ spotlightArtisan.studio }}</h3>
+          <p>{{ spotlightArtisan.story }}</p>
+          <div class="hero-artisan-meta">
+            <span>{{ spotlightArtisan.specialty | marketLabel }}</span>
+            <span>{{ spotlightArtisan.location }}</span>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <section class="metrics-grid" aria-label="Marketplace metrics">
+    <section class="stats-strip" aria-label="Indicateurs GreenCraft">
       @for (metric of storefront.metrics; track metric.label) {
-        <article class="metric-card">
+        <article class="stat-card">
           <span>{{ metric.label }}</span>
-          <strong>{{ metric.value }}</strong>
+          <strong class="stat-number">{{ metric.value }}</strong>
           <p>{{ metric.detail }}</p>
         </article>
       }
     </section>
 
-    <section class="editorial-section" id="collection">
-      <div class="section-intro">
-        <p class="section-kicker">Curated collection</p>
-        <h2>Seasonal goods shaped by provenance, craft, and measurable impact.</h2>
-        <p>
-          Each collection is organized around the materials, artisans, and impact improvements
-          buyers actually care about.
-        </p>
+    <section class="home-section" id="categories">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Categories</p>
+          <h2>Commencez votre visite par les univers les plus demandes.</h2>
+        </div>
+        <a class="section-link" routerLink="/catalog">Voir toute la boutique</a>
       </div>
 
       <div class="category-grid">
-        @for (category of storefront.categories; track category.slug) {
-          <article class="category-card">
-            <p class="card-label">{{ category.materialFocus }}</p>
-            <h3>{{ category.name }}</h3>
+        @for (category of categoryCards(); track category.title) {
+          <a class="category-card" [routerLink]="category.route">
+            <span class="card-label">{{ category.eyebrow }}</span>
+            <h3>{{ category.title | marketLabel }}</h3>
             <p>{{ category.description }}</p>
-            <span>{{ category.impactHighlight }}</span>
-          </article>
+            <small>{{ category.helper }}</small>
+          </a>
         }
       </div>
     </section>
 
-    <section class="editorial-section" id="featured">
-      <div class="section-intro section-intro-compact">
-        <p class="section-kicker">Featured creations</p>
-        <h2>
-          Handmade objects with the warmth of a boutique edit and the rigor of a product passport.
-        </h2>
-      </div>
+    @if (searchQuery() && !hasSearchMatches()) {
+      <section class="section-empty">
+        <h2>Aucun produit ne correspond a votre recherche sur l'accueil.</h2>
+        <p>Essayez un autre mot-cle, puis continuez dans le catalogue pour parcourir toute la boutique.</p>
+        <button type="button" class="button button-secondary" (click)="clearSearch()">
+          Effacer la recherche
+        </button>
+      </section>
+    }
 
-      <div class="featured-grid">
-        @for (product of storefront.featuredProducts; track product.id) {
-          <article class="product-card">
-            <div
-              class="product-visual"
-              [class.has-image]="!!product.imageUrl"
-              [attr.aria-label]="product.imageAlt"
-              [style.background-image]="
-                product.imageUrl
-                  ? 'linear-gradient(rgba(14, 34, 29, 0.14), rgba(14, 34, 29, 0.04)), url(' +
-                    product.imageUrl +
-                    ')'
-                  : ''
-              "
-            >
-              @if (!product.imageUrl) {
-                <span>{{ product.imageHint }}</span>
-              }
-              <div class="product-badge">+{{ product.co2SavedKg | number: '1.1-1' }}kg CO2</div>
-            </div>
-
-            <div class="product-copy">
-              <div class="product-meta">
-                <span>{{ product.artisanName }}</span>
-                <span>{{ product.region }}</span>
-              </div>
-
-              <h3>{{ product.name }}</h3>
-              <p>{{ product.storySnippet }}</p>
-
-              <div class="product-footer">
-                <strong>{{
-                  product.price | currency: product.currency : 'symbol' : '1.0-0'
-                }}</strong>
-                <span>{{ product.material }}</span>
-              </div>
-            </div>
-          </article>
-        }
-      </div>
-    </section>
-
-    <section class="editorial-section artisan-layout" id="artisans">
-      <article class="artisan-feature">
-        <p class="section-kicker">Artisan stories</p>
-        <h2>
-          {{ spotlightArtisan.name }} is building slow-made essentials with transparent sourcing.
-        </h2>
-        <p>{{ spotlightArtisan.story }}</p>
-
-        <div class="artisan-feature-meta">
-          <span>{{ spotlightArtisan.specialty }}</span>
-          <span>{{ spotlightArtisan.location }}</span>
+    <section class="home-section" id="featured-products">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Produits a la une</p>
+          <h2>Les creations les plus visibles du moment sur GreenCraft.</h2>
         </div>
-      </article>
-
-      <div class="artisan-stack">
-        @for (artisan of supportingArtisans(); track artisan.id) {
-          <article class="artisan-card">
-            <div>
-              <p class="card-label">{{ artisan.impactBadge }}</p>
-              <h3>{{ artisan.studio }}</h3>
-            </div>
-            <p>{{ artisan.story }}</p>
-            <span>{{ artisan.location }}</span>
-          </article>
-        }
+        <a class="section-link" routerLink="/catalog">Explorer le catalogue</a>
       </div>
-    </section>
 
-    <section class="editorial-section bundle-layout" id="bundle">
-      <article class="bundle-builder">
-        <p class="section-kicker">Bundle builder</p>
-        <h2>Create a room-ready set and see your sustainability gains stack in real time.</h2>
-        <p>
-          GreenCraft bundles are designed to lower packaging waste, increase artisan discovery, and
-          make coordinated shopping feel intentional.
-        </p>
+      @if (featured.length) {
+        <div class="product-grid">
+          @for (product of featured; track product.id) {
+            <article class="shop-product-card">
+              <a
+                class="product-image"
+                [routerLink]="['/catalog', product.slug]"
+                [attr.aria-label]="product.imageAlt"
+                [style.background-image]="
+                  product.imageUrl
+                    ? 'linear-gradient(rgba(20, 47, 42, 0.16), rgba(20, 47, 42, 0.06)), url(' +
+                      product.imageUrl +
+                      ')'
+                    : ''
+                "
+              >
+                @if (!product.imageUrl) {
+                  <span>{{ product.imageHint }}</span>
+                }
+                <span class="impact-chip numeric">{{ product.impactScore }}/100</span>
+              </a>
 
-        <div class="bundle-items">
-          @for (item of bundle.bundle; track item.id) {
-            <div class="bundle-item">
-              <div>
-                <strong>{{ item.name }}</strong>
-                <span>{{ item.artisanName }}</span>
+              <div class="product-copy">
+                <div class="product-meta">
+                  <span>{{ product.artisanName }}</span>
+                  <span>{{ product.category | marketLabel }}</span>
+                </div>
+
+                <h3>
+                  <a [routerLink]="['/catalog', product.slug]">{{ product.name }}</a>
+                </h3>
+                <p>{{ product.description }}</p>
+
+                <div class="product-bottom">
+                  <div class="product-pricing">
+                    <strong class="price">{{ product.price | tndCurrency }}</strong>
+                    <small>{{ product.location }}</small>
+                  </div>
+
+                  <button type="button" class="add-button" (click)="addToCart(product.id)">
+                    Ajouter au panier
+                  </button>
+                </div>
               </div>
-              <span>{{ item.price | currency: item.currency : 'symbol' : '1.0-0' }}</span>
-            </div>
+            </article>
           }
         </div>
-      </article>
+      } @else {
+        <div class="section-empty compact">
+          <p>Les produits a la une seront affiches ici des que le catalogue sera charge.</p>
+        </div>
+      }
+    </section>
 
-      <aside class="bundle-summary">
-        <div class="summary-row">
-          <span>Total bundle value</span>
-          <strong>{{ bundle.total | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+    <section class="home-section" id="new-arrivals">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Nouveautes</p>
+          <h2>Les derniers ajouts pour suivre l'arrivee des nouvelles pieces.</h2>
         </div>
-        <div class="summary-row">
-          <span>Bundle savings preview</span>
-          <strong>{{ bundle.bundleDiscount | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+
+      @if (arrivals.length) {
+        <div class="product-grid">
+          @for (product of arrivals; track product.id) {
+            <article class="shop-product-card">
+              <a
+                class="product-image"
+                [routerLink]="['/catalog', product.slug]"
+                [attr.aria-label]="product.imageAlt"
+                [style.background-image]="
+                  product.imageUrl
+                    ? 'linear-gradient(rgba(20, 47, 42, 0.16), rgba(20, 47, 42, 0.06)), url(' +
+                      product.imageUrl +
+                      ')'
+                    : ''
+                "
+              >
+                @if (!product.imageUrl) {
+                  <span>{{ product.imageHint }}</span>
+                }
+                <span class="impact-chip numeric">{{ product.impactScore }}/100</span>
+              </a>
+
+              <div class="product-copy">
+                <div class="product-meta">
+                  <span>{{ product.artisanName }}</span>
+                  <span>{{ product.material | marketLabel }}</span>
+                </div>
+
+                <h3>
+                  <a [routerLink]="['/catalog', product.slug]">{{ product.name }}</a>
+                </h3>
+                <p>{{ product.description }}</p>
+
+                <div class="product-bottom">
+                  <div class="product-pricing">
+                    <strong class="price">{{ product.price | tndCurrency }}</strong>
+                    <small>{{ product.location }}</small>
+                  </div>
+
+                  <button type="button" class="add-button" (click)="addToCart(product.id)">
+                    Ajouter au panier
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
         </div>
-        <div class="summary-row">
-          <span>Shared CO2 savings</span>
-          <strong>{{ bundle.co2SavedKg | number: '1.1-1' }}kg</strong>
+      } @else {
+        <div class="section-empty compact">
+          <p>Les nouveautes apparaitront ici des que de nouveaux produits seront disponibles.</p>
         </div>
-        <div class="summary-total">
-          <span>Estimated bundle checkout</span>
-          <strong>{{ bundle.bundledPrice | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+      }
+    </section>
+
+    <section class="home-section" id="recommended">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Produits recommandes</p>
+          <h2>Une selection visuelle a part pour guider vos prochains achats.</h2>
+        </div>
+      </div>
+
+      @if (recommended.length) {
+        <div class="product-grid">
+          @for (product of recommended; track product.id) {
+            <article class="shop-product-card is-recommended">
+              <a
+                class="product-image"
+                [routerLink]="['/catalog', product.slug]"
+                [attr.aria-label]="product.imageAlt"
+                [style.background-image]="
+                  product.imageUrl
+                    ? 'linear-gradient(rgba(20, 47, 42, 0.16), rgba(20, 47, 42, 0.06)), url(' +
+                      product.imageUrl +
+                      ')'
+                    : ''
+                "
+              >
+                @if (!product.imageUrl) {
+                  <span>{{ product.imageHint }}</span>
+                }
+                <span class="impact-chip numeric">{{ product.impactScore }}/100</span>
+              </a>
+
+              <div class="product-copy">
+                <div class="product-meta">
+                  <span>{{ product.artisanName }}</span>
+                  <span>{{ product.category | marketLabel }}</span>
+                </div>
+
+                <h3>
+                  <a [routerLink]="['/catalog', product.slug]">{{ product.name }}</a>
+                </h3>
+                <p>{{ product.description }}</p>
+
+                <div class="product-bottom">
+                  <div class="product-pricing">
+                    <strong class="price">{{ product.price | tndCurrency }}</strong>
+                    <small>{{ product.location }}</small>
+                  </div>
+
+                  <button type="button" class="add-button" (click)="addToCart(product.id)">
+                    Ajouter au panier
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="section-empty compact">
+          <p>Les recommandations apparaitront ici pour completer votre visite.</p>
+        </div>
+      }
+    </section>
+
+    <section class="seller-section" id="sell">
+      <div class="seller-copy">
+        <p class="eyebrow">Pour les artisans</p>
+        <h2>Ouvrez votre boutique, publiez vos creations et racontez votre savoir-faire.</h2>
+        <p>
+          GreenCraft accompagne les artisans tunisiens avec un espace vendeur, un suivi des
+          produits, des outils d aide a la redaction et une presentation claire des prix en TND.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" routerLink="/vendor">Commencer a vendre</a>
+          <a class="button button-secondary" routerLink="/auth">Creer mon acces</a>
+        </div>
+      </div>
+
+      <aside class="seller-card">
+        <p class="card-label">Atelier en exemple</p>
+        <h3>{{ spotlightArtisan.studio }}</h3>
+        <p>{{ spotlightArtisan.story }}</p>
+        <div class="seller-meta">
+          <span>{{ spotlightArtisan.specialty | marketLabel }}</span>
+          <span>{{ spotlightArtisan.location }}</span>
         </div>
       </aside>
     </section>
 
-    <section class="editorial-section ai-layout" id="ai">
-      <div class="section-intro section-intro-compact">
-        <p class="section-kicker">AI studio</p>
-        <h2>Two differentiators built directly into the marketplace roadmap.</h2>
+    <section class="home-section" id="benefits">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Pourquoi GreenCraft</p>
+          <h2>Les reperes qui rendent la marketplace simple, rassurante et locale.</h2>
+        </div>
       </div>
 
-      <div class="innovation-layout">
-        <div class="innovation-switcher" role="tablist" aria-label="AI experiences">
-          <button
-            type="button"
-            class="innovation-toggle"
-            [class.is-active]="activeInnovation() === 'visual-search'"
-            (click)="setInnovation('visual-search')"
-          >
-            Visual Search
-          </button>
-          <button
-            type="button"
-            class="innovation-toggle"
-            [class.is-active]="activeInnovation() === 'craftmind'"
-            (click)="setInnovation('craftmind')"
-          >
-            CraftMind
-          </button>
+      <div class="benefit-grid">
+        @for (benefit of trustCards; track benefit.title) {
+          <article class="benefit-card">
+            <h3>{{ benefit.title }}</h3>
+            <p>{{ benefit.copy }}</p>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="home-section" id="market-tools">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Outils de la marketplace</p>
+          <h2>Des experiences utiles pour acheter mieux et vendre plus clairement.</h2>
         </div>
+      </div>
 
-        @if (activePanel(); as panel) {
-          <article class="innovation-card">
-            <p class="card-label">{{ panel.eyebrow }}</p>
-            <h3>{{ panel.title }}</h3>
-            <p>{{ panel.summary }}</p>
-            <div class="innovation-highlight">{{ panel.highlight }}</div>
+      <div class="tool-grid">
+        @for (tool of toolCards; track tool.id) {
+          <article class="tool-card" [id]="tool.id">
+            <p class="card-label">{{ tool.eyebrow }}</p>
+            <h3>{{ tool.title }}</h3>
+            <p>{{ tool.copy }}</p>
 
-            <ul class="innovation-points">
-              @for (point of panel.points; track point) {
+            <ul class="tool-points">
+              @for (point of tool.points; track point) {
                 <li>{{ point }}</li>
               }
             </ul>
 
-            <a
-              class="button button-primary innovation-cta"
-              [routerLink]="activeInnovation() === 'visual-search' ? '/visual-search' : '/vendor'"
-            >
-              {{ activeInnovation() === 'visual-search' ? 'Try visual search' : 'Open vendor workspace' }}
+            <a class="button button-primary tool-cta" [routerLink]="tool.route">
+              {{ tool.cta }}
             </a>
           </article>
         }
       </div>
     </section>
 
-    <section class="initiative-strip" aria-label="Roadmap initiatives">
-      @for (initiative of storefront.initiatives; track initiative.title) {
-        <article class="initiative-card">
-          <p class="card-label">{{ initiative.milestone }}</p>
-          <h3>{{ initiative.title }}</h3>
-          <p>{{ initiative.summary }}</p>
-        </article>
-      }
+    <section class="community-section" id="community">
+      <div class="community-copy">
+        <p class="eyebrow">Communaute GreenCraft</p>
+        <h2>Restez proche des artisans, des nouvelles collections et des idees cadeaux.</h2>
+        <p>
+          Une section newsletter plus complete pourra etre ajoutee ensuite. Pour le moment, cette
+          zone donne le ton d'une communaute locale, chaleureuse et orientee artisanat.
+        </p>
+      </div>
+
+      <div class="community-card">
+        <label class="community-field">
+          <span>Votre e-mail</span>
+          <input type="email" placeholder="vous@exemple.tn" />
+        </label>
+        <button type="button" class="button button-secondary">Bientot disponible</button>
+        <small>En attendant, explorez le catalogue, la recherche visuelle et l'espace vendeur.</small>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div>
-      <strong>GreenCraft Marketplace</strong>
-      <p>Eco-conscious commerce for Tunisia's buyers who care and artisans who build with purpose.</p>
+      <strong>GreenCraft</strong>
+      <p>Une marketplace tunisienne pour les acheteurs attentifs et les artisans qui creent avec intention.</p>
     </div>
 
     <div class="footer-meta">
-      <span>Copyright © 2026 GreenCraft Marketplace. All rights reserved.</span>
+      <span>Copyright (c) 2026 GreenCraft. Tous droits reserves.</span>
       <span>Fourat & Amin</span>
     </div>
   </footer>

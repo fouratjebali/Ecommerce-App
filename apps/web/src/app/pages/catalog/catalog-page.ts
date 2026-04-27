@@ -1,9 +1,11 @@
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CatalogFacetsResponse, CatalogFilters, CatalogResponse } from '../../models/catalog';
+import { MarketLabelPipe } from '../../pipes/market-label.pipe';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { CartApiService } from '../../services/cart-api.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
 
@@ -14,7 +16,7 @@ interface NoticeState {
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe],
+  imports: [CommonModule, FormsModule, RouterLink, TndCurrencyPipe, MarketLabelPipe],
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.scss',
 })
@@ -111,12 +113,12 @@ export class CatalogPageComponent {
       await firstValueFrom(this.cartApiService.addItem(productId, 1));
       this.notice.set({
         tone: 'success',
-        text: 'Product added to the cart session.',
+        text: 'Le produit a ete ajoute a votre panier.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'This product could not be added to the cart right now.',
+        text: "Impossible d'ajouter ce produit au panier pour le moment.",
       });
     }
   }

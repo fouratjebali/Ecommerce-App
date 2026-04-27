@@ -4,8 +4,8 @@
 
 <section class="detail-page">
   <div class="back-actions">
-    <a class="back-link" routerLink="/catalog">Back to catalog</a>
-    <a class="back-link" routerLink="/visual-search">Find by photo</a>
+    <a class="back-link" routerLink="/catalog">Retour au catalogue</a>
+    <a class="back-link" routerLink="/visual-search">Chercher par photo</a>
   </div>
 
   @if (currentNotice) {
@@ -15,9 +15,9 @@
   }
 
   @if (loading()) {
-    <div class="detail-card">Loading product details...</div>
+    <div class="detail-card">Chargement de la fiche produit...</div>
   } @else if (!detail) {
-    <div class="detail-card">This product could not be loaded.</div>
+    <div class="detail-card">Impossible de charger ce produit.</div>
   } @else {
     <div class="detail-layout">
       <div
@@ -32,62 +32,59 @@
       ></div>
 
       <article class="detail-card detail-copy">
-        <p class="eyebrow">{{ detail.product.ecoRating.label }}</p>
+        <p class="eyebrow">{{ detail.product.ecoRating.label | marketLabel }}</p>
         <h1>{{ detail.product.name }}</h1>
         <p>{{ detail.product.description }}</p>
 
         <div class="metric-strip">
           <div>
-            <span>Price</span>
-            <strong>{{
-              detail.product.price.amountInCents / 100
-                | currency: detail.product.price.currency : 'symbol' : '1.0-0'
-            }}</strong>
+            <span>Prix</span>
+            <strong class="price">{{ detail.product.price.amountInCents / 100 | tndCurrency }}</strong>
           </div>
           <div>
-            <span>Impact score</span>
-            <strong>{{ detail.product.impactScore }}/100</strong>
+            <span>Score d'impact</span>
+            <strong class="stat-number">{{ detail.product.impactScore }}/100</strong>
           </div>
           <div>
-            <span>CO2 saved</span>
-            <strong>{{ detail.product.co2SavedKg }}kg</strong>
+            <span>CO2 economise</span>
+            <strong class="amount">{{ detail.product.co2SavedKg | number: '1.1-1' }} kg</strong>
           </div>
         </div>
 
         <div class="purchase-strip">
           <label>
-            <span>Quantity</span>
-            <input type="number" min="1" name="quantity" [(ngModel)]="quantity" />
+            <span>Quantite</span>
+            <input class="numeric" type="number" min="1" name="quantity" [(ngModel)]="quantity" />
           </label>
-          <button type="button" class="primary-link" (click)="addToCart()">Add to cart</button>
-          <a class="ghost-link" routerLink="/cart">View cart</a>
+          <button type="button" class="primary-link" (click)="addToCart()">Ajouter au panier</button>
+          <a class="ghost-link" routerLink="/cart">Voir le panier</a>
         </div>
 
         <div class="detail-section">
-          <strong>Artisan</strong>
+          <strong>L'atelier</strong>
           <p>{{ detail.product.artisan.studioName }} | {{ detail.product.artisan.location }}</p>
         </div>
 
         <div class="detail-section">
-          <strong>Story</strong>
+          <strong>Note de l'artisan</strong>
           <p>{{ detail.product.story }}</p>
         </div>
 
         <div class="detail-section">
-          <strong>Materials</strong>
+          <strong>Matieres</strong>
           <div class="chip-row">
             @for (material of detail.product.materials; track material.id) {
-              <span>{{ material.name }}</span>
+              <span>{{ material.name | marketLabel }}</span>
             }
           </div>
         </div>
 
         <div class="detail-section">
-          <strong>Attributes</strong>
+          <strong>Details de fabrication</strong>
           <div class="attribute-grid">
             @for (attribute of detail.product.attributes; track attribute.id) {
               <div>
-                <span>{{ attribute.label }}</span>
+                <span>{{ attribute.label | marketLabel }}</span>
                 <strong>{{ attribute.value }}</strong>
               </div>
             }
@@ -101,10 +98,10 @@
         <section class="recommendation-shell">
           <div class="recommendation-heading">
             <div>
-              <p class="eyebrow">Redis-backed recs</p>
-              <h2>Visually similar products</h2>
+              <p class="eyebrow">Selection atelier</p>
+              <h2>Produits visuellement proches</h2>
             </div>
-            <a class="ghost-link" routerLink="/visual-search">Run a new photo search</a>
+            <a class="ghost-link" routerLink="/visual-search">Lancer une nouvelle recherche</a>
           </div>
 
           <div class="recommendation-grid">
@@ -124,16 +121,13 @@
                 <div class="recommendation-copy">
                   <div class="recommendation-meta">
                     <span>{{ item.artisan.studioName }}</span>
-                    <span>{{ item.category.name }}</span>
+                    <span>{{ item.category.name | marketLabel }}</span>
                   </div>
                   <h3>{{ item.name }}</h3>
                   <p>{{ item.shortDescription }}</p>
                   <div class="recommendation-footer">
-                    <strong>{{
-                      item.price.amountInCents / 100
-                        | currency: item.price.currency : 'symbol' : '1.0-0'
-                    }}</strong>
-                    <a [routerLink]="['/catalog', item.slug]">View product</a>
+                    <strong class="price">{{ item.price.amountInCents / 100 | tndCurrency }}</strong>
+                    <a [routerLink]="['/catalog', item.slug]">Voir le produit</a>
                   </div>
                 </div>
               </article>

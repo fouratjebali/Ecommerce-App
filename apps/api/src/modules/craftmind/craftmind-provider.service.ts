@@ -105,7 +105,7 @@ export class CraftmindProviderService {
 
     if (!parsed) {
       this.logger.warn(
-        'Anthropic returned a non-JSON listing draft. Falling back to local draft generation.',
+        'Anthropic a retourne un brouillon non JSON. Retour a la generation locale du brouillon.',
       );
       return null;
     }
@@ -176,10 +176,10 @@ export class CraftmindProviderService {
       .join('\n');
 
     const responseText = [
-      `CraftMind reviewed your prompt: "${request.prompt.trim()}".`,
-      `Start by anchoring the copy in what GreenCraft can verify today: materials, sourcing context, artisan perspective, and measurable impact.`,
-      `Use these grounded references as your draft base:\n${references}`,
-      `Recommended next move: refine the product title around the lead material, keep the short description benefit-first, and turn the artisan story into one concrete sourcing detail buyers can trust.`,
+      `CraftMind a analyse votre demande : "${request.prompt.trim()}".`,
+      `Commencez par ancrer votre texte dans ce que GreenCraft peut verifier aujourd'hui : matieres, contexte de sourcing, point de vue de l'artisan et impact mesurable.`,
+      `Utilisez ces references verifiables comme base de travail :\n${references}`,
+      `Etape recommandee : affinez le titre autour de la matiere principale, gardez une description courte centree sur le benefice et transformez l'histoire artisanale en un detail de sourcing concret.`,
     ].join('\n\n');
 
     return {
@@ -198,13 +198,13 @@ export class CraftmindProviderService {
     const artisanStudio =
       typeof artisanDocument?.metadata?.artisanName === 'string'
         ? artisanDocument.metadata.artisanName
-        : artisanDocument?.title ?? 'GreenCraft artisan';
-    const categoryName = request.categoryName || 'Handmade Goods';
-    const materialLead = request.materialNames[0] ?? 'responsibly sourced materials';
+        : artisanDocument?.title ?? 'artisan GreenCraft';
+    const categoryName = request.categoryName || 'Objets artisanaux';
+    const materialLead = request.materialNames[0] ?? 'matieres sourcees avec soin';
     const queryTokens = tokenizeQuery(request.prompt);
     const titleSeed =
       queryTokens.slice(0, 2).map((token) => toTitleCase(token)).join(' ') ||
-      'Studio Crafted';
+      'Atelier';
     const name = `${titleSeed} ${toTitleCase(categoryName.replace(/&/g, ' '))}`
       .replace(/\s+/g, ' ')
       .trim();
@@ -219,9 +219,9 @@ export class CraftmindProviderService {
       draft: {
         name: normalizedName,
         slug: slugify(normalizedName),
-        shortDescription: `${normalizedName} is a ${categoryName.toLowerCase()} made with ${materialLead} and positioned for buyers who want verified craft provenance.`,
-        description: `${normalizedName} brings GreenCraft's sustainability story into a ${categoryName.toLowerCase()} listing that feels tactile, warm, and specific. Lead with ${materialLine}, highlight how the piece fits real daily rituals, and keep every environmental claim tied to the actual materials or making process.\n\nFor the full description, connect the form factor to the artisan's approach, note the measured impact or sourcing improvement, and end with a practical expectation such as lead time, everyday use, or care.`,
-        story: `${artisanStudio} can frame this piece around thoughtful material choices, slower production, and the buyer-facing value of choosing handmade over disposable alternatives. Keep the story rooted in the studio's actual sourcing habits and the impact details already available in the GreenCraft catalog.`,
+        shortDescription: `${normalizedName} est un ${categoryName.toLowerCase()} realise avec ${materialLead} pour des acheteurs qui recherchent une provenance artisanale verifiable.`,
+        description: `${normalizedName} traduit l'histoire durable de GreenCraft dans une fiche ${categoryName.toLowerCase()} qui reste concrete, chaleureuse et precise. Mettez d'abord en avant ${materialLine}, expliquez comment la piece s'inscrit dans des usages reels, puis liez chaque promesse environnementale aux matieres ou au processus de fabrication.\n\nDans la description longue, reliez la forme du produit a l'approche de l'artisan, mentionnez l'amelioration de sourcing ou l'impact mesure, puis terminez par une attente pratique comme le delai, l'usage quotidien ou l'entretien.`,
+        story: `${artisanStudio} peut raconter cette piece a travers des choix de matieres attentifs, une production plus lente et la valeur concrete d'un objet artisanal face aux alternatives jetables. Gardez le recit ancre dans les habitudes de sourcing de l'atelier et dans les informations d'impact deja disponibles dans le catalogue GreenCraft.`,
         materials: request.materialNames,
         tags: Array.from(
           new Set([
@@ -231,13 +231,13 @@ export class CraftmindProviderService {
             'artisan-made',
           ]),
         ).filter(Boolean),
-        seoTitle: `${normalizedName} | Sustainable ${categoryName} on GreenCraft`,
-        seoDescription: `${normalizedName} crafted with ${materialLead}. Discover the artisan story, sourcing context, and impact details on GreenCraft Marketplace.`,
+        seoTitle: `${normalizedName} | ${categoryName} durable sur GreenCraft`,
+        seoDescription: `${normalizedName} realise avec ${materialLead}. Decouvrez l'histoire artisanale, le contexte de sourcing et les details d'impact sur GreenCraft.`,
         launchChecklist: [
-          'Confirm the product photos match the material and finish described in the draft.',
-          'Verify the impact score and CO2 savings before publishing sustainability claims.',
-          'Add one sourcing detail from the studio process to make the story concrete.',
-          'Review lead time, inventory, and eco rating fields before switching to PUBLISHED.',
+          'Verifiez que les photos correspondent bien aux matieres et a la finition decrites.',
+          "Confirmez le score d'impact et les economies de CO2 avant toute promesse environnementale.",
+          "Ajoutez un detail de sourcing issu du processus d'atelier pour rendre l'histoire concrete.",
+          'Controlez le delai, le stock et la note eco avant de passer le produit en PUBLISHED.',
         ],
       },
     };
@@ -245,12 +245,12 @@ export class CraftmindProviderService {
 
   private buildChatSystemPrompt(request: CraftmindChatRequest) {
     return [
-      'You are CraftMind for GreenCraft Marketplace.',
-      'Answer with an artisan-first, sustainability-aware tone.',
-      'Only use facts grounded in the provided retrieval context.',
-      'If a requested fact is not in context, say that it needs confirmation.',
-      `Retrieved context summary: ${request.context.summary}`,
-      `Context documents:\n${request.context.documents
+      'Vous etes CraftMind pour GreenCraft Marketplace.',
+      'Repondez avec un ton artisanal, chaleureux et attentif a la durabilite.',
+      'N utilisez que les faits confirmes par le contexte fourni.',
+      "Si une information demandee n'apparait pas dans le contexte, dites qu'elle doit etre confirmee.",
+      `Resume du contexte : ${request.context.summary}`,
+      `Documents de contexte :\n${request.context.documents
         .map((document) => `- ${document.title}: ${document.snippet}`)
         .join('\n')}`,
     ].join('\n');
@@ -258,23 +258,23 @@ export class CraftmindProviderService {
 
   private buildListingSystemPrompt(request: CraftmindListingRequest) {
     return [
-      'You are CraftMind for GreenCraft Marketplace.',
-      'Return only valid JSON.',
-      'Generate a listing draft grounded in the supplied marketplace and artisan context.',
-      'Do not invent certifications or sourcing claims.',
-      `Category: ${request.categoryName}`,
-      `Eco rating: ${request.ecoRatingLabel ?? 'Not specified'}`,
-      `Materials: ${request.materialNames.join(', ') || 'Not specified'}`,
-      `Context summary: ${request.context.summary}`,
-      `Context documents:\n${request.context.documents
+      'Vous etes CraftMind pour GreenCraft Marketplace.',
+      'Retournez uniquement du JSON valide.',
+      "Generez un brouillon de fiche fonde sur le contexte marketplace et atelier fourni.",
+      "N'inventez ni certifications ni affirmations de sourcing.",
+      `Categorie : ${request.categoryName}`,
+      `Note eco : ${request.ecoRatingLabel ?? 'Non precisee'}`,
+      `Matieres : ${request.materialNames.join(', ') || 'Non precisees'}`,
+      `Resume du contexte : ${request.context.summary}`,
+      `Documents de contexte :\n${request.context.documents
         .map((document) => `- ${document.title}: ${document.snippet}`)
         .join('\n')}`,
-      'Return JSON with keys: name, slug, shortDescription, description, story, materials, tags, seoTitle, seoDescription, launchChecklist.',
+      'Retournez un JSON avec les cles : name, slug, shortDescription, description, story, materials, tags, seoTitle, seoDescription, launchChecklist.',
     ].join('\n');
   }
 
   private buildListingUserPrompt(request: CraftmindListingRequest) {
-    return `Create a product listing draft from this artisan prompt: ${request.prompt}`;
+    return `Creez un brouillon de fiche produit a partir de cette demande artisanale : ${request.prompt}`;
   }
 }
 
@@ -295,36 +295,36 @@ function parseListingDraft(value: string): Partial<CraftmindListingDraft> | null
 function normalizeListingDraft(
   draft: Partial<CraftmindListingDraft>,
 ): CraftmindListingDraft {
-  const name = draft.name?.trim() || 'GreenCraft Draft Product';
+  const name = draft.name?.trim() || 'Brouillon produit GreenCraft';
 
   return {
     name,
     slug: slugify(draft.slug?.trim() || name),
     shortDescription:
       draft.shortDescription?.trim() ||
-      'A GreenCraft listing draft is ready for refinement.',
+      'Un brouillon de fiche GreenCraft est pret a etre affine.',
     description:
       draft.description?.trim() ||
-      'CraftMind prepared a listing description that should be reviewed before publishing.',
+      'CraftMind a prepare une description de fiche a relire avant publication.',
     story:
       draft.story?.trim() ||
-      'Review the artisan story and replace placeholders with verified sourcing details.',
+      "Relisez l'histoire artisanale et remplacez les placeholders par des details de sourcing verifies.",
     materials: Array.isArray(draft.materials)
       ? draft.materials.map((material) => String(material))
       : [],
     tags: Array.isArray(draft.tags)
       ? draft.tags.map((tag) => slugify(String(tag))).filter(Boolean)
       : [],
-    seoTitle: draft.seoTitle?.trim() || `${name} | GreenCraft Marketplace`,
+    seoTitle: draft.seoTitle?.trim() || `${name} | GreenCraft`,
     seoDescription:
       draft.seoDescription?.trim() ||
-      'Generated with CraftMind for GreenCraft Marketplace.',
+      'Genere avec CraftMind pour GreenCraft.',
     launchChecklist:
       Array.isArray(draft.launchChecklist) && draft.launchChecklist.length
         ? draft.launchChecklist.map((item) => String(item))
         : [
-            'Review the generated copy.',
-            'Validate product facts before publishing.',
+            'Relisez le texte genere.',
+            'Validez les informations produit avant publication.',
           ],
   };
 }

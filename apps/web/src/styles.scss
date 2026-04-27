@@ -1,19 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --pine-950: #16332d;
-  --pine-800: #22453d;
-  --pine-700: #2f5f54;
-  --sage-500: #7f9973;
-  --sand-50: #f7f1e5;
-  --mist-100: rgba(255, 255, 255, 0.72);
-  --clay-500: #bc744b;
-  --gold-400: #d9bd7c;
-  --ink-900: #1f2a24;
-  --ink-700: #405149;
-  --shadow-soft: 0 24px 60px rgba(37, 54, 45, 0.14);
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Manrope', 'Segoe UI', sans-serif;
+  --color-parchment: #fff7e6;
+  --color-paper: #f8eed3;
+  --color-aged-paper: #e8d3a6;
+  --color-terracotta: #b65f3a;
+  --color-terracotta-deep: #8e3b2f;
+  --color-forest: #2f4f3a;
+  --color-forest-soft: #3e5f44;
+  --color-olive: #6f7d45;
+  --color-walnut: #3a2415;
+  --color-walnut-soft: #4b2e1e;
+  --color-mustard: #c89b3c;
+  --color-ink: #2b2118;
+  --color-muted-ink: #625041;
+  --color-line: rgba(75, 46, 30, 0.2);
+  --color-line-strong: rgba(58, 36, 21, 0.35);
+  --surface-paper: linear-gradient(
+      180deg,
+      rgba(255, 251, 241, 0.98),
+      rgba(247, 235, 206, 0.94)
+    ),
+    linear-gradient(135deg, rgba(200, 155, 60, 0.08), rgba(182, 95, 58, 0.08));
+  --surface-card: linear-gradient(
+    180deg,
+    rgba(255, 251, 243, 0.98),
+    rgba(244, 229, 194, 0.92)
+  );
+  --surface-tinted: linear-gradient(
+    180deg,
+    rgba(250, 239, 212, 0.96),
+    rgba(238, 220, 178, 0.92)
+  );
+  --surface-dark: linear-gradient(180deg, #4b2e1e 0%, #3a2415 100%);
+  --shadow-paper:
+    0 24px 48px rgba(58, 36, 21, 0.12),
+    0 3px 0 rgba(58, 36, 21, 0.14);
+  --shadow-inset: inset 0 1px 0 rgba(255, 252, 243, 0.8);
+  --shadow-pressed:
+    0 6px 0 rgba(75, 46, 30, 0.35),
+    0 12px 24px rgba(75, 46, 30, 0.18);
+  --radius-handmade: 22px;
+  --radius-card: 28px;
+  --radius-pill: 999px;
+  --focus-ring: 0 0 0 3px rgba(200, 155, 60, 0.28);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Nunito Sans', 'Segoe UI', sans-serif;
+  --font-numeric: 'Nunito Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+
+  /* legacy aliases used throughout the app */
+  --pine-950: var(--color-forest);
+  --pine-800: var(--color-forest-soft);
+  --pine-700: var(--color-olive);
+  --sage-500: var(--color-aged-paper);
+  --sand-50: var(--color-parchment);
+  --mist-100: rgba(255, 250, 241, 0.78);
+  --clay-500: var(--color-terracotta);
+  --gold-400: var(--color-mustard);
+  --ink-900: var(--color-ink);
+  --ink-700: var(--color-muted-ink);
+  --shadow-soft: var(--shadow-paper);
 }
 
 *,
@@ -30,23 +76,38 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-body);
-  color: var(--ink-900);
+  color: var(--color-ink);
+  text-rendering: optimizeLegibility;
   background:
-    radial-gradient(circle at top left, rgba(217, 189, 124, 0.25), transparent 26rem),
-    radial-gradient(circle at top right, rgba(127, 153, 115, 0.18), transparent 30rem),
-    linear-gradient(180deg, #fbf6ee 0%, #f3ebdc 42%, #fbf7f0 100%);
+    radial-gradient(circle at top left, rgba(200, 155, 60, 0.22), transparent 26rem),
+    radial-gradient(circle at top right, rgba(182, 95, 58, 0.16), transparent 30rem),
+    radial-gradient(circle at bottom right, rgba(111, 125, 69, 0.14), transparent 28rem),
+    linear-gradient(180deg, #fff7e6 0%, #f7ecd0 38%, #fff7e8 100%);
 }
 
-body::before {
+body::before,
+body::after {
   content: '';
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(31, 42, 36, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(31, 42, 36, 0.02) 1px, transparent 1px);
-  background-size: 120px 120px;
   pointer-events: none;
-  opacity: 0.5;
+}
+
+body::before {
+  opacity: 0.4;
+  background:
+    linear-gradient(rgba(94, 71, 48, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94, 71, 48, 0.03) 1px, transparent 1px);
+  background-size: 92px 92px;
+}
+
+body::after {
+  opacity: 0.3;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4), transparent 0.8rem),
+    radial-gradient(circle at 70% 35%, rgba(75, 46, 30, 0.05), transparent 0.7rem),
+    radial-gradient(circle at 40% 75%, rgba(58, 36, 21, 0.04), transparent 0.8rem);
+  background-size: 180px 180px;
 }
 
 button,
@@ -54,6 +115,36 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+input[type='number'],
+.numeric,
+.price,
+.amount,
+.quantity,
+.stat-number,
+.cart-total,
+.order-total {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  letter-spacing: 0.01em;
+}
+
+.price,
+.amount,
+.cart-total,
+.order-total {
+  font-weight: 700;
+}
+
+.quantity,
+.stat-number {
+  font-weight: 800;
+}
+
+button {
+  cursor: pointer;
 }
 
 a {
@@ -64,6 +155,59 @@ a {
 img {
   display: block;
   max-width: 100%;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: rgba(200, 155, 60, 0.26);
+  color: var(--color-walnut);
+}
+
+input,
+textarea,
+select {
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  background:
+    linear-gradient(180deg, rgba(255, 252, 245, 0.96), rgba(247, 235, 206, 0.84));
+  box-shadow: var(--shadow-inset);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(98, 80, 65, 0.78);
+}
+
+button,
+[type='button'],
+[type='submit'] {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+button:hover,
+[type='button']:hover,
+[type='submit']:hover {
+  transform: translateY(-1px);
+}
+
+button:active,
+[type='button']:active,
+[type='submit']:active {
+  transform: translateY(1px);
 }
 
 @media (prefers-reduced-motion: reduce) {

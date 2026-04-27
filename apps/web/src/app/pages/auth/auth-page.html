@@ -1,27 +1,28 @@
 <section class="auth-page">
-  <a class="page-link" routerLink="/">Back to home</a>
+  <a class="page-link" routerLink="/">Retour a l accueil</a>
 
   <div class="auth-layout">
     <article class="auth-story">
-      <p class="eyebrow">Sprint 2 access</p>
-      <h1>Sign in to manage a studio or create a buyer account.</h1>
+      <p class="eyebrow">Acces a la communaute</p>
+      <h1>Connectez-vous a votre atelier ou rejoignez la marketplace en tant qu'acheteur.</h1>
       <p>
-        GreenCraft now includes JWT auth, artisan onboarding, and protected vendor tooling
-        backed by the Nest API.
+        Entrez dans une marketplace plus humaine, ou les artisans gerent leur atelier, les
+        acheteurs parcourent les pieces avec attention et chaque fiche raconte le geste derriere
+        l'objet.
       </p>
 
       <div class="demo-accounts">
-        <p class="card-label">Seeded demo accounts</p>
+        <p class="card-label">Comptes de demonstration</p>
         <div>
-          <strong>Artisan:</strong>
+          <strong>Artisan :</strong>
           <span>`noura@greencraft.local / Artisan@1234`</span>
         </div>
         <div>
-          <strong>Buyer:</strong>
+          <strong>Acheteur :</strong>
           <span>`buyer@greencraft.local / Buyer@1234`</span>
         </div>
         <div>
-          <strong>Admin:</strong>
+          <strong>Admin :</strong>
           <span>`admin@greencraft.local / Admin@1234`</span>
         </div>
       </div>
@@ -34,14 +35,14 @@
           [class.is-active]="mode() === 'login'"
           (click)="setMode('login')"
         >
-          Login
+          Connexion
         </button>
         <button
           type="button"
           [class.is-active]="mode() === 'register'"
           (click)="setMode('register')"
         >
-          Register
+          Inscription
         </button>
       </div>
 
@@ -52,7 +53,7 @@
             [class.is-active]="registrationType() === 'buyer'"
             (click)="setRegistrationType('buyer')"
           >
-            Buyer
+            Acheteur
           </button>
           <button
             type="button"
@@ -67,7 +68,7 @@
       <form class="auth-form" (ngSubmit)="submit()">
         @if (mode() === 'login') {
           <label>
-            <span>Email</span>
+            <span>E-mail</span>
             <input
               type="email"
               name="loginEmail"
@@ -77,7 +78,7 @@
           </label>
 
           <label>
-            <span>Password</span>
+            <span>Mot de passe</span>
             <input
               type="password"
               name="loginPassword"
@@ -87,7 +88,7 @@
           </label>
         } @else if (registrationType() === 'buyer') {
           <label>
-            <span>Full name</span>
+            <span>Nom complet</span>
             <input
               type="text"
               name="buyerFullName"
@@ -97,7 +98,7 @@
           </label>
 
           <label>
-            <span>Email</span>
+            <span>E-mail</span>
             <input
               type="email"
               name="buyerEmail"
@@ -107,7 +108,7 @@
           </label>
 
           <label>
-            <span>Password</span>
+            <span>Mot de passe</span>
             <input
               type="password"
               name="buyerPassword"
@@ -118,7 +119,7 @@
         } @else {
           <div class="grid-two">
             <label>
-              <span>Full name</span>
+              <span>Nom complet</span>
               <input
                 type="text"
                 name="artisanFullName"
@@ -127,7 +128,7 @@
               />
             </label>
             <label>
-              <span>Studio name</span>
+              <span>Nom de l atelier</span>
               <input
                 type="text"
                 name="artisanStudioName"
@@ -139,7 +140,7 @@
 
           <div class="grid-two">
             <label>
-              <span>Email</span>
+              <span>E-mail</span>
               <input
                 type="email"
                 name="artisanEmail"
@@ -159,7 +160,7 @@
           </div>
 
           <label>
-            <span>Password</span>
+            <span>Mot de passe</span>
             <input
               type="password"
               name="artisanPassword"
@@ -170,7 +171,7 @@
 
           <div class="grid-two">
             <label>
-              <span>Location</span>
+              <span>Localisation</span>
               <input
                 type="text"
                 name="artisanLocation"
@@ -179,7 +180,7 @@
               />
             </label>
             <label>
-              <span>Headline</span>
+              <span>Accroche</span>
               <input
                 type="text"
                 name="artisanHeadline"
@@ -190,7 +191,7 @@
           </div>
 
           <label>
-            <span>Studio bio</span>
+            <span>Presentation de l atelier</span>
             <textarea
               rows="4"
               name="artisanBio"
@@ -200,7 +201,7 @@
           </label>
 
           <label>
-            <span>Impact statement</span>
+            <span>Engagement d impact</span>
             <textarea
               rows="4"
               name="artisanImpactStatement"
@@ -215,7 +216,13 @@
         }
 
         <button class="submit-button" type="submit" [disabled]="isSubmitting()">
-          {{ isSubmitting() ? 'Working...' : mode() === 'login' ? 'Continue' : 'Create account' }}
+          {{
+            isSubmitting()
+              ? 'Preparation de votre acces...'
+              : mode() === 'login'
+                ? 'Entrer dans la marketplace'
+                : 'Creer un compte'
+          }}
         </button>
       </form>
     </article>

@@ -1,110 +1,453 @@
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { fallbackStorefront } from '../../data/fallback-storefront';
+import { CatalogFilters, CatalogItem, CatalogResponse } from '../../models/catalog';
 import { ArtisanProfile, StorefrontProduct } from '../../models/storefront';
+import { MarketLabelPipe } from '../../pipes/market-label.pipe';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
+import { AuthService } from '../../services/auth.service';
+import { CartApiService } from '../../services/cart-api.service';
+import { CatalogApiService } from '../../services/catalog-api.service';
 import { StorefrontService } from '../../services/storefront.service';
 
-type InnovationMode = 'visual-search' | 'craftmind';
+interface NoticeState {
+  tone: 'success' | 'error';
+  text: string;
+}
 
-type InnovationPanelViewModel = {
+interface HomeProductCard {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  artisanName: string;
+  location: string;
+  category: string;
+  material: string;
+  imageUrl: string | null;
+  imageAlt: string;
+  imageHint: string;
+  price: number;
+  impactScore: number;
+  co2SavedKg: number;
+}
+
+interface HomeCategoryCard {
+  title: string;
+  eyebrow: string;
+  description: string;
+  helper: string;
+  route: string;
+}
+
+interface TrustCard {
+  title: string;
+  copy: string;
+}
+
+interface ToolCard {
+  id: string;
   eyebrow: string;
   title: string;
-  summary: string;
-  highlight: string;
+  copy: string;
   points: string[];
+  route: string;
+  cta: string;
+}
+
+const emptyCatalogResponse: CatalogResponse = {
+  items: [],
+  total: 0,
+  filtersApplied: {},
 };
 
 @Component({
   selector: 'app-home-page',
-  imports: [CurrencyPipe, DecimalPipe, RouterLink],
+  imports: [DecimalPipe, FormsModule, RouterLink, TndCurrencyPipe, MarketLabelPipe],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePageComponent {
+  protected readonly authService = inject(AuthService);
+
   private readonly storefrontService = inject(StorefrontService);
+  private readonly catalogApiService = inject(CatalogApiService);
+  private readonly cartApiService = inject(CartApiService);
 
   protected readonly homepage = toSignal(this.storefrontService.getHomepage(), {
     initialValue: fallbackStorefront,
   });
 
-  protected readonly navigation = [
-    { label: 'Collection', href: '#collection' },
-    { label: 'Featured', href: '#featured' },
-    { label: 'Artisans', href: '#artisans' },
-    { label: 'Bundle Lab', href: '#bundle' },
-    { label: 'AI Studio', href: '#ai' },
+  protected readonly searchQuery = signal('');
+  protected readonly notice = signal<NoticeState | null>(null);
+
+  protected readonly headerLinks = [
+    { label: 'Categories', href: '#categories' },
+    { label: 'A la une', href: '#featured-products' },
+    { label: 'Nouveautes', href: '#new-arrivals' },
+    { label: 'Artisans', href: '#sell' },
+    { label: 'Outils', href: '#market-tools' },
   ];
 
-  protected readonly quickLinks = [
-    { label: 'Shop catalog', route: '/catalog' },
-    { label: 'Find by photo', route: '/visual-search' },
-    { label: 'Artisan sign in', route: '/auth' },
-    { label: 'Vendor workspace', route: '/vendor' },
+  protected readonly trustCards: TrustCard[] = [
+    {
+      title: 'Produits faits main',
+      copy: 'Des pieces faconnees a petite echelle, loin des standards industriels.',
+    },
+    {
+      title: 'Createurs tunisiens',
+      copy: 'Une selection d ateliers et de savoir-faire ancres en Tunisie.',
+    },
+    {
+      title: 'Paiement securise',
+      copy: 'Un parcours d achat clair pour commander en confiance sur la plateforme.',
+    },
+    {
+      title: 'Livraison locale',
+      copy: 'Des commandes pensees pour des envois regionaux plus simples et plus coherents.',
+    },
   ];
 
-  protected readonly activeInnovation = signal<InnovationMode>('visual-search');
+  protected readonly toolCards: ToolCard[] = [
+    {
+      id: 'visual-search',
+      eyebrow: 'Recherche visuelle',
+      title: "Retrouvez une creation a partir d'une simple photo.",
+      copy:
+        "Chargez l'image d'un objet qui vous inspire et GreenCraft remontera les produits les plus proches du catalogue.",
+      points: [
+        'Recherche par similarite visuelle',
+        'Filtres par artisan, prix et impact',
+        'Parcours ideal pour la decouverte',
+      ],
+      route: '/visual-search',
+      cta: 'Essayer la recherche visuelle',
+    },
+    {
+      id: 'craftmind',
+      eyebrow: 'CraftMind',
+      title: 'Aidez les artisans a mieux raconter leurs creations.',
+      copy:
+        'CraftMind accompagne les vendeurs pour rediger leurs fiches, structurer leurs descriptions et renforcer la clarte de leur sourcing.',
+      points: [
+        'Brouillons de fiches produit',
+        'Aide a la redaction durable',
+        'Support vendeur directement dans la plateforme',
+      ],
+      route: '/vendor',
+      cta: 'Decouvrir CraftMind',
+    },
+  ];
 
-  protected readonly heroProduct = computed<StorefrontProduct>(
-    () => this.homepage().featuredProducts[0],
+  private readonly featuredCatalog = toSignal(
+    this.catalogSection({ sort: 'featured' }),
+    { initialValue: emptyCatalogResponse },
   );
+
+  private readonly newestCatalog = toSignal(
+    this.catalogSection({ sort: 'newest' }),
+    { initialValue: emptyCatalogResponse },
+  );
+
+  private readonly recommendedCatalog = toSignal(
+    this.catalogSection({ sort: 'impact-desc' }),
+    { initialValue: emptyCatalogResponse },
+  );
+
+  private readonly fallbackProductCards = computed(() =>
+    this.homepage().featuredProducts.map((product, index) =>
+      this.mapStorefrontProduct(product, index),
+    ),
+  );
+
+  private readonly featuredSectionProducts = computed(() =>
+    this.buildDistinctSection(
+      this.featuredCatalog().items.map((item) => this.mapCatalogProduct(item)),
+      [],
+      this.fallbackProductCards(),
+    ),
+  );
+
+  private readonly newArrivalSectionProducts = computed(() =>
+    this.buildDistinctSection(
+      this.newestCatalog().items.map((item) => this.mapCatalogProduct(item)),
+      this.featuredSectionProducts().map((product) => product.id),
+      this.rotateProducts(this.fallbackProductCards(), 1),
+    ),
+  );
+
+  private readonly recommendedSectionProducts = computed(() =>
+    this.buildDistinctSection(
+      this.recommendedCatalog().items.map((item) => this.mapCatalogProduct(item)),
+      [
+        ...this.featuredSectionProducts().map((product) => product.id),
+        ...this.newArrivalSectionProducts().map((product) => product.id),
+      ],
+      this.rotateProducts(this.fallbackProductCards(), 2),
+    ),
+  );
+
+  protected readonly heroSpotlight = computed<HomeProductCard>(() => {
+    return this.featuredSectionProducts()[0] ?? this.fallbackProductCards()[0];
+  });
 
   protected readonly leadArtisan = computed<ArtisanProfile>(() => this.homepage().artisans[0]);
 
-  protected readonly supportingArtisans = computed(() => this.homepage().artisans.slice(1));
+  protected readonly categoryCards = computed<HomeCategoryCard[]>(() => {
+    const dynamicCards = this.homepage().categories.map((category) => ({
+      title: category.name,
+      eyebrow: category.materialFocus,
+      description: category.description,
+      helper: category.impactHighlight,
+      route: '/catalog',
+    }));
 
-  protected readonly materialPills = computed(() =>
-    [...new Set(this.homepage().featuredProducts.map((product) => product.material))].slice(0, 3),
-  );
+    const curatedCards: HomeCategoryCard[] = [
+      {
+        title: 'Textile',
+        eyebrow: 'Ateliers du quotidien',
+        description:
+          'Sacs, pochettes et pieces souples pensees pour un usage durable et local.',
+        helper: 'Des matieres revalorisees pour les achats utiles.',
+        route: '/catalog',
+      },
+      {
+        title: 'Accessoires',
+        eyebrow: 'Petites pieces a offrir',
+        description:
+          'Objets de style et essentiels artisanaux faciles a adopter ou a offrir.',
+        helper: 'Une porte d entree simple vers l artisanat tunisien.',
+        route: '/catalog',
+      },
+      {
+        title: 'Cadeaux',
+        eyebrow: 'Selections chaleureuses',
+        description:
+          'Des idees choisies pour les cadeaux de maison, de fete ou de visite.',
+        helper: 'Des creations utiles, memorables et faites main.',
+        route: '/catalog',
+      },
+    ];
 
-  protected readonly bundleSummary = computed(() => {
-    const bundle = this.homepage().featuredProducts;
-    const total = bundle.reduce((sum, item) => sum + item.price, 0);
-    const co2SavedKg = bundle.reduce((sum, item) => sum + item.co2SavedKg, 0);
-    const bundleDiscount = Math.round(total * 0.12);
+    const merged = [...dynamicCards, ...curatedCards];
+    const seen = new Set<string>();
 
-    return {
-      bundle,
-      total,
-      co2SavedKg,
-      bundleDiscount,
-      bundledPrice: total - bundleDiscount,
-    };
+    return merged.filter((card) => {
+      const key = card.title.toLowerCase();
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    }).slice(0, 6);
   });
 
-  protected readonly innovationPanels = {
-    'visual-search': {
-      eyebrow: 'Visual search',
-      title: 'Find sustainable matches from a single inspiration photo.',
-      summary:
-        'Upload a bowl, tote, or lamp you love and GreenCraft will surface the closest handmade alternatives with material-aware filters.',
-      highlight: 'Embeddings stored in pgvector with cosine similarity and faceted refinement.',
-      points: [
-        'Photo upload with nearest-neighbor matching',
-        'Hybrid filtering by material, artisan, price, and impact score',
-        'Cold-start fallback recommendations cached in Redis',
-      ],
-    },
-    craftmind: {
-      eyebrow: 'CraftMind assistant',
-      title: 'Generate artisan-first listing copy and sustainability guidance.',
-      summary:
-        'CraftMind will help vendors write product stories, clarify sourcing claims, and answer buyer questions with streaming responses.',
-      highlight: 'RAG over the product catalog and artisan knowledge base for grounded answers.',
-      points: [
-        'AI-assisted product storytelling and metadata completion',
-        'Buyer chat with impact-aware recommendations',
-        'Catalog knowledge retrieval before checkout or vendor publishing',
-      ],
-    },
-  } satisfies Record<InnovationMode, InnovationPanelViewModel>;
-
-  protected readonly activePanel = computed<InnovationPanelViewModel>(
-    () => this.innovationPanels[this.activeInnovation()],
+  protected readonly featuredProducts = computed(() =>
+    this.filterProducts(this.featuredSectionProducts()),
   );
 
-  protected setInnovation(mode: InnovationMode) {
-    this.activeInnovation.set(mode);
+  protected readonly newArrivalProducts = computed(() =>
+    this.filterProducts(this.newArrivalSectionProducts()),
+  );
+
+  protected readonly recommendedProducts = computed(() =>
+    this.filterProducts(this.recommendedSectionProducts()),
+  );
+
+  protected readonly hasSearchMatches = computed(() => {
+    return (
+      this.featuredProducts().length +
+        this.newArrivalProducts().length +
+        this.recommendedProducts().length >
+      0
+    );
+  });
+
+  protected readonly accountLabel = computed(() => {
+    const user = this.authService.user();
+
+    if (!user) {
+      return 'Connexion / inscription';
+    }
+
+    if (user.role === 'ARTISAN') {
+      return 'Mon atelier';
+    }
+
+    if (user.role === 'BUYER') {
+      return 'Mon compte';
+    }
+
+    return 'Mon espace';
+  });
+
+  protected readonly accountRoute = computed(() => {
+    const user = this.authService.user();
+
+    if (!user) {
+      return '/auth';
+    }
+
+    if (user.role === 'ARTISAN') {
+      return '/vendor';
+    }
+
+    if (user.role === 'BUYER') {
+      return '/orders';
+    }
+
+    return '/auth';
+  });
+
+  protected readonly sellerLabel = computed(() => {
+    const user = this.authService.user();
+
+    return user?.role === 'ARTISAN' ? 'Acceder a mon atelier' : 'Vendre mes creations';
+  });
+
+  constructor() {
+    void this.authService.ensureProfile();
+  }
+
+  protected updateSearch(value: string) {
+    this.searchQuery.set(value);
+  }
+
+  protected applySearch() {
+    this.searchQuery.update((query) => query.trim());
+  }
+
+  protected clearSearch() {
+    this.searchQuery.set('');
+  }
+
+  protected async addToCart(productId: string) {
+    this.notice.set(null);
+
+    try {
+      await firstValueFrom(this.cartApiService.addItem(productId, 1));
+      this.notice.set({
+        tone: 'success',
+        text: 'Le produit a ete ajoute a votre panier.',
+      });
+    } catch {
+      this.notice.set({
+        tone: 'error',
+        text: "Impossible d'ajouter ce produit au panier pour le moment.",
+      });
+    }
+  }
+
+  private catalogSection(filters: CatalogFilters) {
+    return this.catalogApiService.getCatalog(filters).pipe(
+      catchError(() => of(emptyCatalogResponse)),
+    );
+  }
+
+  private buildDistinctSection(
+    primaryItems: HomeProductCard[],
+    excludedIds: string[],
+    fallbackItems: HomeProductCard[],
+  ) {
+    const excluded = new Set(excludedIds);
+    const selected: HomeProductCard[] = [];
+
+    const appendUnique = (items: HomeProductCard[]) => {
+      for (const item of items) {
+        if (selected.length >= 4) {
+          break;
+        }
+
+        if (excluded.has(item.id) || selected.some((entry) => entry.id === item.id)) {
+          continue;
+        }
+
+        selected.push(item);
+      }
+    };
+
+    appendUnique(primaryItems);
+    appendUnique(fallbackItems);
+
+    return selected;
+  }
+
+  private mapCatalogProduct(product: CatalogItem): HomeProductCard {
+    return {
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      description: product.shortDescription,
+      artisanName: product.artisan.studioName,
+      location: product.artisan.location,
+      category: product.category.name,
+      material: product.materials[0]?.name ?? 'Selection artisanale',
+      imageUrl: product.imageUrl,
+      imageAlt: product.imageAlt,
+      imageHint: product.name,
+      price: product.price.amountInCents / 100,
+      impactScore: product.impactScore,
+      co2SavedKg: product.co2SavedKg,
+    };
+  }
+
+  private mapStorefrontProduct(product: StorefrontProduct, index: number): HomeProductCard {
+    const fallbackCategory =
+      this.homepage().categories[index % this.homepage().categories.length]?.name ??
+      'Selection artisanale';
+
+    return {
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      description: product.storySnippet,
+      artisanName: product.artisanName,
+      location: product.region,
+      category: fallbackCategory,
+      material: product.material,
+      imageUrl: product.imageUrl,
+      imageAlt: product.imageAlt,
+      imageHint: product.imageHint,
+      price: product.price,
+      impactScore: product.impactScore,
+      co2SavedKg: product.co2SavedKg,
+    };
+  }
+
+  private rotateProducts(products: HomeProductCard[], offset: number) {
+    if (!products.length) {
+      return [];
+    }
+
+    const safeOffset = offset % products.length;
+    return [...products.slice(safeOffset), ...products.slice(0, safeOffset)];
+  }
+
+  private filterProducts(products: HomeProductCard[]) {
+    const query = this.searchQuery().trim().toLowerCase();
+
+    if (!query) {
+      return products;
+    }
+
+    return products.filter((product) =>
+      [
+        product.name,
+        product.description,
+        product.artisanName,
+        product.category,
+        product.material,
+        product.location,
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(query),
+    );
   }
 }

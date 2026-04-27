@@ -1,9 +1,10 @@
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CartResponse } from '../../models/cart';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { AuthService } from '../../services/auth.service';
 import { CartApiService } from '../../services/cart-api.service';
 
@@ -14,7 +15,7 @@ interface NoticeState {
 
 @Component({
   selector: 'app-cart-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe, DatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, DatePipe, TndCurrencyPipe],
   templateUrl: './cart-page.html',
   styleUrl: './cart-page.scss',
 })
@@ -56,7 +57,7 @@ export class CartPageComponent {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The cart quantity could not be updated.',
+        text: 'La quantite du panier n a pas pu etre mise a jour.',
       });
     } finally {
       this.updatingProductId.set(null);
@@ -72,7 +73,7 @@ export class CartPageComponent {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The cart item could not be removed.',
+        text: "L'article n'a pas pu etre retire du panier.",
       });
     } finally {
       this.updatingProductId.set(null);
@@ -97,12 +98,12 @@ export class CartPageComponent {
       );
       this.notice.set({
         tone: 'success',
-        text: 'Coupon applied to the current bundle.',
+        text: 'Le code promo a ete applique a votre selection.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'That coupon is not valid for the current cart.',
+        text: "Ce code promo n'est pas valable pour ce panier.",
       });
     } finally {
       this.applyingCoupon.set(false);
@@ -117,7 +118,7 @@ export class CartPageComponent {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'The coupon could not be removed.',
+        text: "Le code promo n'a pas pu etre retire.",
       });
     }
   }

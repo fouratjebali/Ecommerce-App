@@ -3,16 +3,17 @@
 <section class="orders-page">
   <header class="page-header panel">
     <div>
-      <p class="eyebrow">Buyer orders</p>
-      <h1>Track confirmed handmade orders, bundled savings, and current fulfillment status.</h1>
+      <p class="eyebrow">Suivi des commandes</p>
+      <h1>Suivez vos commandes artisanales, vos economies de lot et chaque etape de preparation.</h1>
       <p>
-        Sprint 3 introduces a buyer order timeline backed by the new OMS and reservation flow.
+        Chaque commande est presentee comme un registre clair pour vous montrer son etat, ses
+        reductions et la prochaine etape.
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="ghost-link" routerLink="/catalog">Catalog</a>
-      <a class="ghost-link" routerLink="/cart">Cart</a>
+      <a class="ghost-link" routerLink="/catalog">Catalogue</a>
+      <a class="ghost-link" routerLink="/cart">Panier</a>
     </div>
   </header>
 
@@ -21,12 +22,12 @@
   }
 
   @if (loading()) {
-    <div class="panel empty-state">Loading your orders...</div>
+    <div class="panel empty-state">Ouverture de votre carnet de commandes...</div>
   } @else if (!orders().length) {
     <div class="panel empty-state">
-      <h2>No buyer orders yet.</h2>
-      <p>Complete checkout from the cart and your first Sprint 3 order will appear here.</p>
-      <a class="primary-link" routerLink="/catalog">Shop the catalog</a>
+      <h2>Aucune commande pour le moment.</h2>
+      <p>Finalisez votre panier et votre premiere commande apparaitra ici.</p>
+      <a class="primary-link" routerLink="/catalog">Voir le catalogue</a>
     </div>
   } @else {
     <div class="order-list">
@@ -34,33 +35,27 @@
         <article class="order-card panel">
           <div class="order-header">
             <div>
-              <p class="eyebrow">{{ order.status }}</p>
-              <h2>{{ order.orderNumber }}</h2>
+              <p class="eyebrow">{{ order.status | marketLabel }}</p>
+              <h2 class="numeric">{{ order.orderNumber }}</h2>
             </div>
             <div class="order-meta">
-              <span>{{ order.placedAt | date: 'mediumDate' }}</span>
-              <strong>{{
-                order.totalInCents / 100 | currency: order.currency : 'symbol' : '1.0-0'
-              }}</strong>
+              <span class="numeric">{{ order.placedAt | date: 'mediumDate' }}</span>
+              <strong class="order-total">{{ order.totalInCents / 100 | tndCurrency }}</strong>
             </div>
           </div>
 
           <div class="order-summary">
             <div>
-              <span>Shipping</span>
+              <span>Livraison</span>
               <strong>{{ order.shipping.city }}, {{ order.shipping.country }}</strong>
             </div>
             <div>
-              <span>Bundle savings</span>
-              <strong>{{
-                order.bundleDiscountInCents / 100 | currency: order.currency : 'symbol' : '1.0-0'
-              }}</strong>
+              <span>Economies du lot</span>
+              <strong class="amount">{{ order.bundleDiscountInCents / 100 | tndCurrency }}</strong>
             </div>
             <div>
-              <span>Coupon savings</span>
-              <strong>{{
-                order.couponDiscountInCents / 100 | currency: order.currency : 'symbol' : '1.0-0'
-              }}</strong>
+              <span>Reduction promo</span>
+              <strong class="amount">{{ order.couponDiscountInCents / 100 | tndCurrency }}</strong>
             </div>
           </div>
 
@@ -72,10 +67,8 @@
                   <span>{{ item.artisanStudioName }} | {{ item.artisanLocation }}</span>
                 </div>
                 <div class="order-item-meta">
-                  <span>{{ item.status }}</span>
-                  <strong>{{
-                    item.lineTotalInCents / 100 | currency: item.currency : 'symbol' : '1.0-0'
-                  }}</strong>
+                  <span>{{ item.status | marketLabel }}</span>
+                  <strong class="amount">{{ item.lineTotalInCents / 100 | tndCurrency }}</strong>
                 </div>
               </div>
             }
@@ -90,8 +83,8 @@
             >
               {{
                 cancellingOrderNumber() === order.orderNumber
-                  ? 'Cancelling...'
-                  : 'Cancel order'
+                  ? 'Annulation...'
+                  : 'Annuler la commande'
               }}
             </button>
           }

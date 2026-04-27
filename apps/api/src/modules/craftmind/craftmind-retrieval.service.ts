@@ -86,7 +86,7 @@ export class CraftmindRetrievalService {
     ]);
 
     if (!artisanProfile) {
-      throw new NotFoundException('Artisan profile not found for CraftMind.');
+      throw new NotFoundException("Profil artisan introuvable pour CraftMind.");
     }
 
     const scoredDocuments: CraftmindContextDocument[] = [
@@ -101,7 +101,7 @@ export class CraftmindRetrievalService {
           this.buildProductDocument(product, 'catalog-product', tokens),
         ),
       ...materialTags.map((materialTag) => {
-        const snippet = `${materialTag.name} from ${materialTag.origin}. ${materialTag.description}`;
+        const snippet = `${materialTag.name} provenant de ${materialTag.origin}. ${materialTag.description}`;
         return {
           id: materialTag.id,
           kind: 'material' as const,
@@ -134,7 +134,7 @@ export class CraftmindRetrievalService {
 
     return {
       query,
-      summary: `${artisanProfile.studioName} context plus ${rankedDocuments.length} marketplace references selected for "${query}".`,
+      summary: `Contexte de ${artisanProfile.studioName} avec ${rankedDocuments.length} references marketplace selectionnees pour "${query}".`,
       documents,
     };
   }
@@ -170,7 +170,7 @@ export class CraftmindRetrievalService {
     ]);
 
     return {
-      categoryName: category?.name ?? 'Handmade Goods',
+      categoryName: category?.name ?? 'Objets artisanaux',
       ecoRatingLabel: ecoRating?.label ?? null,
       materialNames: materialTags.map((materialTag) => materialTag.name),
     };
@@ -179,7 +179,7 @@ export class CraftmindRetrievalService {
   private requireArtisanProfile(user: AuthenticatedUser) {
     if (!user.artisanProfileId) {
       throw new ForbiddenException(
-        'CraftMind is currently available for artisan accounts only.',
+        "CraftMind est actuellement reserve aux comptes artisan.",
       );
     }
 
@@ -204,7 +204,7 @@ export class CraftmindRetrievalService {
       kind: 'artisan-profile',
       title: artisanProfile.studioName,
       snippet: truncate(
-        `${artisanProfile.headline}. ${artisanProfile.bio} Impact focus: ${artisanProfile.impactStatement}`,
+        `${artisanProfile.headline}. ${artisanProfile.bio} Axe d impact : ${artisanProfile.impactStatement}`,
         220,
       ),
       score: 100 + scoreTextMatch(searchable, tokens),
@@ -220,9 +220,9 @@ export class CraftmindRetrievalService {
     return {
       id: 'craftmind-guidance',
       kind: 'policy',
-      title: 'GreenCraft marketplace guidance',
+      title: 'Guide marketplace GreenCraft',
       snippet:
-        'Keep claims verifiable, foreground sourcing details, connect impact metrics to the actual product story, and avoid promising certifications or materials that are not in context.',
+        "Gardez des affirmations verifiables, mettez en avant les details de sourcing, reliez les mesures d impact a l'histoire reelle du produit et n'annoncez ni certifications ni matieres absentes du contexte.",
       score: 90 + tokens.length,
     };
   }
@@ -253,7 +253,7 @@ export class CraftmindRetrievalService {
       kind,
       title: product.name,
       snippet: truncate(
-        `${product.shortDescription}. ${product.story} Materials: ${product.materials
+        `${product.shortDescription}. ${product.story} Matieres : ${product.materials
           .map((material) => material.materialTag.name)
           .join(', ')}.`,
         220,

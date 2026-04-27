@@ -1,0 +1,226 @@
+@let currentCart = cart();
+@let currentNotice = notice();
+@let draft = checkoutDraft();
+
+<section class="payment-page">
+  <header class="page-header panel">
+    <div>
+      <p class="eyebrow">Paiement simule</p>
+      <h1>Finalisez la commande avec une etape de paiement fictive, sans debit reel.</h1>
+      <p>
+        Cette page met en scene un paiement carte pour votre sprint. Aucune transaction bancaire
+        n est envoyee, mais le parcours reste coherent jusqu a la creation de commande.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a class="ghost-link" routerLink="/checkout">Retour au checkout</a>
+      <a class="ghost-link" routerLink="/cart">Panier</a>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel empty-state">Preparation de votre etape de paiement...</div>
+  } @else if (currentCart; as cart) {
+    @if (!cart.items.length || !draft) {
+      <div class="panel empty-state">
+        <h2>Les informations de paiement ne sont pas disponibles.</h2>
+        <a class="primary-link" routerLink="/checkout">Revenir au checkout</a>
+      </div>
+    } @else {
+      <div class="payment-layout">
+        <form class="panel payment-form" (ngSubmit)="submit()">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Carte de test</p>
+              <h2>Coordonnees de paiement</h2>
+            </div>
+            <span class="status-chip">Aucun debit reel</span>
+          </div>
+
+          <div class="method-grid">
+            <label class="method-card" [class.is-active]="paymentForm.paymentMethod === 'card'">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="card"
+                [(ngModel)]="paymentForm.paymentMethod"
+              />
+              <div>
+                <strong>Carte bancaire</strong>
+                <span>Scenario principal du paiement</span>
+              </div>
+            </label>
+
+            <label class="method-card" [class.is-active]="paymentForm.paymentMethod === 'wallet'">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="wallet"
+                [(ngModel)]="paymentForm.paymentMethod"
+              />
+              <div>
+                <strong>Portefeuille</strong>
+                <span>Affichage fictif pour le sprint</span>
+              </div>
+            </label>
+          </div>
+
+          <label>
+            <span>Nom sur la carte</span>
+            <input
+              type="text"
+              name="cardholderName"
+              [(ngModel)]="paymentForm.cardholderName"
+              required
+            />
+          </label>
+
+          <label>
+            <span>Numero de carte test</span>
+            <input
+              class="numeric"
+              type="text"
+              name="cardNumber"
+              [(ngModel)]="paymentForm.cardNumber"
+              maxlength="19"
+              required
+            />
+          </label>
+
+          <div class="grid-three">
+            <label>
+              <span>Mois</span>
+              <input
+                class="numeric"
+                type="text"
+                name="expiryMonth"
+                [(ngModel)]="paymentForm.expiryMonth"
+                maxlength="2"
+                required
+              />
+            </label>
+
+            <label>
+              <span>Annee</span>
+              <input
+                class="numeric"
+                type="text"
+                name="expiryYear"
+                [(ngModel)]="paymentForm.expiryYear"
+                maxlength="4"
+                required
+              />
+            </label>
+
+            <label>
+              <span>CVV</span>
+              <input
+                class="numeric"
+                type="text"
+                name="securityCode"
+                [(ngModel)]="paymentForm.securityCode"
+                maxlength="4"
+                required
+              />
+            </label>
+          </div>
+
+          <label>
+            <span>Ville de facturation</span>
+            <input
+              type="text"
+              name="billingCity"
+              [(ngModel)]="paymentForm.billingCity"
+              required
+            />
+          </label>
+
+          <div class="simulation-note">
+            <strong>Important</strong>
+            <p>
+              Le formulaire ci-dessus est volontairement faux. Il sert uniquement a illustrer le
+              parcours de paiement pour le sprint 6.
+            </p>
+          </div>
+
+          <label class="checkbox-row">
+            <input
+              type="checkbox"
+              name="acceptSimulation"
+              [(ngModel)]="paymentForm.acceptSimulation"
+            />
+            <span>Je confirme qu il s agit d une simulation sans paiement reel.</span>
+          </label>
+
+          <button class="primary-link submit-button" type="submit" [disabled]="submitting()">
+            {{
+              submitting()
+                ? 'Simulation du paiement...'
+                : 'Simuler le paiement et creer la commande'
+            }}
+          </button>
+        </form>
+
+        <aside class="panel summary-panel">
+          <p class="eyebrow">Recapitulatif</p>
+          <h2><span class="stat-number">{{ cart.summary.itemCount }}</span> articles a regler</h2>
+
+          <div class="delivery-card">
+            <strong>Livraison</strong>
+            <span>{{ draft.shippingName }}</span>
+            <span>{{ draft.shippingAddressLine1 }}</span>
+            @if (draft.shippingAddressLine2) {
+              <span>{{ draft.shippingAddressLine2 }}</span>
+            }
+            <span>{{ draft.shippingPostalCode }} {{ draft.shippingCity }}</span>
+            <span>{{ draft.shippingCountry }}</span>
+          </div>
+
+          <div class="summary-list">
+            @for (item of cart.items; track item.productId) {
+              <div class="summary-item">
+                <div>
+                  <strong>{{ item.name }}</strong>
+                  <span>{{ item.artisan.studioName }}</span>
+                </div>
+                <span class="amount">{{ item.lineTotalInCents / 100 | tndCurrency }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-row">
+            <span>Sous-total</span>
+            <strong class="cart-total">{{ cart.summary.subtotalInCents / 100 | tndCurrency }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Remise lot</span>
+            <strong class="amount">{{ cart.summary.bundleDiscountInCents / 100 | tndCurrency }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Remise promo</span>
+            <strong class="amount">{{ cart.summary.couponDiscountInCents / 100 | tndCurrency }}</strong>
+          </div>
+
+          <div class="summary-total">
+            <span>Total a simuler</span>
+            <strong class="cart-total">{{ cart.summary.totalInCents / 100 | tndCurrency }}</strong>
+          </div>
+        </aside>
+      </div>
+    }
+  } @else {
+    <div class="panel empty-state">
+      <h2>Impossible d ouvrir l etape de paiement.</h2>
+      <a class="primary-link" routerLink="/checkout">Revenir au checkout</a>
+    </div>
+  }
+</section>

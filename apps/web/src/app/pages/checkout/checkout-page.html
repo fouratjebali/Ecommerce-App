@@ -4,17 +4,17 @@
 <section class="checkout-page">
   <header class="page-header panel">
     <div>
-      <p class="eyebrow">OMS checkout</p>
-      <h1>Confirm shipping details and convert the reserved cart into an order.</h1>
+      <p class="eyebrow">Bon de commande</p>
+      <h1>Confirmez vos informations de livraison et transformez ce panier reserve en commande.</h1>
       <p>
-        Sprint 3 checkout validates the buyer session, keeps coupon and bundle pricing, and creates
-        a tracked order record.
+        Verifiez les derniers details, conservez vos economies de lot et lancez l envoi de chaque
+        creation vers chez vous.
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="ghost-link" routerLink="/cart">Back to cart</a>
-      <a class="ghost-link" routerLink="/catalog">Catalog</a>
+      <a class="ghost-link" routerLink="/cart">Retour au panier</a>
+      <a class="ghost-link" routerLink="/catalog">Catalogue</a>
     </div>
   </header>
 
@@ -23,26 +23,26 @@
   }
 
   @if (loading()) {
-    <div class="panel empty-state">Loading checkout details...</div>
+    <div class="panel empty-state">Preparation de votre bon de commande...</div>
   } @else if (currentCart; as cart) {
     @if (!cart.items.length) {
       <div class="panel empty-state">
-        <h2>Your cart is empty.</h2>
-        <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+        <h2>Votre panier est vide.</h2>
+        <a class="primary-link" routerLink="/catalog">Parcourir le catalogue</a>
       </div>
     } @else {
       <div class="checkout-layout">
         <form class="panel checkout-form" (ngSubmit)="submit()">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Shipping details</p>
-              <h2>Buyer information</h2>
+              <p class="eyebrow">Livraison</p>
+              <h2>Informations acheteur</h2>
             </div>
           </div>
 
           <div class="grid-two">
             <label>
-              <span>Full name</span>
+              <span>Nom complet</span>
               <input type="text" name="shippingName" [(ngModel)]="form.shippingName" required />
             </label>
 
@@ -53,7 +53,7 @@
           </div>
 
           <label>
-            <span>Address line 1</span>
+            <span>Adresse ligne 1</span>
             <input
               type="text"
               name="shippingAddressLine1"
@@ -63,7 +63,7 @@
           </label>
 
           <label>
-            <span>Address line 2</span>
+            <span>Adresse ligne 2</span>
             <input
               type="text"
               name="shippingAddressLine2"
@@ -73,12 +73,12 @@
 
           <div class="grid-three">
             <label>
-              <span>City</span>
+              <span>Ville</span>
               <input type="text" name="shippingCity" [(ngModel)]="form.shippingCity" required />
             </label>
 
             <label>
-              <span>Postal code</span>
+              <span>Code postal</span>
               <input
                 type="text"
                 name="shippingPostalCode"
@@ -88,7 +88,7 @@
             </label>
 
             <label>
-              <span>Country</span>
+              <span>Pays</span>
               <input
                 type="text"
                 name="shippingCountry"
@@ -99,18 +99,18 @@
           </div>
 
           <label>
-            <span>Order notes</span>
+            <span>Notes de commande</span>
             <textarea rows="4" name="notes" [(ngModel)]="form.notes"></textarea>
           </label>
 
           <button class="primary-link submit-button" type="submit" [disabled]="submitting()">
-            {{ submitting() ? 'Creating order...' : 'Place order' }}
+            {{ submitting() ? 'Ouverture du paiement...' : 'Continuer vers le paiement' }}
           </button>
         </form>
 
         <aside class="panel summary-panel">
-          <p class="eyebrow">Order summary</p>
-          <h2>{{ cart.summary.itemCount }} items ready</h2>
+          <p class="eyebrow">Resume</p>
+          <h2><span class="stat-number">{{ cart.summary.itemCount }}</span> articles prets</h2>
 
           <div class="summary-list">
             @for (item of cart.items; track item.productId) {
@@ -119,43 +119,37 @@
                   <strong>{{ item.name }}</strong>
                   <span>{{ item.artisan.studioName }}</span>
                 </div>
-                <span>{{
-                  item.lineTotalInCents / 100 | currency: item.price.currency : 'symbol' : '1.0-0'
-                }}</span>
+                <span class="amount">{{ item.lineTotalInCents / 100 | tndCurrency }}</span>
               </div>
             }
           </div>
 
           <div class="summary-row">
-            <span>Subtotal</span>
-            <strong>{{ cart.summary.subtotalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+            <span>Sous-total</span>
+            <strong class="cart-total">{{ cart.summary.subtotalInCents / 100 | tndCurrency }}</strong>
           </div>
 
           <div class="summary-row">
-            <span>Bundle discount</span>
-            <strong>{{
-              cart.summary.bundleDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
-            }}</strong>
+            <span>Remise lot</span>
+            <strong class="amount">{{ cart.summary.bundleDiscountInCents / 100 | tndCurrency }}</strong>
           </div>
 
           <div class="summary-row">
-            <span>Coupon discount</span>
-            <strong>{{
-              cart.summary.couponDiscountInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0'
-            }}</strong>
+            <span>Remise promo</span>
+            <strong class="amount">{{ cart.summary.couponDiscountInCents / 100 | tndCurrency }}</strong>
           </div>
 
           <div class="summary-total">
             <span>Total</span>
-            <strong>{{ cart.summary.totalInCents / 100 | currency: 'TND' : 'symbol' : '1.0-0' }}</strong>
+            <strong class="cart-total">{{ cart.summary.totalInCents / 100 | tndCurrency }}</strong>
           </div>
         </aside>
       </div>
     }
   } @else {
     <div class="panel empty-state">
-      <h2>Your cart is empty.</h2>
-      <a class="primary-link" routerLink="/catalog">Browse catalog</a>
+      <h2>Votre panier est vide.</h2>
+      <a class="primary-link" routerLink="/catalog">Parcourir le catalogue</a>
     </div>
   }
 </section>

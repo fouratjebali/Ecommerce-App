@@ -2,58 +2,58 @@ import { StorefrontSnapshot } from './storefront.types';
 
 export const storefrontSnapshot: StorefrontSnapshot = {
   hero: {
-    eyebrow: 'Traceable Tunisian handmade essentials',
+    eyebrow: 'Artisanat tunisien traceable',
     title:
-      'The Tunisian sustainable marketplace where every craft carries its impact story.',
+      "La marketplace tunisienne ou chaque creation raconte son impact.",
     subtitle:
-      'GreenCraft Tunisia connects eco-conscious buyers with artisans across Nabeul, Sousse, Tozeur, and beyond using reclaimed, low-waste, and naturally sourced materials.',
-    primaryCta: 'Explore the spring collection',
-    secondaryCta: 'Meet the artisans',
+      'GreenCraft Tunisia rapproche les acheteurs attentifs et les artisans de Nabeul, Sousse, Tozeur et d ailleurs, autour de matieres revalorisees, durables et sourcees avec soin.',
+    primaryCta: 'Explorer la collection',
+    secondaryCta: 'Rencontrer les artisans',
   },
   metrics: [
     {
-      label: 'Verified artisans',
+      label: 'Artisans verifies',
       value: '64',
       detail:
-        'Studios screened for sustainable sourcing and transparent storytelling.',
+        'Ateliers verifies pour leur sourcing responsable et leur transparence.',
     },
     {
-      label: 'CO2 saved this season',
+      label: 'CO2 economise cette saison',
       value: '1.8t',
       detail:
-        'Compared with mass-produced alternatives across active catalogue items.',
+        'Compare aux alternatives industrielles sur les pieces actives du catalogue.',
     },
     {
-      label: 'Average impact score',
+      label: "Score d'impact moyen",
       value: '92/100',
       detail:
-        'Blends sourcing, packaging, durability, and regional delivery efficiency.',
+        'Prend en compte le sourcing, l emballage, la durabilite et l efficacite des livraisons.',
     },
   ],
   categories: [
     {
       slug: 'tableware',
-      name: 'Tableware',
+      name: 'Art de la table',
       description:
-        'Hand-thrown ceramics and reusable serving pieces for slow living.',
-      materialFocus: 'Clay, plant-based glaze',
-      impactHighlight: 'Local kiln partners cut shipping distance by 38%',
+        'Ceramiques tournees a la main et pieces de service reutilisables pour un quotidien plus lent.',
+      materialFocus: 'Argile, email vegetal',
+      impactHighlight: 'Les fours partenaires locaux reduisent la distance de transport de 38 %',
     },
     {
       slug: 'wearables',
-      name: 'Wearables',
+      name: 'Accessoires textiles',
       description:
-        'Repairable bags, scarves, and accessories made from deadstock textiles.',
-      materialFocus: 'Organic cotton, reclaimed canvas',
-      impactHighlight: 'Deadstock-first sourcing prevents landfill overflow',
+        'Sacs, echarpes et accessoires reparables confectionnes a partir de textiles revalorises.',
+      materialFocus: 'Coton biologique, toile revalorisee',
+      impactHighlight: 'Le recours aux stocks dormants evite des dechets supplementaires',
     },
     {
       slug: 'home-objects',
-      name: 'Home Objects',
+      name: 'Objets pour la maison',
       description:
-        'Statement decor built from salvaged wood and natural fibers.',
-      materialFocus: 'Recovered oak, jute, cork',
-      impactHighlight: 'Durability scoring rewards long-life craftsmanship',
+        'Objets de decoration a forte presence, fabriques en bois recupere et fibres naturelles.',
+      materialFocus: 'Chene recupere, jute, liege',
+      impactHighlight: 'Le score de durabilite valorise les pieces concues pour durer longtemps',
     },
   ],
   featuredProducts: [
@@ -63,16 +63,16 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       name: 'Bloom Serving Bowl',
       artisanName: 'Noura Clay Studio',
       region: 'Nabeul, Tunisia',
-      material: 'Recycled stoneware',
+      material: 'Gres recycle',
       price: 58,
       currency: 'TND',
       co2SavedKg: 5.6,
       impactScore: 95,
       storySnippet:
-        'Thrown in small batches and fired with an energy-sharing kiln schedule.',
+        'Tournee en petite serie et cuite selon un planning de four mutualise entre ateliers.',
       imageUrl: null,
       imageAlt: 'Bloom Serving Bowl',
-      imageHint: 'Terracotta bowl with speckled glaze',
+      imageHint: 'Bol terracotta a email mouchete',
     },
     {
       id: 'prod-cinder-tote',
@@ -80,16 +80,16 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       name: 'Cinder Market Tote',
       artisanName: 'Atelier Olive',
       region: 'Sousse, Tunisia',
-      material: 'Deadstock canvas',
+      material: 'Toile revalorisee',
       price: 72,
       currency: 'TND',
       co2SavedKg: 3.8,
       impactScore: 91,
       storySnippet:
-        'Cut from reclaimed sailcloth remnants and reinforced for daily carry.',
+        'Decoupe dans des chutes de toile recuperee et renforcee pour un usage quotidien.',
       imageUrl: null,
       imageAlt: 'Cinder Market Tote',
-      imageHint: 'Structured olive canvas tote bag',
+      imageHint: 'Sac cabas structure en toile olive',
     },
     {
       id: 'prod-luna-lamp',
@@ -97,16 +97,16 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       name: 'Luna Reed Lamp',
       artisanName: 'Nile Loom Works',
       region: 'Tozeur, Tunisia',
-      material: 'River reed and ash wood',
+      material: 'Roseau de riviere et frene',
       price: 138,
       currency: 'TND',
       co2SavedKg: 9.4,
       impactScore: 96,
       storySnippet:
-        'Woven over a lightweight ash frame finished with biodegradable oil.',
+        'Tissee sur une structure legere en frene et finie avec une huile biodegradable.',
       imageUrl: null,
       imageAlt: 'Luna Reed Lamp',
-      imageHint: 'Warm woven lamp with organic shape',
+      imageHint: 'Lampe tissee aux lignes organiques',
     },
   ],
   artisans: [
@@ -115,50 +115,50 @@ export const storefrontSnapshot: StorefrontSnapshot = {
       name: 'Noura Benali',
       studio: 'Noura Clay Studio',
       location: 'Nabeul, Tunisia',
-      specialty: 'Small-batch ceramics',
-      impactBadge: 'Kiln co-op partner',
+      specialty: 'Ceramique en petite serie',
+      impactBadge: 'Partenaire de four mutualise',
       story:
-        'Noura works with reclaimed clay offcuts and shares firing schedules with neighboring studios to reduce energy waste.',
+        'Noura travaille des chutes d argile recuperees et partage ses cuissons avec les ateliers voisins pour limiter la depense energetique.',
     },
     {
       id: 'artisan-selene',
       name: 'Selene Marchand',
       studio: 'Atelier Olive',
       location: 'Sousse, Tunisia',
-      specialty: 'Textile upcycling',
-      impactBadge: 'Deadstock rescue leader',
+      specialty: 'Upcycling textile',
+      impactBadge: 'Specialiste des stocks dormants',
       story:
-        'Selene transforms marine canvas and unused garment rolls into repairable bags built to last for years.',
+        'Selene transforme des toiles marines et des rouleaux inutilises en sacs reparables concus pour durer des annees.',
     },
     {
       id: 'artisan-khaled',
       name: 'Khaled Fares',
       studio: 'Nile Loom Works',
       location: 'Tozeur, Tunisia',
-      specialty: 'Natural fiber lighting',
-      impactBadge: 'Low-waste weaving',
+      specialty: 'Luminaires en fibres naturelles',
+      impactBadge: 'Tissage faible dechet',
       story:
-        'Khaled partners with local reed harvesters and documents every material source inside the product impact passport.',
+        'Khaled collabore avec des recolteurs de roseaux locaux et documente chaque origine de matiere dans le passeport produit.',
     },
   ],
   initiatives: [
     {
-      title: 'Carbon-aware catalogue',
+      title: 'Catalogue sensible au carbone',
       summary:
-        'Each listing carries a measurable impact score, material provenance, and estimated CO2 savings.',
-      milestone: 'Sprint 2 foundation',
+        'Chaque fiche affiche un score d impact mesurable, la provenance des matieres et une estimation du CO2 economise.',
+      milestone: 'Base du produit',
     },
     {
-      title: 'Bundle builder',
+      title: 'Composeur de lots',
       summary:
-        'Shoppers will compose room-ready bundles and watch the shared packaging savings update in real time.',
-      milestone: 'Sprint 3 target',
+        'Les acheteurs composent des ensembles harmonieux et voient les economies d emballage evoluer en temps reel.',
+      milestone: 'Parcours panier',
     },
     {
-      title: 'Visual search',
+      title: 'Recherche visuelle',
       summary:
-        'Customers will upload a photo and match similar products using embeddings stored in pgvector.',
-      milestone: 'Sprint 4 differentiator',
+        'Les clients televersent une photo et retrouvent des produits similaires grace aux embeddings stockes dans pgvector.',
+      milestone: 'Signature IA',
     },
   ],
 };

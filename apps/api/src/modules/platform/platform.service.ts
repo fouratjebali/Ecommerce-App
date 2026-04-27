@@ -31,26 +31,26 @@ export class PlatformService {
     return {
       metrics: [
         {
-          label: 'Verified artisans',
+          label: 'Artisans verifies',
           value: String(verifiedArtisans),
           detail:
-            'Studios screened for sustainable sourcing and transparent storytelling.',
+            'Ateliers verifies pour leur sourcing responsable et leur transparence.',
         },
         {
-          label: 'CO2 saved this season',
+          label: 'CO2 economise cette saison',
           value: `${(publishedProductStats._sum.co2SavedKg ?? 0).toFixed(1)}kg`,
           detail:
-            'Compared with mass-produced alternatives across active catalogue items.',
+            'Compare aux alternatives industrielles sur les pieces actives du catalogue.',
         },
         {
-          label: 'Average impact score',
+          label: "Score d'impact moyen",
           value: `${Math.round(publishedProductStats._avg.impactScore ?? 0)}/100`,
           detail:
-            'Blends sourcing, packaging, durability, and regional delivery efficiency.',
+            'Prend en compte le sourcing, l emballage, la durabilite et l efficacite des livraisons.',
         },
       ],
       initiatives: storefrontSnapshot.initiatives,
-      roadmapStatus: 'Sprint 2 auth and catalog foundation in progress',
+      roadmapStatus: 'Fondations auth et catalogue en progression',
     };
   }
 }

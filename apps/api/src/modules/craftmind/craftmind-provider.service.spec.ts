@@ -46,7 +46,7 @@ describe('CraftmindProviderService', () => {
     const result = await service.generateChat(baseChatRequest);
 
     expect(result.provider).toBe('local');
-    expect(result.text).toContain('CraftMind reviewed your prompt');
+    expect(result.text).toContain('CraftMind a analyse votre demande');
     expect(result.text).toContain('Bloom Serving Bowl');
   });
 

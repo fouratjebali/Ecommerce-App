@@ -2,7 +2,7 @@
   display: block;
 }
 
-.checkout-page {
+.payment-page {
   width: min(100%, 1360px);
   margin: 0 auto;
   padding: 2rem 1.5rem 3.25rem;
@@ -64,7 +64,7 @@
 }
 
 .page-header h1,
-.checkout-form h2,
+.payment-form h2,
 .summary-panel h2,
 .empty-state h2 {
   margin: 0;
@@ -81,7 +81,10 @@
 .page-header p,
 .empty-state,
 .summary-item span,
-.summary-item strong {
+.summary-item strong,
+.method-card span,
+.delivery-card span,
+.simulation-note p {
   color: var(--color-muted-ink);
   line-height: 1.75;
 }
@@ -128,53 +131,121 @@
     linear-gradient(180deg, rgba(255, 247, 240, 0.98), rgba(252, 229, 217, 0.92));
 }
 
-.checkout-layout {
+.payment-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
   gap: 1rem;
   margin-top: 1rem;
 }
 
-.checkout-form,
+.payment-form,
 .summary-panel {
   padding: 1.5rem;
 }
 
-.checkout-form {
+.payment-form {
   display: grid;
   gap: 0.95rem;
 }
 
-.checkout-form label {
+.payment-form label {
   display: grid;
   gap: 0.4rem;
 }
 
-.checkout-form span,
+.payment-form span,
 .summary-row span,
 .summary-total span {
   color: var(--color-muted-ink);
 }
 
-.checkout-form input,
-.checkout-form textarea {
+.payment-form input,
+.payment-form textarea {
   width: 100%;
   padding: 0.9rem 1rem;
   border-radius: 1rem;
 }
 
-.grid-two,
+.method-grid,
 .grid-three {
   display: grid;
   gap: 0.8rem;
 }
 
-.grid-two {
+.method-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .grid-three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.method-card {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid rgba(75, 46, 30, 0.14);
+  border-radius: 1.2rem;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
+}
+
+.method-card.is-active {
+  border-color: rgba(166, 75, 42, 0.34);
+  box-shadow:
+    0 0 0 1px rgba(166, 75, 42, 0.14),
+    0 12px 24px rgba(75, 46, 30, 0.08);
+}
+
+.method-card input {
+  width: auto;
+  margin-top: 0.2rem;
+}
+
+.method-card div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(75, 46, 30, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 250, 242, 0.82);
+  color: var(--color-walnut-soft);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.simulation-note,
+.delivery-card {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid rgba(75, 46, 30, 0.1);
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
+}
+
+.simulation-note strong,
+.delivery-card strong {
+  color: var(--color-walnut);
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.2rem 0;
+}
+
+.checkbox-row input {
+  width: auto;
+  margin-top: 0.25rem;
 }
 
 .submit-button {
@@ -221,24 +292,25 @@
 }
 
 @media (max-width: 1080px) {
-  .checkout-layout {
+  .payment-layout {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 760px) {
-  .checkout-page {
+  .payment-page {
     padding-inline: 1rem;
   }
 
   .page-header,
   .header-actions,
   .section-heading,
-  .summary-item {
+  .summary-item,
+  .checkbox-row {
     flex-direction: column;
   }
 
-  .grid-two,
+  .method-grid,
   .grid-three {
     grid-template-columns: 1fr;
   }

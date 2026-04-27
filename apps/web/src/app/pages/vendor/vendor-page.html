@@ -7,24 +7,25 @@
 <section class="vendor-page">
   <header class="vendor-header panel">
     <div>
-      <p class="eyebrow">Vendor dashboard</p>
-      <h1>Manage your artisan studio, publish products, and work with CraftMind.</h1>
+      <p class="eyebrow">Registre d'atelier</p>
+      <h1>Gerez votre atelier artisanal, publiez vos produits et affinez vos fiches avec CraftMind.</h1>
       <p>
-        This workspace is connected to protected NestJS endpoints for vendor profile updates,
-        product publishing, and Sprint 5 CraftMind guidance.
+        Retrouvez dans un meme espace les informations de votre atelier, vos brouillons produits
+        et le suivi de vos commandes.
       </p>
     </div>
 
     <div class="header-actions">
       <div class="account-pill">
-        <strong>{{ currentUser?.fullName ?? 'Artisan account' }}</strong>
+        <strong>{{ currentUser?.fullName ?? 'Compte artisan' }}</strong>
         <span>{{
-          currentDashboard ? currentDashboard.profile.verificationStatus : 'PENDING'
+          (currentDashboard ? currentDashboard.profile.verificationStatus : 'PENDING')
+            | marketLabel
         }}</span>
       </div>
-      <a class="ghost-link" routerLink="/">Home</a>
-      <a class="ghost-link" routerLink="/catalog">Catalog</a>
-      <button type="button" class="primary-link" (click)="logout()">Log out</button>
+      <a class="ghost-link" routerLink="/">Accueil</a>
+      <a class="ghost-link" routerLink="/catalog">Catalogue</a>
+      <button type="button" class="primary-link" (click)="logout()">Se deconnecter</button>
     </div>
   </header>
 
@@ -35,37 +36,41 @@
   }
 
   @if (loading()) {
-    <div class="panel loading-panel">Loading the vendor workspace...</div>
+    <div class="panel loading-panel">Ouverture de votre espace atelier...</div>
   } @else {
     <section class="metrics-grid">
       <article class="metric-card panel">
-        <span>Total products</span>
-        <strong>{{ currentDashboard ? currentDashboard.metrics.totalProducts : 0 }}</strong>
-        <p>All artisan SKUs currently linked to your studio.</p>
+        <span>Total produits</span>
+        <strong class="stat-number">{{
+          currentDashboard ? currentDashboard.metrics.totalProducts : 0
+        }}</strong>
+        <p>Toutes les references artisanales actuellement rattachees a votre atelier.</p>
       </article>
 
       <article class="metric-card panel">
-        <span>Published</span>
-        <strong>{{ currentDashboard ? currentDashboard.metrics.publishedProducts : 0 }}</strong>
-        <p>Live products available in the public marketplace catalog.</p>
+        <span>Publies</span>
+        <strong class="stat-number">{{
+          currentDashboard ? currentDashboard.metrics.publishedProducts : 0
+        }}</strong>
+        <p>Produits visibles dans le catalogue public GreenCraft.</p>
       </article>
 
       <article class="metric-card panel">
-        <span>Average impact</span>
-        <strong
+        <span>Impact moyen</span>
+        <strong class="stat-number"
           >{{ currentDashboard ? currentDashboard.metrics.averageImpactScore : 0 }}/100</strong
         >
-        <p>Average sustainability score across your current assortment.</p>
+        <p>Score de durabilite moyen sur votre assortiment actuel.</p>
       </article>
 
       <article class="metric-card panel">
-        <span>Total CO2 saved</span>
-        <strong
+        <span>CO2 total economise</span>
+        <strong class="stat-number"
           >{{
             (currentDashboard ? currentDashboard.metrics.totalCo2SavedKg : 0) | number: '1.1-1'
-          }}kg</strong
+          }} kg</strong
         >
-        <p>Current cumulative savings surfaced by your published stories.</p>
+        <p>Economies cumulees actuellement affichees dans vos fiches publiees.</p>
       </article>
     </section>
 
@@ -73,39 +78,39 @@
       <article class="panel profile-panel">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">Studio profile</p>
-            <h2>Artisan identity</h2>
+            <p class="eyebrow">Profil atelier</p>
+            <h2>Identite artisanale</h2>
           </div>
           <span class="meta-chip">{{
-            currentDashboard ? currentDashboard.profile.location : 'Location pending'
+            currentDashboard ? currentDashboard.profile.location : 'Localisation en attente'
           }}</span>
         </div>
 
         <form class="panel-form" (ngSubmit)="saveProfile()">
           <label>
-            <span>Studio name</span>
+            <span>Nom de l'atelier</span>
             <input type="text" name="studioName" [(ngModel)]="profileForm.studioName" required />
           </label>
 
           <div class="grid-two">
             <label>
-              <span>Headline</span>
+              <span>Accroche</span>
               <input type="text" name="headline" [(ngModel)]="profileForm.headline" required />
             </label>
 
             <label>
-              <span>Location</span>
+              <span>Localisation</span>
               <input type="text" name="location" [(ngModel)]="profileForm.location" required />
             </label>
           </div>
 
           <label>
-            <span>Studio bio</span>
+            <span>Presentation de l'atelier</span>
             <textarea rows="5" name="bio" [(ngModel)]="profileForm.bio" required></textarea>
           </label>
 
           <label>
-            <span>Impact statement</span>
+            <span>Engagement d'impact</span>
             <textarea
               rows="4"
               name="impactStatement"
@@ -115,7 +120,7 @@
           </label>
 
           <button class="primary-button" type="submit" [disabled]="savingProfile()">
-            {{ savingProfile() ? 'Saving profile...' : 'Save studio profile' }}
+            {{ savingProfile() ? 'Enregistrement...' : "Enregistrer le profil de l'atelier" }}
           </button>
         </form>
       </article>
@@ -123,16 +128,16 @@
       <article class="panel composer-panel">
         <div class="panel-heading">
           <div>
-            <p class="eyebrow">Product composer</p>
-            <h2>{{ editingProductId() ? 'Edit product' : 'Create a new product' }}</h2>
+            <p class="eyebrow">Editeur produit</p>
+            <h2>{{ editingProductId() ? 'Modifier le produit' : 'Creer un nouveau produit' }}</h2>
           </div>
-          <button type="button" class="ghost-button" (click)="startNewProduct()">New draft</button>
+          <button type="button" class="ghost-button" (click)="startNewProduct()">Nouvelle ebauche</button>
         </div>
 
         <form class="panel-form" (ngSubmit)="saveProduct()">
           <div class="grid-two">
             <label>
-              <span>Product name</span>
+              <span>Nom du produit</span>
               <input type="text" name="productName" [(ngModel)]="productForm.name" required />
             </label>
 
@@ -143,7 +148,7 @@
           </div>
 
           <label>
-            <span>Short description</span>
+            <span>Description courte</span>
             <input
               type="text"
               name="shortDescription"
@@ -163,36 +168,36 @@
           </label>
 
           <label>
-            <span>Artisan story</span>
+            <span>Histoire artisanale</span>
             <textarea rows="4" name="story" [(ngModel)]="productForm.story" required></textarea>
           </label>
 
           <div class="grid-three">
             <label>
-              <span>Category</span>
+              <span>Categorie</span>
               <select name="categoryId" [(ngModel)]="productForm.categoryId" required>
                 @for (category of currentOptions?.categories ?? []; track category.id) {
-                  <option [value]="category.id">{{ category.name }}</option>
+                  <option [value]="category.id">{{ category.name | marketLabel }}</option>
                 }
               </select>
             </label>
 
             <label>
-              <span>Eco rating</span>
+              <span>Note eco</span>
               <select name="ecoRatingId" [(ngModel)]="productForm.ecoRatingId" required>
                 @for (ecoRating of currentOptions?.ecoRatings ?? []; track ecoRating.id) {
                   <option [value]="ecoRating.id">
-                    {{ ecoRating.label }} ({{ ecoRating.score }})
+                    {{ ecoRating.label | marketLabel }} ({{ ecoRating.score }})
                   </option>
                 }
               </select>
             </label>
 
             <label>
-              <span>Status</span>
+              <span>Statut</span>
               <select name="status" [(ngModel)]="productForm.status" required>
                 @for (status of currentOptions?.productStatuses ?? []; track status) {
-                  <option [value]="status">{{ status }}</option>
+                  <option [value]="status">{{ status | marketLabel }}</option>
                 }
               </select>
             </label>
@@ -200,11 +205,12 @@
 
           <div class="grid-four">
             <label>
-              <span>Price (TND)</span>
+              <span>Prix (TND)</span>
               <input
+                class="numeric"
                 type="number"
                 min="1"
-                step="0.01"
+                step="0.001"
                 name="price"
                 [(ngModel)]="productForm.price"
                 required
@@ -212,8 +218,9 @@
             </label>
 
             <label>
-              <span>Inventory</span>
+              <span>Stock</span>
               <input
+                class="numeric"
                 type="number"
                 min="0"
                 name="inventoryCount"
@@ -223,8 +230,9 @@
             </label>
 
             <label>
-              <span>Impact score</span>
+              <span>Score d'impact</span>
               <input
+                class="numeric"
                 type="number"
                 min="0"
                 max="100"
@@ -235,8 +243,9 @@
             </label>
 
             <label>
-              <span>CO2 saved (kg)</span>
+              <span>CO2 economise (kg)</span>
               <input
+                class="numeric"
                 type="number"
                 min="0"
                 step="0.1"
@@ -249,8 +258,9 @@
 
           <div class="grid-three">
             <label>
-              <span>Lead time (days)</span>
+              <span>Delai (jours)</span>
               <input
+                class="numeric"
                 type="number"
                 min="1"
                 name="leadTimeDays"
@@ -260,32 +270,32 @@
             </label>
 
             <label>
-              <span>Currency</span>
+              <span>Devise</span>
               <input type="text" name="currency" [(ngModel)]="productForm.currency" required />
             </label>
 
             <label class="checkbox-field">
-              <span>Featured placement</span>
+              <span>Mise en avant</span>
               <input type="checkbox" name="isFeatured" [(ngModel)]="productForm.isFeatured" />
             </label>
           </div>
 
           <div class="grid-two">
             <label>
-              <span>Image URL</span>
+              <span>URL de l'image</span>
               <input type="url" name="imageUrl" [(ngModel)]="productForm.imageUrl" required />
             </label>
 
             <label>
-              <span>Image alt text</span>
+              <span>Texte alternatif</span>
               <input type="text" name="imageAlt" [(ngModel)]="productForm.imageAlt" required />
             </label>
           </div>
 
           <div class="form-block">
             <div class="block-heading">
-              <strong>Materials</strong>
-              <span>Select every sourcing tag that applies.</span>
+              <strong>Matieres</strong>
+              <span>Selectionnez toutes les matieres qui s'appliquent.</span>
             </div>
 
             <div class="chip-grid">
@@ -297,7 +307,7 @@
                     [ngModel]="productForm.materialIds.includes(material.id)"
                     (ngModelChange)="toggleMaterial(material.id, $event)"
                   />
-                  <span>{{ material.name }}</span>
+                  <span>{{ material.name | marketLabel }}</span>
                 </label>
               }
             </div>
@@ -306,8 +316,8 @@
           @if (currentOptions?.attributeDefinitions?.length) {
             <div class="form-block">
               <div class="block-heading">
-                <strong>Product attributes</strong>
-                <span>Faceted attributes used by the catalog and product filters.</span>
+                <strong>Attributs produit</strong>
+                <span>Attributs utilises dans le catalogue et les filtres produit.</span>
               </div>
 
               <div class="attribute-grid">
@@ -316,7 +326,7 @@
                   track definition.id
                 ) {
                   <label>
-                    <span>{{ definition.label }}</span>
+                    <span>{{ definition.label | marketLabel }}</span>
 
                     @if (definition.options.length) {
                       <select
@@ -324,9 +334,9 @@
                         [ngModel]="readAttributeOption(definition.id)"
                         (ngModelChange)="updateAttributeOption(definition.id, $event)"
                       >
-                        <option value="">Select an option</option>
+                        <option value="">Selectionnez une option</option>
                         @for (option of definition.options; track option.id) {
-                          <option [value]="option.id">{{ option.label }}</option>
+                          <option [value]="option.id">{{ option.label | marketLabel }}</option>
                         }
                       </select>
                     } @else if (definition.kind === 'BOOLEAN') {
@@ -337,10 +347,11 @@
                           [ngModel]="readAttributeBoolean(definition.id)"
                           (ngModelChange)="updateAttributeBoolean(definition.id, $event)"
                         />
-                        <small>Enabled</small>
+                        <small>Active</small>
                       </span>
                     } @else if (definition.kind === 'NUMBER') {
                       <input
+                        class="numeric"
                         type="number"
                         [name]="'attribute-' + definition.id"
                         [ngModel]="readAttributeNumber(definition.id)"
@@ -363,10 +374,10 @@
           <button class="primary-button" type="submit" [disabled]="savingProduct()">
             {{
               savingProduct()
-                ? 'Saving product...'
+                ? 'Enregistrement du produit...'
                 : editingProductId()
-                  ? 'Update product'
-                  : 'Create product'
+                  ? 'Mettre a jour le produit'
+                  : 'Creer le produit'
             }}
           </button>
         </form>
@@ -376,8 +387,8 @@
     <section class="panel craftmind-panel">
       <div class="panel-heading">
         <div>
-          <p class="eyebrow">CraftMind studio</p>
-          <h2>Catalog-aware chat and listing generation</h2>
+          <p class="eyebrow">Atelier CraftMind</p>
+          <h2>Accompagnement contextuel et generation de fiches</h2>
         </div>
 
         <div class="craftmind-header-actions">
@@ -385,7 +396,7 @@
             <span class="meta-chip">{{ craftmindProviderSummary() }}</span>
           }
           <button type="button" class="ghost-button" (click)="seedCraftmindPromptFromProductForm()">
-            Use current form
+            Utiliser le formulaire actuel
           </button>
         </div>
       </div>
@@ -393,12 +404,12 @@
       <div class="craftmind-layout">
         <div class="craftmind-chat-column">
           <label class="craftmind-prompt">
-            <span>Brief or question</span>
+            <span>Brief ou question</span>
             <textarea
               rows="4"
               name="craftmindPrompt"
               [(ngModel)]="craftmindPrompt"
-              placeholder="Ask CraftMind to improve a title, sharpen the sustainability story, or generate a full listing draft."
+              placeholder="Demandez a CraftMind d'ameliorer un titre, de renforcer l'histoire durable ou de generer une fiche complete."
             ></textarea>
           </label>
 
@@ -409,7 +420,7 @@
               (click)="sendCraftmindPrompt()"
               [disabled]="craftmindLoading()"
             >
-              {{ craftmindLoading() ? 'Streaming reply...' : 'Stream reply' }}
+              {{ craftmindLoading() ? 'Generation en cours...' : 'Envoyer la question' }}
             </button>
 
             <button
@@ -419,7 +430,9 @@
               [disabled]="generatingListingDraft()"
             >
               {{
-                generatingListingDraft() ? 'Generating draft...' : 'Generate listing draft'
+                generatingListingDraft()
+                  ? 'Generation du brouillon...'
+                  : 'Generer un brouillon de fiche'
               }}
             </button>
           </div>
@@ -437,7 +450,7 @@
           <div class="craftmind-thread">
             @for (message of craftmindMessages(); track message.id) {
               <article class="craftmind-message" [class.is-user]="message.role === 'user'">
-                <span class="card-label">{{ message.role === 'user' ? 'You' : 'CraftMind' }}</span>
+                <span class="card-label">{{ message.role === 'user' ? 'Vous' : 'CraftMind' }}</span>
                 <p>{{ message.content }}</p>
               </article>
             }
@@ -445,7 +458,7 @@
             @if (craftmindLoading() || craftmindStreamingReply()) {
               <article class="craftmind-message">
                 <span class="card-label">CraftMind</span>
-                <p>{{ craftmindStreamingReply() || 'Building a grounded reply...' }}</p>
+                <p>{{ craftmindStreamingReply() || 'Preparation d une reponse contextualisee...' }}</p>
               </article>
             }
           </div>
@@ -454,15 +467,15 @@
         <aside class="craftmind-side-column">
           <section class="craftmind-context panel-surface">
             <div class="block-heading">
-              <strong>Retrieved context</strong>
+              <strong>Contexte retrouve</strong>
               <span>{{
-                craftmindContextSummary() ?? 'CraftMind will surface artisan and catalog references here.'
+                craftmindContextSummary() ?? 'CraftMind affichera ici les references atelier et catalogue utilisees.'
               }}</span>
             </div>
 
             @if (!craftmindContextDocuments().length) {
               <div class="empty-state compact-empty-state">
-                Ask a question or generate a draft to inspect the RAG context bundle.
+                Posez une question ou generez un brouillon pour consulter le contexte RAG.
               </div>
             } @else {
               <div class="craftmind-context-list">
@@ -483,24 +496,25 @@
 
           <section class="craftmind-draft panel-surface">
             <div class="block-heading">
-              <strong>Listing draft</strong>
-              <span>Generate a draft, review it, then apply the copy into the composer.</span>
+              <strong>Brouillon de fiche</strong>
+              <span>Generez un brouillon, relisez-le, puis appliquez-le dans l'editeur produit.</span>
             </div>
 
             @if (!currentCraftmindDraft) {
               <div class="empty-state compact-empty-state">
-                No CraftMind draft yet. Generate one from the current form or a custom brief.
+                Aucun brouillon CraftMind pour le moment. Generez-en un depuis le formulaire actuel
+                ou un brief libre.
               </div>
             } @else {
               <div class="draft-preview">
                 <div class="draft-copy">
-                  <span class="card-label">Suggested name</span>
+                  <span class="card-label">Nom suggere</span>
                   <h3>{{ currentCraftmindDraft.name }}</h3>
                   <p>{{ currentCraftmindDraft.shortDescription }}</p>
                 </div>
 
                 <div class="draft-copy">
-                  <span class="card-label">Story direction</span>
+                  <span class="card-label">Direction narrative</span>
                   <p>{{ currentCraftmindDraft.story }}</p>
                 </div>
 
@@ -511,7 +525,7 @@
                 </div>
 
                 <div class="draft-checklist">
-                  <span class="card-label">Launch checklist</span>
+                  <span class="card-label">Checklist de mise en ligne</span>
                   <ul>
                     @for (
                       checklistItem of currentCraftmindDraft.launchChecklist;
@@ -523,7 +537,7 @@
                 </div>
 
                 <button type="button" class="primary-button" (click)="applyCraftmindDraft()">
-                  Apply draft to product form
+                  Appliquer le brouillon au formulaire
                 </button>
               </div>
             }
@@ -535,25 +549,25 @@
     <section class="panel inventory-panel">
       <div class="panel-heading">
         <div>
-          <p class="eyebrow">Current inventory</p>
-          <h2>Artisan catalog overview</h2>
+          <p class="eyebrow">Inventaire actuel</p>
+          <h2>Vue d'ensemble du catalogue artisan</h2>
         </div>
-        <span class="meta-chip">{{ products().length }} products</span>
+        <span class="meta-chip"><span class="numeric">{{ products().length }}</span> produits</span>
       </div>
 
       @if (!products().length) {
-        <div class="empty-state">No products have been created for this artisan yet.</div>
+        <div class="empty-state">Aucun produit n'a encore ete cree pour cet artisan.</div>
       } @else {
         <div class="product-list">
           @for (product of products(); track product.id) {
             <article class="inventory-card">
               <div class="inventory-header">
                 <div>
-                  <span class="status-badge">{{ product.status }}</span>
+                  <span class="status-badge">{{ product.status | marketLabel }}</span>
                   <h3>{{ product.name }}</h3>
                 </div>
                 <button type="button" class="ghost-button" (click)="editProduct(product)">
-                  Edit
+                  Modifier
                 </button>
               </div>
 
@@ -561,18 +575,16 @@
 
               <div class="inventory-metrics">
                 <div>
-                  <span>Price</span>
-                  <strong>{{
-                    product.priceInCents / 100 | currency: product.currency : 'symbol' : '1.0-0'
-                  }}</strong>
+                  <span>Prix</span>
+                  <strong class="price">{{ product.priceInCents / 100 | tndCurrency }}</strong>
                 </div>
                 <div>
-                  <span>Inventory</span>
-                  <strong>{{ product.inventoryCount }}</strong>
+                  <span>Stock</span>
+                  <strong class="stat-number">{{ product.inventoryCount }}</strong>
                 </div>
                 <div>
                   <span>Impact</span>
-                  <strong>{{ product.impactScore }}/100</strong>
+                  <strong class="stat-number">{{ product.impactScore }}/100</strong>
                 </div>
               </div>
 
@@ -590,16 +602,18 @@
     <section class="panel orders-panel">
       <div class="panel-heading">
         <div>
-          <p class="eyebrow">Order management</p>
-          <h2>Vendor order queue</h2>
+          <p class="eyebrow">Gestion des commandes</p>
+          <h2>File de preparation de l'atelier</h2>
         </div>
-        <span class="meta-chip">{{ vendorOrderItems().length }} order items</span>
+        <span class="meta-chip"
+          ><span class="numeric">{{ vendorOrderItems().length }}</span> lignes de commande</span
+        >
       </div>
 
       @if (!vendorOrderItems().length) {
         <div class="empty-state">
-          Buyer orders will appear here as soon as checkout starts flowing through this artisan
-          studio.
+          Les commandes acheteurs apparaitront ici des que le passage en caisse commencera a
+          alimenter cet atelier.
         </div>
       } @else {
         <div class="order-list">
@@ -608,24 +622,24 @@
               <div class="order-card-header">
                 <div>
                   <div class="order-badges">
-                    <span class="status-badge">{{ item.itemStatus }}</span>
-                    <span class="meta-chip">{{ item.orderStatus }}</span>
+                    <span class="status-badge">{{ item.itemStatus | marketLabel }}</span>
+                    <span class="meta-chip">{{ item.orderStatus | marketLabel }}</span>
                   </div>
                   <h3>{{ item.productName }}</h3>
                   <p>
-                    Order {{ item.orderNumber }} placed
-                    {{ item.placedAt | date: 'mediumDate' }}
+                    Commande <span class="numeric">{{ item.orderNumber }}</span> passee le
+                    <span class="numeric">{{ item.placedAt | date: 'mediumDate' }}</span>
                   </p>
                 </div>
 
                 <a class="ghost-link" [routerLink]="['/catalog', item.productSlug]">
-                  View product
+                  Voir le produit
                 </a>
               </div>
 
               <div class="order-grid">
                 <div>
-                  <span>Buyer</span>
+                  <span>Acheteur</span>
                   <strong>{{ item.buyer.fullName }}</strong>
                   <small>{{ item.buyer.email }}</small>
                 </div>
@@ -637,17 +651,15 @@
                 </div>
 
                 <div>
-                  <span>Quantity</span>
-                  <strong>{{ item.quantity }}</strong>
-                  <small>Units reserved</small>
+                  <span>Quantite</span>
+                  <strong class="quantity">{{ item.quantity }}</strong>
+                  <small>Unites reservees</small>
                 </div>
 
                 <div>
-                  <span>Line total</span>
-                  <strong>{{
-                    item.lineTotalInCents / 100 | currency: item.currency : 'symbol' : '1.0-0'
-                  }}</strong>
-                  <small>Marketplace checkout value</small>
+                  <span>Total ligne</span>
+                  <strong class="order-total">{{ item.lineTotalInCents / 100 | tndCurrency }}</strong>
+                  <small>Valeur du passage en caisse</small>
                 </div>
               </div>
 
@@ -658,7 +670,7 @@
                   (click)="updateOrderItemStatus(item.id, 'CONFIRMED')"
                   [disabled]="updatingOrderItemId() === item.id || item.itemStatus === 'CONFIRMED'"
                 >
-                  Confirm
+                  Confirmer
                 </button>
                 <button
                   type="button"
@@ -668,7 +680,7 @@
                     updatingOrderItemId() === item.id || item.itemStatus === 'FULFILLING'
                   "
                 >
-                  Fulfilling
+                  Preparation
                 </button>
                 <button
                   type="button"
@@ -676,7 +688,7 @@
                   (click)="updateOrderItemStatus(item.id, 'SHIPPED')"
                   [disabled]="updatingOrderItemId() === item.id || item.itemStatus === 'SHIPPED'"
                 >
-                  {{ updatingOrderItemId() === item.id ? 'Saving...' : 'Ship item' }}
+                  {{ updatingOrderItemId() === item.id ? 'Enregistrement...' : 'Expedier' }}
                 </button>
                 <button
                   type="button"
@@ -686,7 +698,7 @@
                     updatingOrderItemId() === item.id || item.itemStatus === 'CANCELLED'
                   "
                 >
-                  Cancel item
+                  Annuler la ligne
                 </button>
               </div>
             </article>

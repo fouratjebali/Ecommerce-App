@@ -155,7 +155,7 @@ export class VisualSearchService {
 
     if (!basisProduct || basisProduct.status !== ProductStatus.PUBLISHED) {
       throw new NotFoundException(
-        'Visual-search recommendations were not found for this product.',
+        'Les recommandations de recherche visuelle sont introuvables pour ce produit.',
       );
     }
 
@@ -728,12 +728,12 @@ export class VisualSearchService {
     file: Express.Multer.File | undefined,
   ): asserts file is Express.Multer.File {
     if (!file) {
-      throw new BadRequestException('Upload an image to run visual search.');
+      throw new BadRequestException('Televersez une image pour lancer la recherche visuelle.');
     }
 
     if (!file.mimetype.startsWith('image/')) {
       throw new BadRequestException(
-        'Visual search only accepts image uploads.',
+        'La recherche visuelle accepte uniquement les fichiers image.',
       );
     }
   }
@@ -772,14 +772,14 @@ function buildMatchReasons(
 ) {
   const reasons = [
     similarity >= 0.88
-      ? 'Very close visual similarity to the uploaded inspiration.'
+      ? "Tres forte similarite visuelle avec l'inspiration televersee."
       : similarity >= 0.72
-        ? 'Strong visual similarity with the uploaded reference.'
-        : 'Closest handmade alternative found in the current visual index.',
+        ? 'Forte similarite visuelle avec la photo de reference.'
+        : "Alternative artisanale la plus proche trouvee dans l'index visuel actuel.",
   ];
 
   if (query.category?.includes(product.category.slug)) {
-    reasons.push(`Matches the ${product.category.name} filter.`);
+    reasons.push(`Correspond a la categorie ${product.category.name}.`);
   }
 
   if (
@@ -789,11 +789,11 @@ function buildMatchReasons(
       ),
     )
   ) {
-    reasons.push('Aligned with the selected material filters.');
+    reasons.push('Correspond aux filtres matiere selectionnes.');
   }
 
   if (product.impactScore >= 90) {
-    reasons.push(`High impact score at ${product.impactScore}/100.`);
+    reasons.push(`Score d'impact eleve : ${product.impactScore}/100.`);
   }
 
   return reasons.slice(0, 3);
@@ -804,17 +804,17 @@ function buildFallbackReasons(
   query: VisualSearchFilters,
 ) {
   const reasons = [
-    'Served from cached visual discovery while the query stays cold-start safe.',
+    'Resultat issu du cache de decouverte visuelle pour un demarrage a froid securise.',
   ];
 
   if (query.category?.includes(product.category.slug)) {
     reasons.push(
-      `Pulled from the cached ${product.category.name} fallback set.`,
+      `Recupere depuis le jeu de secours en cache pour ${product.category.name}.`,
     );
   }
 
   reasons.push(
-    `Strong marketplace sustainability signal at ${product.impactScore}/100.`,
+    `Signal de durabilite fort dans la marketplace : ${product.impactScore}/100.`,
   );
 
   return reasons.slice(0, 3);

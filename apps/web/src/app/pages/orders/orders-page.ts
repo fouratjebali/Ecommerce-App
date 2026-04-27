@@ -1,8 +1,10 @@
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { BuyerOrder } from '../../models/orders';
+import { MarketLabelPipe } from '../../pipes/market-label.pipe';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { OrdersApiService } from '../../services/orders-api.service';
 
 interface NoticeState {
@@ -12,7 +14,7 @@ interface NoticeState {
 
 @Component({
   selector: 'app-orders-page',
-  imports: [CommonModule, RouterLink, CurrencyPipe, DatePipe],
+  imports: [CommonModule, RouterLink, DatePipe, TndCurrencyPipe, MarketLabelPipe],
   templateUrl: './orders-page.html',
   styleUrl: './orders-page.scss',
 })
@@ -38,7 +40,7 @@ export class OrdersPageComponent {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'This order could not be cancelled from the buyer portal.',
+        text: "Cette commande n'a pas pu etre annulee depuis votre espace acheteur.",
       });
     } finally {
       this.cancellingOrderNumber.set(null);

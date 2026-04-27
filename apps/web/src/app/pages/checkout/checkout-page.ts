@@ -1,12 +1,13 @@
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CartResponse } from '../../models/cart';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { AuthService } from '../../services/auth.service';
 import { CartApiService } from '../../services/cart-api.service';
-import { OrdersApiService } from '../../services/orders-api.service';
+import { CheckoutDraftService } from '../../services/checkout-draft.service';
 
 interface NoticeState {
   tone: 'error';
@@ -15,14 +16,14 @@ interface NoticeState {
 
 @Component({
   selector: 'app-checkout-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe],
+  imports: [CommonModule, FormsModule, RouterLink, TndCurrencyPipe],
   templateUrl: './checkout-page.html',
   styleUrl: './checkout-page.scss',
 })
 export class CheckoutPageComponent {
   private readonly authService = inject(AuthService);
   private readonly cartApiService = inject(CartApiService);
-  private readonly ordersApiService = inject(OrdersApiService);
+  private readonly checkoutDraftService = inject(CheckoutDraftService);
   private readonly router = inject(Router);
 
   protected readonly cart = signal<CartResponse | null>(null);
@@ -54,12 +55,12 @@ export class CheckoutPageComponent {
     this.notice.set(null);
 
     try {
-      await firstValueFrom(this.ordersApiService.checkout(this.form));
-      await this.router.navigateByUrl('/orders');
+      this.checkoutDraftService.save({ ...this.form });
+      await this.router.navigateByUrl('/payment');
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'Checkout could not be completed. Verify the buyer session and cart reservations.',
+        text: "Impossible d'ouvrir l'etape de paiement pour le moment. Reessayez dans quelques instants.",
       });
     } finally {
       this.submitting.set(false);

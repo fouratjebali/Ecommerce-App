@@ -1,9 +1,11 @@
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ProductDetailResponse } from '../../models/catalog';
+import { MarketLabelPipe } from '../../pipes/market-label.pipe';
+import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { VisualSearchRecommendationsResponse } from '../../models/visual-search';
 import { CartApiService } from '../../services/cart-api.service';
 import { CatalogApiService } from '../../services/catalog-api.service';
@@ -16,7 +18,7 @@ interface NoticeState {
 
 @Component({
   selector: 'app-product-detail-page',
-  imports: [CommonModule, FormsModule, RouterLink, CurrencyPipe],
+  imports: [CommonModule, FormsModule, RouterLink, TndCurrencyPipe, MarketLabelPipe],
   templateUrl: './product-detail-page.html',
   styleUrl: './product-detail-page.scss',
 })
@@ -50,12 +52,12 @@ export class ProductDetailPageComponent {
       await firstValueFrom(this.cartApiService.addItem(productId, this.quantity));
       this.notice.set({
         tone: 'success',
-        text: 'Product added to the cart session.',
+        text: 'Le produit a ete ajoute a votre panier.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'This product could not be reserved in the cart.',
+        text: "Impossible de reserver ce produit dans le panier.",
       });
     }
   }

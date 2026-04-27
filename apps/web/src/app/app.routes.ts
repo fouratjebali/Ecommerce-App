@@ -48,6 +48,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'payment',
+    canActivate: [buyerGuard],
+    loadComponent: () =>
+      import('./pages/payment/payment-page').then(
+        (module) => module.PaymentPageComponent,
+      ),
+  },
+  {
     path: 'orders',
     canActivate: [buyerGuard],
     loadComponent: () =>

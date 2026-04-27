@@ -121,9 +121,9 @@ export class CraftmindService {
 
     if (normalizedPrompt.includes('title') || normalizedPrompt.includes('name')) {
       return [
-        'Rewrite this title to sound warmer and more artisan-led.',
-        'Turn this into a short description with a stronger material hook.',
-        'Suggest three SEO-friendly tags for this listing.',
+        "Reecrivez ce titre pour qu'il sonne plus chaleureux et plus artisanal.",
+        'Transformez ceci en description courte avec un meilleur angle matiere.',
+        'Proposez trois tags SEO adaptes a cette fiche.',
       ];
     }
 
@@ -132,16 +132,16 @@ export class CraftmindService {
       normalizedPrompt.includes('description')
     ) {
       return [
-        'Shorten this story for the product card.',
-        'Add one stronger sourcing detail without overstating impact.',
-        'Rewrite this for buyers who care about low-waste materials.',
+        'Raccourcissez cette histoire pour la carte produit.',
+        "Ajoutez un detail de sourcing plus fort sans exagerer l'impact.",
+        'Reecrivez cela pour des acheteurs sensibles aux matieres a faible dechet.',
       ];
     }
 
     return [
-      'Generate a publish-ready title and short description.',
-      'Help me turn this idea into a verified sustainability story.',
-      'Suggest missing product facts I should confirm before publishing.',
+      'Generez un titre et une description courte prets a publier.',
+      "Aidez-moi a transformer cette idee en histoire de durabilite verifiable.",
+      'Suggerez les informations produit qu il me reste a confirmer avant publication.',
     ];
   }
 }

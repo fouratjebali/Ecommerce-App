@@ -6,18 +6,18 @@
 <section class="visual-search-page">
   <header class="page-header panel">
     <div>
-      <p class="eyebrow">Visual search</p>
-      <h1>Upload a photo and find the closest handmade matches with hybrid filtering.</h1>
+      <p class="eyebrow">Recherche visuelle</p>
+      <h1>Televersez une photo et retrouvez les creations artisanales les plus proches.</h1>
       <p>
-        This flow blends image similarity, product impact data, and Redis-backed fallback
-        recommendations when the vector match is still cold.
+        Importez une image d inspiration depuis votre appareil et comparez-la au catalogue avec
+        similarite visuelle, metadata produit et filtres intelligents.
       </p>
     </div>
 
     <div class="header-actions">
-      <a class="ghost-link" routerLink="/">Home</a>
-      <a class="ghost-link" routerLink="/catalog">Catalog</a>
-      <a class="primary-link" routerLink="/cart">Cart</a>
+      <a class="ghost-link" routerLink="/">Accueil</a>
+      <a class="ghost-link" routerLink="/catalog">Catalogue</a>
+      <a class="primary-link" routerLink="/cart">Panier</a>
     </div>
   </header>
 
@@ -32,8 +32,8 @@
       <section class="panel upload-panel">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Reference photo</p>
-            <h2>Find it from a photo</h2>
+            <p class="eyebrow">Photo de reference</p>
+            <h2>Trouver a partir d une photo</h2>
           </div>
         </div>
 
@@ -45,8 +45,8 @@
             ></div>
           } @else {
             <div class="drop-copy">
-              <strong>Drop a bowl, tote, lamp, or decor photo here</strong>
-              <span>PNG, JPG, or WEBP up to 5MB</span>
+              <strong>Deposez ici une photo de bol, sac, lampe ou objet deco</strong>
+              <span>PNG, JPG ou WEBP jusqu a 5 Mo</span>
             </div>
           }
 
@@ -56,29 +56,29 @@
         @if (fileName()) {
           <div class="file-row">
             <span>{{ fileName() }}</span>
-            <button type="button" class="ghost-button" (click)="clearSelectedFile()">Clear</button>
+            <button type="button" class="ghost-button" (click)="clearSelectedFile()">Effacer</button>
           </div>
         }
 
         <button type="button" class="primary-button" (click)="runSearch()" [disabled]="loading()">
-          {{ loading() ? 'Searching...' : 'Run visual search' }}
+          {{ loading() ? 'Recherche...' : 'Lancer la recherche' }}
         </button>
       </section>
 
       <section class="panel filter-panel">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Hybrid filters</p>
-            <h2>Refine the match set</h2>
+            <p class="eyebrow">Filtres hybrides</p>
+            <h2>Affiner les resultats</h2>
           </div>
         </div>
 
         @if (loadingFacets()) {
-          <div class="loading-copy">Loading faceted options...</div>
+          <div class="loading-copy">Chargement des facettes...</div>
         } @else {
           <div class="filter-quick-grid">
             <label class="filter-control">
-              <span>Minimum impact score</span>
+              <span>Score d impact minimum</span>
               <input
                 type="range"
                 min="0"
@@ -86,28 +86,28 @@
                 [ngModel]="filters().minImpactScore ?? 50"
                 (ngModelChange)="setMinImpactScore($event)"
               />
-              <small>{{ filters().minImpactScore ?? 50 }}/100</small>
+              <small class="numeric">{{ filters().minImpactScore ?? 50 }}/100</small>
             </label>
 
             <label class="filter-control">
-              <span>Max price</span>
+              <span>Prix maximum</span>
               <select
                 [ngModel]="filters().maxPrice === null ? '' : filters().maxPrice"
                 (ngModelChange)="setMaxPrice($event)"
               >
-                <option value="">Any price</option>
-                <option value="6000">Up to TND60</option>
-                <option value="12000">Up to TND120</option>
-                <option value="18000">Up to TND180</option>
+                <option value="">Tous les prix</option>
+                <option value="6000">Jusqu a 60 TND</option>
+                <option value="12000">Jusqu a 120 TND</option>
+                <option value="18000">Jusqu a 180 TND</option>
               </select>
             </label>
 
             <label class="filter-control">
-              <span>Result limit</span>
+              <span>Nombre de resultats</span>
               <select [ngModel]="filters().limit ?? 8" (ngModelChange)="setLimit($event)">
-                <option value="4">4 results</option>
-                <option value="6">6 results</option>
-                <option value="8">8 results</option>
+                <option value="4">4 resultats</option>
+                <option value="6">6 resultats</option>
+                <option value="8">8 resultats</option>
               </select>
             </label>
           </div>
@@ -115,7 +115,7 @@
           <details class="filter-group" open>
             <summary>
               <strong>Categories</strong>
-              <span class="filter-count">{{ filters().category?.length ?? 0 }}</span>
+              <span class="filter-count numeric">{{ filters().category?.length ?? 0 }}</span>
             </summary>
 
             <div class="pill-cluster">
@@ -126,7 +126,7 @@
                   [class.is-active]="filters().category?.includes(category.slug)"
                   (click)="toggleCategory(category.slug)"
                 >
-                  {{ category.name }}
+                  {{ category.name | marketLabel }}
                 </button>
               }
             </div>
@@ -134,8 +134,8 @@
 
           <details class="filter-group">
             <summary>
-              <strong>Materials</strong>
-              <span class="filter-count">{{ filters().material?.length ?? 0 }}</span>
+              <strong>Matieres</strong>
+              <span class="filter-count numeric">{{ filters().material?.length ?? 0 }}</span>
             </summary>
 
             <div class="pill-cluster">
@@ -146,7 +146,7 @@
                   [class.is-active]="filters().material?.includes(material.slug)"
                   (click)="toggleMaterial(material.slug)"
                 >
-                  {{ material.name }}
+                  {{ material.name | marketLabel }}
                 </button>
               }
             </div>
@@ -154,8 +154,8 @@
 
           <details class="filter-group">
             <summary>
-              <strong>Eco ratings</strong>
-              <span class="filter-count">{{ filters().ecoRating?.length ?? 0 }}</span>
+              <strong>Notes eco</strong>
+              <span class="filter-count numeric">{{ filters().ecoRating?.length ?? 0 }}</span>
             </summary>
 
             <div class="pill-cluster">
@@ -166,7 +166,7 @@
                   [class.is-active]="filters().ecoRating?.includes(eco.code)"
                   (click)="toggleEcoRating(eco.code)"
                 >
-                  {{ eco.label }}
+                  {{ eco.label | marketLabel }}
                 </button>
               }
             </div>
@@ -175,7 +175,7 @@
           <details class="filter-group">
             <summary>
               <strong>Artisans</strong>
-              <span class="filter-count">{{ filters().artisan?.length ?? 0 }}</span>
+              <span class="filter-count numeric">{{ filters().artisan?.length ?? 0 }}</span>
             </summary>
 
             <div class="pill-cluster">
@@ -198,17 +198,17 @@
     <section class="result-column">
       @if (!currentResults) {
         <div class="panel empty-state">
-          <h2>Visual search is ready.</h2>
+          <h2>La recherche visuelle est prete.</h2>
           <p>
-            Upload a product inspiration image and GreenCraft will compare it against the pgvector
-            index built from the current artisan catalog.
+            Televersez une image d inspiration et GreenCraft la comparera au catalogue actuel pour
+            faire remonter les correspondances artisanales les plus proches.
           </p>
         </div>
       } @else {
         <div class="panel result-summary">
           <div>
-            <p class="eyebrow">Search summary</p>
-            <h2>{{ currentResults.items.length }} matches surfaced</h2>
+            <p class="eyebrow">Resume de recherche</p>
+            <h2><span class="stat-number">{{ currentResults.items.length }}</span> correspondances</h2>
           </div>
 
           <div class="summary-badges">
@@ -216,7 +216,7 @@
               {{ currentResults.query.dominantColorHex }}
             </span>
             @if (currentResults.query.fallbackMode) {
-              <span class="fallback-chip">Cold-start fallback</span>
+              <span class="fallback-chip">Mode de secours</span>
             }
           </div>
         </div>
@@ -236,17 +236,17 @@
               >
                 @if (item.visualMatch.similarity !== null) {
                   <span class="match-badge">
-                    {{ item.visualMatch.similarity * 100 | number: '1.0-0' }}% match
+                    {{ item.visualMatch.similarity * 100 | number: '1.0-0' }}% de correspondance
                   </span>
                 } @else {
-                  <span class="match-badge is-fallback">Fallback pick</span>
+                  <span class="match-badge is-fallback">Selection de secours</span>
                 }
               </div>
 
               <div class="result-copy">
                 <div class="result-meta">
                   <span>{{ item.artisan.studioName }}</span>
-                  <span>{{ item.category.name }}</span>
+                  <span>{{ item.category.name | marketLabel }}</span>
                 </div>
 
                 <h3>{{ item.name }}</h3>
@@ -260,18 +260,15 @@
 
                 <div class="result-footer">
                   <div>
-                    <strong>{{
-                      item.price.amountInCents / 100
-                        | currency: item.price.currency : 'symbol' : '1.0-0'
-                    }}</strong>
-                    <span>{{ item.impactScore }}/100 impact</span>
+                    <strong class="price">{{ item.price.amountInCents / 100 | tndCurrency }}</strong>
+                    <span class="numeric">{{ item.impactScore }}/100 d impact</span>
                   </div>
 
                   <div class="result-actions">
                     <button type="button" class="ghost-button" (click)="addToCart(item.id)">
-                      Add to cart
+                      Ajouter au panier
                     </button>
-                    <a [routerLink]="['/catalog', item.slug]">View product</a>
+                    <a [routerLink]="['/catalog', item.slug]">Voir le produit</a>
                   </div>
                 </div>
               </div>
