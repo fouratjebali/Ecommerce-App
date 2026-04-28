@@ -1,0 +1,508 @@
+@let snapshot = dashboard();
+@let currentNotice = notice();
+
+<section class="admin-page">
+  <header class="admin-header panel">
+    <div>
+      <p class="eyebrow">Administration</p>
+      <h1>Gardez la main sur la marketplace.</h1>
+      <p>Suivi global, alertes, utilisateurs, commandes et catalogue.</p>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-pill">
+        <strong>{{ snapshot ? (snapshot.generatedAt | date: 'shortTime') : '--:--' }}</strong>
+        <span>Mise a jour auto</span>
+      </div>
+      <a class="ghost-link" routerLink="/">Accueil</a>
+      <a class="ghost-link" routerLink="/catalog">Catalogue</a>
+      <button
+        type="button"
+        class="primary-button"
+        (click)="manualRefresh()"
+        [disabled]="refreshing()"
+      >
+        {{ refreshing() ? 'Actualisation...' : 'Actualiser' }}
+      </button>
+    </div>
+  </header>
+
+  @if (currentNotice) {
+    <div class="notice" [class.is-error]="currentNotice.tone === 'error'">
+      {{ currentNotice.text }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="panel empty-state">Ouverture de la console administrateur...</div>
+  } @else if (snapshot) {
+    <nav class="admin-nav panel">
+      <a href="#admin-dashboard">Tableau de bord</a>
+      <a href="#admin-users">Utilisateurs</a>
+      <a href="#admin-orders">Commandes</a>
+      <a href="#admin-products">Catalogue</a>
+    </nav>
+
+    <section class="metrics-grid" id="admin-dashboard">
+      <article class="metric-card panel">
+        <span>Chiffre d'affaires</span>
+        <strong class="cart-total">
+          {{ snapshot.metrics.totalRevenueInCents / 100 | tndCurrency }}
+        </strong>
+        <p>
+          <span class="numeric">{{ revenueTrend(snapshot) }}</span> sur les 7 derniers jours.
+        </p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Commandes</span>
+        <strong class="stat-number">{{ snapshot.metrics.totalOrders }}</strong>
+        <p>
+          <span class="numeric">{{ snapshot.metrics.ordersLast7Days }}</span> nouvelles commandes
+          cette semaine.
+        </p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Utilisateurs</span>
+        <strong class="stat-number">{{ snapshot.metrics.totalUsers }}</strong>
+        <p>
+          <span class="numeric">{{ snapshot.metrics.totalBuyers }}</span> acheteurs et
+          <span class="numeric">{{ snapshot.metrics.activeArtisans }}</span> artisans actifs.
+        </p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Produits publies</span>
+        <strong class="stat-number">{{ snapshot.metrics.publishedProducts }}</strong>
+        <p>
+          <span class="numeric">{{ snapshot.metrics.lowStockProducts }}</span> references en stock
+          faible.
+        </p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Ateliers a valider</span>
+        <strong class="stat-number">{{ snapshot.metrics.pendingVendorReviews }}</strong>
+        <p>Demandes administratives en attente de revue.</p>
+      </article>
+
+      <article class="metric-card panel">
+        <span>Taux d'aboutissement</span>
+        <strong class="stat-number">{{ snapshot.performance.fulfillmentRate }}%</strong>
+        <p>Commandes menees jusqu'a la cloture.</p>
+      </article>
+    </section>
+
+    <section class="dashboard-layout">
+      <article class="panel insight-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Alertes automatiques</p>
+            <h2>Priorites du moment</h2>
+          </div>
+        </div>
+
+        @if (!snapshot.alerts.length) {
+          <div class="empty-state compact-empty-state">Aucune alerte critique pour le moment.</div>
+        } @else {
+          <div class="alert-list">
+            @for (alert of snapshot.alerts; track alert.id) {
+              <article class="alert-card" [class.is-critical]="alert.severity === 'critical'">
+                <div class="alert-head">
+                  <span class="alert-badge">{{ alert.severity }}</span>
+                  <strong>{{ alert.title }}</strong>
+                  <span class="numeric">{{ alert.count }}</span>
+                </div>
+                <p>{{ alert.message }}</p>
+              </article>
+            }
+          </div>
+        }
+      </article>
+
+      <article class="panel insight-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Analyse de performance</p>
+            <h2>Vue business</h2>
+          </div>
+        </div>
+
+        <div class="performance-grid">
+          <section class="panel-surface">
+            <strong>Panier moyen</strong>
+            <p class="cart-total">
+              {{ snapshot.performance.averageOrderValueInCents / 100 | tndCurrency }}
+            </p>
+            <small>Valeur moyenne des commandes finalisees.</small>
+          </section>
+
+          <section class="panel-surface">
+            <strong>Statuts des commandes</strong>
+            <div class="stat-list">
+              @for (status of snapshot.performance.statusBreakdown; track status.status) {
+                <div>
+                  <span>{{ status.status | marketLabel }}</span>
+                  <strong class="quantity">{{ status.count }}</strong>
+                </div>
+              }
+            </div>
+          </section>
+
+          <section class="panel-surface">
+            <strong>Categories les plus performantes</strong>
+            <div class="leader-list">
+              @for (category of snapshot.performance.topCategories; track category.slug) {
+                <div>
+                  <span>{{ category.name | marketLabel }}</span>
+                  <strong class="amount">
+                    {{ category.revenueInCents / 100 | tndCurrency }}
+                  </strong>
+                  <small>
+                    <span class="numeric">{{ category.itemsSold }}</span> articles vendus
+                  </small>
+                </div>
+              }
+            </div>
+          </section>
+
+          <section class="panel-surface">
+            <strong>Ateliers moteurs</strong>
+            <div class="leader-list">
+              @for (artisan of snapshot.performance.topArtisans; track artisan.id) {
+                <div>
+                  <span>{{ artisan.studioName }}</span>
+                  <strong class="amount">
+                    {{ artisan.revenueInCents / 100 | tndCurrency }}
+                  </strong>
+                  <small>
+                    {{ artisan.location }} - <span class="numeric">{{ artisan.itemsSold }}</span>
+                    ventes
+                  </small>
+                </div>
+              }
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+    <section class="activity-layout">
+      <article class="panel activity-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Commandes recentes</p>
+            <h2>Dernieres operations</h2>
+          </div>
+        </div>
+
+        <div class="activity-list">
+          @for (order of snapshot.recentOrders; track order.id) {
+            <div class="activity-row">
+              <div>
+                <strong class="numeric">{{ order.orderNumber }}</strong>
+                <span>{{ order.buyer.fullName }}</span>
+              </div>
+              <div>
+                <strong class="amount">{{ order.totalInCents / 100 | tndCurrency }}</strong>
+                <span>{{ order.status | marketLabel }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article class="panel activity-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Utilisateurs recents</p>
+            <h2>Nouveaux comptes</h2>
+          </div>
+        </div>
+
+        <div class="activity-list">
+          @for (user of snapshot.recentUsers; track user.id) {
+            <div class="activity-row">
+              <div>
+                <strong>{{ user.fullName }}</strong>
+                <span>{{ user.email }}</span>
+              </div>
+              <div>
+                <strong>{{ roleLabel(user.role) }}</strong>
+                <span>{{ user.createdAt | date: 'mediumDate' }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </article>
+    </section>
+
+    <section class="panel management-panel" id="admin-users">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Controle des utilisateurs</p>
+          <h2>Utilisateurs et statuts d'atelier</h2>
+        </div>
+        <span class="meta-chip"><span class="numeric">{{ users().length }}</span> comptes</span>
+      </div>
+
+      <div class="management-grid">
+        @for (user of users(); track user.id) {
+          <article class="management-card">
+            <div class="management-header">
+              <div>
+                <h3>{{ user.fullName }}</h3>
+                <p>{{ user.email }}</p>
+              </div>
+              <span class="status-badge">{{ roleLabel(user.role) }}</span>
+            </div>
+
+            <div class="management-metrics">
+              <div>
+                <span>Commandes</span>
+                <strong class="quantity">{{ user.orderCount }}</strong>
+              </div>
+              <div>
+                <span>Total depense</span>
+                <strong class="amount">{{ user.totalSpentInCents / 100 | tndCurrency }}</strong>
+              </div>
+            </div>
+
+            @if (user.artisanProfile) {
+              <div class="info-block">
+                <strong>{{ user.artisanProfile.studioName }}</strong>
+                <span>{{ user.artisanProfile.location }}</span>
+                <small>{{ user.artisanProfile.verificationStatus | marketLabel }}</small>
+              </div>
+            }
+
+            <div class="action-row">
+              @if (user.canManageRole) {
+                <button
+                  type="button"
+                  class="ghost-button"
+                  (click)="promoteOrRestoreUser(user)"
+                  [disabled]="updatingUserId() === user.id"
+                >
+                  {{
+                    user.role === 'ADMIN'
+                      ? user.artisanProfile
+                        ? 'Rendre artisan'
+                        : 'Rendre acheteur'
+                      : 'Promouvoir admin'
+                  }}
+                </button>
+              }
+
+              @if (user.artisanProfile) {
+                <button
+                  type="button"
+                  class="ghost-button"
+                  (click)="setVendorStatus(user, 'ACTIVE')"
+                  [disabled]="updatingUserId() === user.id"
+                >
+                  Activer
+                </button>
+                <button
+                  type="button"
+                  class="ghost-button"
+                  (click)="setVendorStatus(user, 'PENDING')"
+                  [disabled]="updatingUserId() === user.id"
+                >
+                  En attente
+                </button>
+                <button
+                  type="button"
+                  class="ghost-button danger-button"
+                  (click)="setVendorStatus(user, 'SUSPENDED')"
+                  [disabled]="updatingUserId() === user.id"
+                >
+                  Suspendre
+                </button>
+                <button
+                  type="button"
+                  class="primary-button"
+                  (click)="toggleVerified(user)"
+                  [disabled]="updatingUserId() === user.id"
+                >
+                  {{ user.artisanProfile.verified ? 'Retirer la verification' : 'Verifier' }}
+                </button>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="panel management-panel" id="admin-orders">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Controle des commandes</p>
+          <h2>Suivi et interventions</h2>
+        </div>
+        <span class="meta-chip">
+          <span class="numeric">{{ orders().length }}</span> commandes
+        </span>
+      </div>
+
+      <div class="management-grid">
+        @for (order of orders(); track order.id) {
+          <article class="management-card">
+            <div class="management-header">
+              <div>
+                <h3 class="numeric">{{ order.orderNumber }}</h3>
+                <p>
+                  {{ order.buyer.fullName }} - {{ order.shippingCity }},
+                  {{ order.shippingCountry }}
+                </p>
+              </div>
+              <span class="status-badge">{{ order.status | marketLabel }}</span>
+            </div>
+
+            <div class="management-metrics">
+              <div>
+                <span>Total</span>
+                <strong class="amount">{{ order.totalInCents / 100 | tndCurrency }}</strong>
+              </div>
+              <div>
+                <span>Articles</span>
+                <strong class="quantity">{{ order.itemCount }}</strong>
+              </div>
+              <div>
+                <span>Ateliers</span>
+                <strong class="quantity">{{ order.vendorCount }}</strong>
+              </div>
+            </div>
+
+            <div class="chip-row">
+              @for (item of order.items; track item.id) {
+                <span>{{ item.productName }} - {{ item.status | marketLabel }}</span>
+              }
+            </div>
+
+            <div class="action-row">
+              <button
+                type="button"
+                class="ghost-button"
+                (click)="setOrderStatus(order.orderNumber, 'CONFIRMED')"
+                [disabled]="updatingOrderNumber() === order.orderNumber"
+              >
+                Confirmer
+              </button>
+              <button
+                type="button"
+                class="ghost-button"
+                (click)="setOrderStatus(order.orderNumber, 'FULFILLING')"
+                [disabled]="updatingOrderNumber() === order.orderNumber"
+              >
+                Preparation
+              </button>
+              <button
+                type="button"
+                class="primary-button"
+                (click)="setOrderStatus(order.orderNumber, 'COMPLETED')"
+                [disabled]="updatingOrderNumber() === order.orderNumber"
+              >
+                Terminer
+              </button>
+              <button
+                type="button"
+                class="ghost-button danger-button"
+                (click)="setOrderStatus(order.orderNumber, 'CANCELLED')"
+                [disabled]="updatingOrderNumber() === order.orderNumber"
+              >
+                Annuler
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="panel management-panel" id="admin-products">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Controle du catalogue</p>
+          <h2>Moderation produits</h2>
+        </div>
+        <span class="meta-chip"><span class="numeric">{{ products().length }}</span> produits</span>
+      </div>
+
+      <div class="management-grid">
+        @for (product of products(); track product.id) {
+          <article class="management-card">
+            <div class="management-header">
+              <div>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.artisan.studioName }} - {{ product.category.name | marketLabel }}</p>
+              </div>
+              <span class="status-badge">{{ product.status | marketLabel }}</span>
+            </div>
+
+            <div class="management-metrics">
+              <div>
+                <span>Prix</span>
+                <strong class="amount">{{ product.priceInCents / 100 | tndCurrency }}</strong>
+              </div>
+              <div>
+                <span>Stock</span>
+                <strong class="quantity">{{ product.inventoryCount }}</strong>
+                <small>{{ inventoryTone(product) }}</small>
+              </div>
+              <div>
+                <span>Impact</span>
+                <strong class="quantity">{{ product.impactScore }}/100</strong>
+              </div>
+            </div>
+
+            <div class="chip-row">
+              <span>{{ product.updatedAt | date: 'mediumDate' }}</span>
+              <span>{{ product.orderItemCount }} ventes</span>
+              @if (product.isFeatured) {
+                <span>Mis en avant</span>
+              }
+            </div>
+
+            <div class="action-row">
+              <button
+                type="button"
+                class="ghost-button"
+                (click)="setProductStatus(product.id, 'DRAFT')"
+                [disabled]="updatingProductId() === product.id"
+              >
+                Brouillon
+              </button>
+              <button
+                type="button"
+                class="ghost-button"
+                (click)="setProductStatus(product.id, 'PUBLISHED')"
+                [disabled]="updatingProductId() === product.id"
+              >
+                Publier
+              </button>
+              <button
+                type="button"
+                class="ghost-button danger-button"
+                (click)="setProductStatus(product.id, 'ARCHIVED')"
+                [disabled]="updatingProductId() === product.id"
+              >
+                Archiver
+              </button>
+              <button
+                type="button"
+                class="primary-button"
+                (click)="toggleFeatured(product)"
+                [disabled]="updatingProductId() === product.id || product.status !== 'PUBLISHED'"
+              >
+                {{ product.isFeatured ? 'Retirer la mise en avant' : 'Mettre a la une' }}
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  } @else {
+    <div class="panel empty-state">Le tableau de bord administrateur est indisponible.</div>
+  }
+</section>

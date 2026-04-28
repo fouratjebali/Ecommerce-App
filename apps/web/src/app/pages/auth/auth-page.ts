@@ -63,7 +63,11 @@ export class AuthPageComponent {
       if (this.mode() === 'login') {
         const response = await this.authService.login(this.loginForm);
         await this.router.navigateByUrl(
-          response.user.role === 'ARTISAN' ? '/vendor' : '/catalog',
+          response.user.role === 'ARTISAN'
+            ? '/vendor'
+            : response.user.role === 'ADMIN'
+              ? '/admin'
+              : '/catalog',
         );
         return;
       }

@@ -336,6 +336,10 @@ export class HomePageComponent {
       return 'Mon compte';
     }
 
+    if (user.role === 'ADMIN') {
+      return 'Administration';
+    }
+
     return 'Mon espace';
   });
 
@@ -354,13 +358,31 @@ export class HomePageComponent {
       return '/orders';
     }
 
+    if (user.role === 'ADMIN') {
+      return '/admin';
+    }
+
     return '/auth';
   });
 
-  protected readonly sellerLabel = computed(() => {
+  protected readonly workspaceLabel = computed(() => {
     const user = this.authService.user();
 
+    if (user?.role === 'ADMIN') {
+      return "Ouvrir l'administration";
+    }
+
     return user?.role === 'ARTISAN' ? 'Acceder a mon atelier' : 'Vendre mes creations';
+  });
+
+  protected readonly workspaceRoute = computed(() => {
+    const user = this.authService.user();
+
+    if (user?.role === 'ADMIN') {
+      return '/admin';
+    }
+
+    return '/vendor';
   });
 
   constructor() {

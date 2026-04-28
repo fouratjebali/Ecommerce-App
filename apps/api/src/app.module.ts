@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { validateEnvironment } from './config/environment';
 import { AuthModule } from './modules/auth/auth.module';
+import { AdminModule } from './modules/admin/admin.module';
 import { ArtisansModule } from './modules/artisans/artisans.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { CartModule } from './modules/cart/cart.module';
@@ -27,6 +28,7 @@ import { VendorsModule } from './modules/vendors/vendors.module';
     EventEmitterModule.forRoot(),
     PrismaModule,
     UsersModule,
+    AdminModule,
     AuthModule,
     HealthModule,
     CatalogModule,

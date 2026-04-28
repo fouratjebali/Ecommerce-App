@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-account-menu',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './account-menu.html',
   styleUrl: './account-menu.scss',
 })
@@ -45,6 +45,32 @@ export class AccountMenuComponent {
   });
 
   protected readonly studioName = computed(() => this.user()?.artisanProfile?.studioName ?? null);
+
+  protected readonly workspaceRoute = computed(() => {
+    switch (this.user()?.role) {
+      case 'ARTISAN':
+        return '/vendor';
+      case 'BUYER':
+        return '/orders';
+      case 'ADMIN':
+        return '/admin';
+      default:
+        return '/auth';
+    }
+  });
+
+  protected readonly workspaceLabel = computed(() => {
+    switch (this.user()?.role) {
+      case 'ARTISAN':
+        return "Ouvrir l'atelier";
+      case 'BUYER':
+        return 'Voir mes commandes';
+      case 'ADMIN':
+        return "Ouvrir l'administration";
+      default:
+        return 'Ouvrir mon espace';
+    }
+  });
 
   protected toggleMenu(event: MouseEvent) {
     event.stopPropagation();

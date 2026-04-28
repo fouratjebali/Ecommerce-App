@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './guards/admin.guard';
 import { buyerGuard } from './guards/buyer.guard';
 import { vendorGuard } from './guards/vendor.guard';
 
@@ -69,6 +70,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/vendor/vendor-page').then(
         (module) => module.VendorPageComponent,
+      ),
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/admin-page').then(
+        (module) => module.AdminPageComponent,
       ),
   },
   {

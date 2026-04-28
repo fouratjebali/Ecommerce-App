@@ -31,6 +31,10 @@
 
         <p class="account-email">{{ currentUser.email }}</p>
 
+        <a class="workspace-link" [routerLink]="workspaceRoute()" role="menuitem" (click)="open.set(false)">
+          {{ workspaceLabel() }}
+        </a>
+
         <button type="button" class="logout-button" role="menuitem" (click)="logout()">
           Se déconnecter
         </button>

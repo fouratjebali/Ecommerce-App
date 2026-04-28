@@ -46,7 +46,7 @@
           <span class="utility-icon is-user" aria-hidden="true"></span>
           <span>{{ accountLabel() }}</span>
         </a>
-        <a class="seller-button" routerLink="/vendor">{{ sellerLabel() }}</a>
+        <a class="seller-button" [routerLink]="workspaceRoute()">{{ workspaceLabel() }}</a>
       </div>
     </div>
 

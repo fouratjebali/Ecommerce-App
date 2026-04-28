@@ -30,6 +30,7 @@ const MARKET_LABELS: Record<string, string> = {
   ARCHIVED: 'Archive',
   PENDING: 'En attente',
   ACTIVE: 'Actif',
+  SUSPENDED: 'Suspendu',
   CONFIRMED: 'Confirme',
   FULFILLING: 'En preparation',
   COMPLETED: 'Termine',

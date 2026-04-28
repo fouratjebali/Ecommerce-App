@@ -147,7 +147,7 @@
 
 .logout-button {
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 0.85rem;
   padding: 0.78rem 1rem;
   border: 1px solid rgba(47, 58, 36, 0.42);
   border-radius: 999px;
@@ -156,6 +156,23 @@
   box-shadow:
     0 4px 0 rgba(47, 58, 36, 0.26),
     0 12px 22px rgba(47, 58, 36, 0.14);
+  font-weight: 900;
+}
+
+.workspace-link {
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.78rem 1rem;
+  border: 1px solid rgba(47, 58, 36, 0.2);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 243, 0.98), rgba(244, 228, 194, 0.9)),
+    var(--surface-paper);
+  box-shadow:
+    0 5px 0 rgba(84, 107, 65, 0.12),
+    0 12px 20px rgba(84, 107, 65, 0.08);
   font-weight: 900;
 }
 
