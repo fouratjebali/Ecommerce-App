@@ -45,6 +45,8 @@ interface HomeCategoryCard {
 }
 
 interface TrustCard {
+  eyebrow: string;
+  badge: string;
   title: string;
   copy: string;
 }
@@ -57,6 +59,17 @@ interface ToolCard {
   points: string[];
   route: string;
   cta: string;
+}
+
+interface FooterLink {
+  label: string;
+  route?: string;
+  href?: string;
+}
+
+interface FooterColumn {
+  title: string;
+  links: FooterLink[];
 }
 
 const emptyCatalogResponse: CatalogResponse = {
@@ -95,20 +108,32 @@ export class HomePageComponent {
 
   protected readonly trustCards: TrustCard[] = [
     {
+      eyebrow: 'Selection soignee',
+      badge: '01',
       title: 'Produits faits main',
-      copy: 'Des pieces faconnees a petite echelle, loin des standards industriels.',
+      copy:
+        'Des pieces faconnees en petites series avec des finitions visibles, des matieres choisies et une vraie personnalite d atelier.',
     },
     {
+      eyebrow: 'Ancrage local',
+      badge: '02',
       title: 'Createurs tunisiens',
-      copy: 'Une selection d ateliers et de savoir-faire ancres en Tunisie.',
+      copy:
+        'Une selection d ateliers, de gestes et de savoir-faire installes en Tunisie, du littoral aux villes d artisanat.',
     },
     {
+      eyebrow: 'Parcours rassurant',
+      badge: '03',
       title: 'Paiement securise',
-      copy: 'Un parcours d achat clair pour commander en confiance sur la plateforme.',
+      copy:
+        'Un parcours d achat lisible, en dinar tunisien, pense pour commander en confiance et sans zone floue.',
     },
     {
+      eyebrow: 'Livraison de proximite',
+      badge: '04',
       title: 'Livraison locale',
-      copy: 'Des commandes pensees pour des envois regionaux plus simples et plus coherents.',
+      copy:
+        'Des commandes preparees pour des envois regionaux plus simples, plus coherents et mieux adaptes au marche tunisien.',
     },
   ];
 
@@ -140,6 +165,33 @@ export class HomePageComponent {
       ],
       route: '/vendor',
       cta: 'Decouvrir CraftMind',
+    },
+  ];
+
+  protected readonly footerColumns: FooterColumn[] = [
+    {
+      title: 'Explorer',
+      links: [
+        { label: 'La boutique', route: '/catalog' },
+        { label: 'Categories', href: '#categories' },
+        { label: 'Produits a la une', href: '#featured-products' },
+      ],
+    },
+    {
+      title: 'Experiences',
+      links: [
+        { label: 'Recherche visuelle', route: '/visual-search' },
+        { label: 'Panier', route: '/cart' },
+        { label: 'Paiement', route: '/payment' },
+      ],
+    },
+    {
+      title: 'Pour les artisans',
+      links: [
+        { label: 'Espace vendeur', route: '/vendor' },
+        { label: 'Connexion', route: '/auth' },
+        { label: 'Communaute', href: '#community' },
+      ],
     },
   ];
 

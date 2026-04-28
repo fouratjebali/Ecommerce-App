@@ -67,7 +67,7 @@
     <section class="hero" id="top">
       <div class="hero-copy">
         <p class="eyebrow">Marketplace artisanale tunisienne</p>
-        <h1>Decouvrez des creations faites main en Tunisie dans une boutique claire, chaleureuse et pensee pour l'achat.</h1>
+        <h1>Decouvrez des creations faites main en Tunisie.</h1>
         <p class="hero-description">
           Parcourez des objets d'artisanat, explorez les ateliers, comparez les pieces en dinar
           tunisien et choisissez des produits racontes avec soin.
@@ -390,15 +390,20 @@
       <div class="section-heading">
         <div>
           <p class="eyebrow">Pourquoi GreenCraft</p>
-          <h2>Les reperes qui rendent la marketplace simple, rassurante et locale.</h2>
         </div>
       </div>
 
       <div class="benefit-grid">
         @for (benefit of trustCards; track benefit.title) {
           <article class="benefit-card">
-            <h3>{{ benefit.title }}</h3>
-            <p>{{ benefit.copy }}</p>
+            <div class="benefit-head">
+              <span class="benefit-badge numeric">{{ benefit.badge }}</span>
+              <p class="card-label">{{ benefit.eyebrow }}</p>
+            </div>
+            <div class="benefit-body">
+              <h3>{{ benefit.title }}</h3>
+              <p>{{ benefit.copy }}</p>
+            </div>
           </article>
         }
       </div>
@@ -408,7 +413,6 @@
       <div class="section-heading">
         <div>
           <p class="eyebrow">Outils de la marketplace</p>
-          <h2>Des experiences utiles pour acheter mieux et vendre plus clairement.</h2>
         </div>
       </div>
 
@@ -455,13 +459,47 @@
   </main>
 
   <footer class="site-footer">
-    <div>
-      <strong>GreenCraft</strong>
-      <p>Une marketplace tunisienne pour les acheteurs attentifs et les artisans qui creent avec intention.</p>
+    <div class="footer-branding">
+      <div class="footer-brand-top">
+        <span class="brand-mark footer-brand-mark">GC</span>
+        <div class="brand-copy">
+          <strong>GreenCraft</strong>
+          <small>Marketplace artisanale tunisienne</small>
+        </div>
+      </div>
+
+      <p>
+        Une marketplace tunisienne pour les acheteurs attentifs et les artisans qui creent des
+        pieces utiles, chaleureuses et faites pour durer.
+      </p>
+
+      <div class="footer-badges">
+        <span>Prix en TND</span>
+        <span>Ateliers verifies</span>
+        <span>Photos produit reelles</span>
+      </div>
+    </div>
+
+    <div class="footer-columns">
+      @for (column of footerColumns; track column.title) {
+        <div class="footer-column">
+          <p class="footer-column-title">{{ column.title }}</p>
+          <div class="footer-link-list">
+            @for (link of column.links; track link.label) {
+              @if (link.route) {
+                <a [routerLink]="link.route">{{ link.label }}</a>
+              } @else if (link.href) {
+                <a [href]="link.href">{{ link.label }}</a>
+              }
+            }
+          </div>
+        </div>
+      }
     </div>
 
     <div class="footer-meta">
       <span>Copyright (c) 2026 GreenCraft. Tous droits reserves.</span>
+      <span>Projet dedie au marche tunisien.</span>
       <span>Fourat & Amin</span>
     </div>
   </footer>
