@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
@@ -53,6 +53,7 @@ type FeaturedFilter = 'ALL' | 'FEATURED' | 'STANDARD';
 export class AdminPageComponent implements OnDestroy {
   private readonly adminApiService = inject(AdminApiService);
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly workspaceAnchor = viewChild<ElementRef<HTMLElement>>('workspaceAnchor');
   private readonly chartPalette = {
     forest: '#546B41',
     olive: '#99AD7A',
@@ -372,7 +373,22 @@ export class AdminPageComponent implements OnDestroy {
   }
 
   protected setSection(section: AdminSection) {
+    const sectionWasAlreadyActive = this.activeSection() === section;
     this.activeSection.set(section);
+
+    queueMicrotask(() => {
+      this.workspaceAnchor()?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+
+    if (sectionWasAlreadyActive && section === 'dashboard') {
+      this.notice.set({
+        tone: 'success',
+        text: 'Vous etes deja sur le tableau de bord.',
+      });
+    }
   }
 
   protected openAlertTarget(target: 'users' | 'orders' | 'products') {

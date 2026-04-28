@@ -78,6 +78,7 @@
 .metric-card p,
 .management-card p,
 .management-card small,
+.section-note,
 .compact-row span,
 .panel-surface small,
 .chart-row small,
@@ -300,6 +301,11 @@
 
 .section-heading {
   align-items: center;
+}
+
+.section-note {
+  margin: 0.45rem 0 0;
+  max-width: 42rem;
 }
 
 .panel-surface,

@@ -80,13 +80,16 @@
         </div>
       </aside>
 
-      <main class="admin-workspace">
+      <main class="admin-workspace" #workspaceAnchor>
         @if (activeSection() === 'dashboard') {
           <section class="workspace-panel panel">
             <div class="section-heading">
               <div>
                 <p class="eyebrow">Tableau de bord</p>
                 <h2>Vue generale de la marketplace</h2>
+                <p class="section-note">
+                  Cette section s'ouvre par defaut et rassemble tous les indicateurs cles.
+                </p>
               </div>
               <span class="meta-chip">
                 <span class="numeric">{{ snapshot.metrics.totalUsers }}</span> comptes suivis
@@ -336,6 +339,9 @@
               <div>
                 <p class="eyebrow">Utilisateurs</p>
                 <h2>Gestion des comptes et ateliers</h2>
+                <p class="section-note">
+                  Recherchez un profil, filtrez par role et mettez a jour les statuts atelier.
+                </p>
               </div>
               <span class="meta-chip">
                 <span class="numeric">{{ filteredUsers().length }}</span> resultats
@@ -479,6 +485,9 @@
               <div>
                 <p class="eyebrow">Commandes</p>
                 <h2>Recherche et suivi des commandes</h2>
+                <p class="section-note">
+                  Retrouvez une commande rapidement et appliquez une action de suivi.
+                </p>
               </div>
               <span class="meta-chip">
                 <span class="numeric">{{ filteredOrders().length }}</span> resultats
@@ -596,6 +605,9 @@
               <div>
                 <p class="eyebrow">Catalogue</p>
                 <h2>Moderation et produits mis en avant</h2>
+                <p class="section-note">
+                  Filtrez le catalogue puis publiez, archivez ou mettez en avant un produit.
+                </p>
               </div>
               <span class="meta-chip">
                 <span class="numeric">{{ filteredProducts().length }}</span> resultats
