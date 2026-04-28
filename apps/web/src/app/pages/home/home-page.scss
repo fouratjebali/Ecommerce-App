@@ -44,7 +44,7 @@
   content: '';
   position: absolute;
   inset: 0.75rem;
-  border: 1px dashed rgba(75, 46, 30, 0.14);
+  border: 1px dashed rgba(84, 107, 65, 0.14);
   border-radius: calc(var(--radius-card) - 0.45rem);
   pointer-events: none;
 }
@@ -82,11 +82,11 @@
   place-items: center;
   width: 3rem;
   height: 3rem;
-  border: 1px solid rgba(58, 36, 21, 0.4);
+  border: 1px solid rgba(47, 58, 36, 0.4);
   border-radius: 0.9rem;
   background: linear-gradient(180deg, var(--color-terracotta), var(--color-terracotta-deep));
   box-shadow:
-    0 5px 0 rgba(75, 46, 30, 0.28),
+    0 5px 0 rgba(84, 107, 65, 0.28),
     inset 0 1px 0 rgba(255, 248, 239, 0.25);
   color: var(--color-parchment);
   font-weight: 800;
@@ -130,7 +130,7 @@
   width: 100%;
   min-height: 3.1rem;
   padding: 0.85rem 1rem;
-  border: 1px solid rgba(75, 46, 30, 0.22);
+  border: 1px solid rgba(84, 107, 65, 0.22);
   border-radius: 999px;
   background: rgba(255, 251, 244, 0.9);
   color: var(--color-walnut);
@@ -149,7 +149,7 @@
   gap: 0.55rem;
   min-height: 3rem;
   padding: 0.78rem 1.1rem;
-  border: 1px solid rgba(58, 36, 21, 0.22);
+  border: 1px solid rgba(47, 58, 36, 0.22);
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: 0.01em;
@@ -292,7 +292,7 @@
 }
 
 .notice.is-error {
-  border-color: rgba(142, 59, 47, 0.32);
+  border-color: rgba(84, 107, 65, 0.32);
   background:
     linear-gradient(180deg, rgba(255, 247, 240, 0.96), rgba(246, 223, 214, 0.92)),
     var(--surface-paper);
@@ -417,7 +417,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 0.8rem;
-  border: 1px solid rgba(75, 46, 30, 0.12);
+  border: 1px solid rgba(84, 107, 65, 0.12);
   border-radius: 999px;
   background: rgba(255, 250, 242, 0.82);
   color: var(--color-muted-ink);
@@ -438,12 +438,12 @@
   position: relative;
   display: block;
   min-height: 18rem;
-  border: 1px solid rgba(75, 46, 30, 0.12);
+  border: 1px solid rgba(84, 107, 65, 0.12);
   border-radius: 1.4rem;
   background:
-    linear-gradient(rgba(47, 79, 58, 0.18), rgba(47, 79, 58, 0.04)),
+    linear-gradient(rgba(84, 107, 65, 0.18), rgba(84, 107, 65, 0.04)),
     radial-gradient(circle at top left, rgba(255, 249, 236, 0.2), transparent 7rem),
-    linear-gradient(145deg, rgba(232, 211, 166, 0.35), rgba(182, 95, 58, 0.2));
+    linear-gradient(145deg, rgba(220, 204, 172, 0.35), rgba(153, 173, 122, 0.2));
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -462,7 +462,7 @@
 .hero-passport,
 .hero-artisan {
   padding: 1.15rem;
-  border: 1px solid rgba(75, 46, 30, 0.12);
+  border: 1px solid rgba(84, 107, 65, 0.12);
   border-radius: 1.3rem;
   background:
     linear-gradient(180deg, rgba(255, 252, 245, 0.95), rgba(244, 228, 191, 0.84)),
@@ -474,7 +474,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.65rem 0;
-  border-bottom: 1px dashed rgba(75, 46, 30, 0.16);
+  border-bottom: 1px dashed rgba(84, 107, 65, 0.16);
 }
 
 .passport-row:last-child {
@@ -553,9 +553,9 @@
   left: 1rem;
   bottom: 1rem;
   padding: 0.5rem 0.78rem;
-  border: 1px solid rgba(58, 36, 21, 0.2);
+  border: 1px solid rgba(47, 58, 36, 0.2);
   border-radius: 999px;
-  background: rgba(47, 79, 58, 0.92);
+  background: rgba(84, 107, 65, 0.92);
   color: var(--color-parchment);
   font-size: 0.78rem;
   font-weight: 800;
@@ -632,7 +632,7 @@
   gap: 1rem;
   margin-top: 2rem;
   padding: 1.25rem 0 0.5rem;
-  border-top: 1px dashed rgba(75, 46, 30, 0.2);
+  border-top: 1px dashed rgba(84, 107, 65, 0.2);
 }
 
 .footer-meta {
@@ -748,3 +748,4 @@
     display: grid;
   }
 }
+

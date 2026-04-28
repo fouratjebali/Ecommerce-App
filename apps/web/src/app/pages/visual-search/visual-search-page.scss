@@ -24,7 +24,7 @@
   content: '';
   position: absolute;
   inset: 0.8rem;
-  border: 1px dashed rgba(75, 46, 30, 0.14);
+  border: 1px dashed rgba(84, 107, 65, 0.14);
   border-radius: inherit;
   pointer-events: none;
 }
@@ -108,7 +108,7 @@
   justify-content: center;
   min-height: 3rem;
   padding: 0.82rem 1.1rem;
-  border: 1px solid rgba(58, 36, 21, 0.18);
+  border: 1px solid rgba(47, 58, 36, 0.18);
   border-radius: 999px;
   font: inherit;
   font-weight: 800;
@@ -122,8 +122,8 @@
     var(--surface-paper);
   color: var(--color-walnut);
   box-shadow:
-    0 5px 0 rgba(75, 46, 30, 0.12),
-    0 12px 20px rgba(75, 46, 30, 0.08);
+    0 5px 0 rgba(84, 107, 65, 0.12),
+    0 12px 20px rgba(84, 107, 65, 0.08);
 }
 
 .primary-link,
@@ -140,7 +140,7 @@
 
 .notice.is-error {
   color: var(--color-terracotta-deep);
-  border-color: rgba(142, 59, 47, 0.25);
+  border-color: rgba(84, 107, 65, 0.25);
   background:
     linear-gradient(180deg, rgba(255, 247, 240, 0.98), rgba(252, 229, 217, 0.92));
 }
@@ -181,10 +181,10 @@
   gap: 1rem;
   min-height: 21rem;
   padding: 1rem;
-  border: 1px dashed rgba(75, 46, 30, 0.25);
+  border: 1px dashed rgba(84, 107, 65, 0.25);
   border-radius: 1.45rem;
   background:
-    radial-gradient(circle at top left, rgba(200, 155, 60, 0.18), transparent 12rem),
+    radial-gradient(circle at top left, rgba(220, 204, 172, 0.18), transparent 12rem),
     linear-gradient(180deg, rgba(255, 250, 242, 0.96), rgba(242, 227, 193, 0.88));
   cursor: pointer;
 }
@@ -193,7 +193,7 @@
   content: '';
   position: absolute;
   inset: 0.75rem;
-  border: 1px dashed rgba(75, 46, 30, 0.12);
+  border: 1px dashed rgba(84, 107, 65, 0.12);
   border-radius: 1.1rem;
   pointer-events: none;
 }
@@ -256,7 +256,7 @@
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid rgba(75, 46, 30, 0.1);
+  border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1.3rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.98), rgba(242, 228, 194, 0.84));
@@ -283,13 +283,13 @@
   width: auto;
   padding: 0.6rem 0.9rem;
   justify-content: center;
-  box-shadow: 0 4px 0 rgba(75, 46, 30, 0.08);
+  box-shadow: 0 4px 0 rgba(84, 107, 65, 0.08);
 }
 
 .pill.is-active {
   background: linear-gradient(180deg, var(--color-forest), var(--color-walnut));
   color: var(--color-parchment);
-  border-color: rgba(58, 36, 21, 0.32);
+  border-color: rgba(47, 58, 36, 0.32);
 }
 
 .pill-cluster {
@@ -322,7 +322,7 @@
   min-width: 2rem;
   min-height: 2rem;
   padding: 0 0.55rem;
-  border: 1px solid rgba(75, 46, 30, 0.12);
+  border: 1px solid rgba(84, 107, 65, 0.12);
   border-radius: 999px;
   background: rgba(255, 250, 242, 0.8);
   color: var(--color-walnut);
@@ -341,7 +341,7 @@
   min-width: 7rem;
   padding: 0.7rem 1rem;
   border-radius: 999px;
-  border: 1px solid rgba(58, 36, 21, 0.16);
+  border: 1px solid rgba(47, 58, 36, 0.16);
   color: var(--color-parchment);
   font-weight: 800;
 }
@@ -364,8 +364,8 @@
   position: relative;
   min-height: 16rem;
   background:
-    linear-gradient(rgba(47, 79, 58, 0.2), rgba(47, 79, 58, 0.06)),
-    linear-gradient(145deg, rgba(232, 211, 166, 0.35), rgba(182, 95, 58, 0.22));
+    linear-gradient(rgba(84, 107, 65, 0.2), rgba(84, 107, 65, 0.06)),
+    linear-gradient(145deg, rgba(220, 204, 172, 0.35), rgba(153, 173, 122, 0.22));
   background-size: cover;
   background-position: center;
 }
@@ -375,16 +375,16 @@
   top: 1rem;
   left: 1rem;
   padding: 0.5rem 0.85rem;
-  border: 1px solid rgba(58, 36, 21, 0.16);
+  border: 1px solid rgba(47, 58, 36, 0.16);
   border-radius: 999px;
-  background: rgba(47, 79, 58, 0.92);
+  background: rgba(84, 107, 65, 0.92);
   color: var(--color-parchment);
   font-size: 0.8rem;
   font-weight: 700;
 }
 
 .match-badge.is-fallback {
-  background: rgba(182, 95, 58, 0.94);
+  background: rgba(153, 173, 122, 0.94);
 }
 
 .result-copy {
@@ -404,7 +404,7 @@
 
 .reason-list div {
   padding: 0.85rem 0.95rem;
-  border: 1px solid rgba(75, 46, 30, 0.1);
+  border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
@@ -470,3 +470,4 @@
     grid-template-columns: 1fr;
   }
 }
+

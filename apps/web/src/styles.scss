@@ -1,49 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --color-parchment: #fff7e6;
-  --color-paper: #f8eed3;
-  --color-aged-paper: #e8d3a6;
-  --color-terracotta: #b65f3a;
-  --color-terracotta-deep: #8e3b2f;
-  --color-forest: #2f4f3a;
-  --color-forest-soft: #3e5f44;
-  --color-olive: #6f7d45;
-  --color-walnut: #3a2415;
-  --color-walnut-soft: #4b2e1e;
-  --color-mustard: #c89b3c;
-  --color-ink: #2b2118;
-  --color-muted-ink: #625041;
-  --color-line: rgba(75, 46, 30, 0.2);
-  --color-line-strong: rgba(58, 36, 21, 0.35);
+  --color-parchment: #fff8ec;
+  --color-paper: #f7efdd;
+  --color-aged-paper: #dcccac;
+  --color-terracotta: #99ad7a;
+  --color-terracotta-deep: #546b41;
+  --color-forest: #546b41;
+  --color-forest-soft: #708558;
+  --color-olive: #99ad7a;
+  --color-walnut: #2f3a24;
+  --color-walnut-soft: #435534;
+  --color-mustard: #dcccac;
+  --color-ink: #2f3a24;
+  --color-muted-ink: #67765a;
+  --color-line: rgba(84, 107, 65, 0.18);
+  --color-line-strong: rgba(47, 58, 36, 0.32);
   --surface-paper: linear-gradient(
       180deg,
-      rgba(255, 251, 241, 0.98),
-      rgba(247, 235, 206, 0.94)
+      rgba(255, 252, 246, 0.98),
+      rgba(246, 239, 224, 0.94)
     ),
-    linear-gradient(135deg, rgba(200, 155, 60, 0.08), rgba(182, 95, 58, 0.08));
+    linear-gradient(135deg, rgba(220, 204, 172, 0.14), rgba(153, 173, 122, 0.1));
   --surface-card: linear-gradient(
     180deg,
-    rgba(255, 251, 243, 0.98),
-    rgba(244, 229, 194, 0.92)
+    rgba(255, 252, 246, 0.98),
+    rgba(244, 235, 219, 0.94)
   );
   --surface-tinted: linear-gradient(
     180deg,
-    rgba(250, 239, 212, 0.96),
-    rgba(238, 220, 178, 0.92)
+    rgba(250, 244, 234, 0.98),
+    rgba(220, 204, 172, 0.86)
   );
-  --surface-dark: linear-gradient(180deg, #4b2e1e 0%, #3a2415 100%);
+  --surface-dark: linear-gradient(180deg, #546b41 0%, #435534 100%);
   --shadow-paper:
-    0 24px 48px rgba(58, 36, 21, 0.12),
-    0 3px 0 rgba(58, 36, 21, 0.14);
-  --shadow-inset: inset 0 1px 0 rgba(255, 252, 243, 0.8);
+    0 24px 48px rgba(47, 58, 36, 0.1),
+    0 3px 0 rgba(84, 107, 65, 0.14);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 250, 0.84);
   --shadow-pressed:
-    0 6px 0 rgba(75, 46, 30, 0.35),
-    0 12px 24px rgba(75, 46, 30, 0.18);
+    0 6px 0 rgba(67, 85, 52, 0.32),
+    0 12px 24px rgba(47, 58, 36, 0.16);
   --radius-handmade: 22px;
   --radius-card: 28px;
   --radius-pill: 999px;
-  --focus-ring: 0 0 0 3px rgba(200, 155, 60, 0.28);
+  --focus-ring: 0 0 0 3px rgba(153, 173, 122, 0.28);
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'Nunito Sans', 'Segoe UI', sans-serif;
   --font-numeric: 'Nunito Sans', 'Segoe UI', Roboto, Arial, sans-serif;
@@ -79,10 +79,10 @@ body {
   color: var(--color-ink);
   text-rendering: optimizeLegibility;
   background:
-    radial-gradient(circle at top left, rgba(200, 155, 60, 0.22), transparent 26rem),
-    radial-gradient(circle at top right, rgba(182, 95, 58, 0.16), transparent 30rem),
-    radial-gradient(circle at bottom right, rgba(111, 125, 69, 0.14), transparent 28rem),
-    linear-gradient(180deg, #fff7e6 0%, #f7ecd0 38%, #fff7e8 100%);
+    radial-gradient(circle at top left, rgba(220, 204, 172, 0.34), transparent 26rem),
+    radial-gradient(circle at top right, rgba(153, 173, 122, 0.18), transparent 30rem),
+    radial-gradient(circle at bottom right, rgba(84, 107, 65, 0.12), transparent 28rem),
+    linear-gradient(180deg, #fff8ec 0%, #fdf6e8 45%, #fff8ec 100%);
 }
 
 body::before,
@@ -96,17 +96,17 @@ body::after {
 body::before {
   opacity: 0.4;
   background:
-    linear-gradient(rgba(94, 71, 48, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(94, 71, 48, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(84, 107, 65, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(84, 107, 65, 0.03) 1px, transparent 1px);
   background-size: 92px 92px;
 }
 
 body::after {
   opacity: 0.3;
   background:
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4), transparent 0.8rem),
-    radial-gradient(circle at 70% 35%, rgba(75, 46, 30, 0.05), transparent 0.7rem),
-    radial-gradient(circle at 40% 75%, rgba(58, 36, 21, 0.04), transparent 0.8rem);
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.36), transparent 0.8rem),
+    radial-gradient(circle at 70% 35%, rgba(84, 107, 65, 0.05), transparent 0.7rem),
+    radial-gradient(circle at 40% 75%, rgba(47, 58, 36, 0.04), transparent 0.8rem);
   background-size: 180px 180px;
 }
 
@@ -168,7 +168,7 @@ summary:focus-visible {
 }
 
 ::selection {
-  background: rgba(200, 155, 60, 0.26);
+  background: rgba(153, 173, 122, 0.26);
   color: var(--color-walnut);
 }
 
@@ -184,7 +184,7 @@ select {
 
 input::placeholder,
 textarea::placeholder {
-  color: rgba(98, 80, 65, 0.78);
+  color: rgba(103, 118, 90, 0.78);
 }
 
 button,

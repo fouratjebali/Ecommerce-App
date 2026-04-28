@@ -22,7 +22,7 @@
   content: '';
   position: absolute;
   inset: 0.8rem;
-  border: 1px dashed rgba(75, 46, 30, 0.14);
+  border: 1px dashed rgba(84, 107, 65, 0.14);
   border-radius: inherit;
   pointer-events: none;
 }
@@ -96,7 +96,7 @@
   justify-content: center;
   min-height: 3rem;
   padding: 0.82rem 1.1rem;
-  border: 1px solid rgba(58, 36, 21, 0.18);
+  border: 1px solid rgba(47, 58, 36, 0.18);
   border-radius: 999px;
   font: inherit;
   font-weight: 800;
@@ -108,8 +108,8 @@
     var(--surface-paper);
   color: var(--color-walnut);
   box-shadow:
-    0 5px 0 rgba(75, 46, 30, 0.12),
-    0 12px 20px rgba(75, 46, 30, 0.08);
+    0 5px 0 rgba(84, 107, 65, 0.12),
+    0 12px 20px rgba(84, 107, 65, 0.08);
 }
 
 .primary-link {
@@ -126,7 +126,7 @@
 
 .notice.is-error {
   color: var(--color-terracotta-deep);
-  border-color: rgba(142, 59, 47, 0.25);
+  border-color: rgba(84, 107, 65, 0.25);
   background:
     linear-gradient(180deg, rgba(255, 247, 240, 0.98), rgba(252, 229, 217, 0.92));
 }
@@ -185,17 +185,17 @@
   gap: 0.8rem;
   align-items: flex-start;
   padding: 1rem;
-  border: 1px solid rgba(75, 46, 30, 0.14);
+  border: 1px solid rgba(84, 107, 65, 0.14);
   border-radius: 1.2rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
 }
 
 .method-card.is-active {
-  border-color: rgba(166, 75, 42, 0.34);
+  border-color: rgba(84, 107, 65, 0.34);
   box-shadow:
-    0 0 0 1px rgba(166, 75, 42, 0.14),
-    0 12px 24px rgba(75, 46, 30, 0.08);
+    0 0 0 1px rgba(84, 107, 65, 0.14),
+    0 12px 24px rgba(84, 107, 65, 0.08);
 }
 
 .method-card input {
@@ -212,7 +212,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0.55rem 0.9rem;
-  border: 1px solid rgba(75, 46, 30, 0.12);
+  border: 1px solid rgba(84, 107, 65, 0.12);
   border-radius: 999px;
   background: rgba(255, 250, 242, 0.82);
   color: var(--color-walnut-soft);
@@ -225,7 +225,7 @@
   display: grid;
   gap: 0.3rem;
   padding: 1rem 1.05rem;
-  border: 1px solid rgba(75, 46, 30, 0.1);
+  border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
@@ -265,7 +265,7 @@
 
 .summary-item {
   padding: 0.95rem 1rem;
-  border: 1px solid rgba(75, 46, 30, 0.1);
+  border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
@@ -282,7 +282,7 @@
 
 .summary-total {
   padding-top: 1rem;
-  border-top: 1px dashed rgba(75, 46, 30, 0.18);
+  border-top: 1px dashed rgba(84, 107, 65, 0.18);
 }
 
 .summary-total strong {
@@ -315,3 +315,4 @@
     grid-template-columns: 1fr;
   }
 }
+

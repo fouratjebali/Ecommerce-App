@@ -24,7 +24,7 @@
   content: '';
   position: absolute;
   inset: 0.8rem;
-  border: 1px dashed rgba(75, 46, 30, 0.14);
+  border: 1px dashed rgba(84, 107, 65, 0.14);
   border-radius: inherit;
   pointer-events: none;
 }
@@ -104,7 +104,7 @@
   justify-content: center;
   min-height: 3rem;
   padding: 0.82rem 1.1rem;
-  border: 1px solid rgba(58, 36, 21, 0.18);
+  border: 1px solid rgba(47, 58, 36, 0.18);
   border-radius: 999px;
   font: inherit;
   font-weight: 800;
@@ -117,8 +117,8 @@
     var(--surface-paper);
   color: var(--color-walnut);
   box-shadow:
-    0 5px 0 rgba(75, 46, 30, 0.12),
-    0 12px 20px rgba(75, 46, 30, 0.08);
+    0 5px 0 rgba(84, 107, 65, 0.12),
+    0 12px 20px rgba(84, 107, 65, 0.08);
 }
 
 .primary-link {
@@ -135,7 +135,7 @@
 
 .notice.is-error {
   color: var(--color-terracotta-deep);
-  border-color: rgba(142, 59, 47, 0.25);
+  border-color: rgba(84, 107, 65, 0.25);
   background:
     linear-gradient(180deg, rgba(255, 247, 240, 0.98), rgba(252, 229, 217, 0.92));
 }
@@ -155,7 +155,7 @@
 .meta-chip,
 .callout {
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(75, 46, 30, 0.1);
+  border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1.2rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.98), rgba(242, 228, 194, 0.84));
@@ -167,7 +167,7 @@
   gap: 0.9rem;
   margin-top: 1rem;
   padding: 1rem;
-  border: 1px dashed rgba(75, 46, 30, 0.18);
+  border: 1px dashed rgba(84, 107, 65, 0.18);
   border-radius: 1.35rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.98), rgba(242, 228, 194, 0.84));
@@ -199,8 +199,8 @@
 .item-image {
   min-height: 16rem;
   background:
-    linear-gradient(rgba(47, 79, 58, 0.2), rgba(47, 79, 58, 0.06)),
-    linear-gradient(145deg, rgba(232, 211, 166, 0.35), rgba(182, 95, 58, 0.22));
+    linear-gradient(rgba(84, 107, 65, 0.2), rgba(84, 107, 65, 0.06)),
+    linear-gradient(145deg, rgba(220, 204, 172, 0.35), rgba(153, 173, 122, 0.22));
   background-size: cover;
   background-position: center;
 }
@@ -225,7 +225,7 @@
   display: grid;
   gap: 0.3rem;
   padding: 0.85rem 0.95rem;
-  border: 1px solid rgba(75, 46, 30, 0.1);
+  border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
@@ -270,7 +270,7 @@
 
 .summary-total {
   padding-top: 1rem;
-  border-top: 1px dashed rgba(75, 46, 30, 0.18);
+  border-top: 1px dashed rgba(84, 107, 65, 0.18);
 }
 
 .summary-total strong {
@@ -306,3 +306,4 @@
     grid-template-columns: 1fr;
   }
 }
+
