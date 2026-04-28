@@ -2,6 +2,16 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import {
+  ChartData,
+  ChartOptions,
+  TooltipItem,
+} from 'chart.js';
+import {
+  BaseChartDirective,
+  provideCharts,
+  withDefaultRegisterables,
+} from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import {
   AdminDashboardResponse,
@@ -32,15 +42,27 @@ type FeaturedFilter = 'ALL' | 'FEATURED' | 'STANDARD';
     FormsModule,
     RouterLink,
     DatePipe,
+    BaseChartDirective,
     TndCurrencyPipe,
     MarketLabelPipe,
   ],
+  providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.scss',
 })
 export class AdminPageComponent implements OnDestroy {
   private readonly adminApiService = inject(AdminApiService);
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly chartPalette = {
+    forest: '#546B41',
+    olive: '#99AD7A',
+    parchment: '#FFF8EC',
+    sand: '#DCCCAC',
+    terracotta: '#B65F3A',
+    walnut: '#3A2415',
+    muted: 'rgba(58, 36, 21, 0.72)',
+    line: 'rgba(84, 107, 65, 0.14)',
+  } as const;
 
   protected readonly activeSection = signal<AdminSection>('dashboard');
   protected readonly loading = signal(true);
@@ -199,96 +221,138 @@ export class AdminPageComponent implements OnDestroy {
     });
   });
 
-  protected readonly revenueBars = computed(() => {
+  protected readonly revenueComparisonData = computed<ChartData<'bar'>>(() => {
     const snapshot = this.dashboard();
 
-    if (!snapshot) {
-      return [];
-    }
+    return {
+      labels: ['7 derniers jours', '7 jours precedents'],
+      datasets: [
+        {
+          label: "Chiffre d'affaires",
+          data: snapshot
+            ? [
+                snapshot.metrics.revenueLast7DaysInCents / 100,
+                snapshot.metrics.revenuePrevious7DaysInCents / 100,
+              ]
+            : [0, 0],
+          backgroundColor: [this.chartPalette.forest, this.chartPalette.sand],
+          borderRadius: 12,
+          borderSkipped: false,
+          maxBarThickness: 58,
+        },
+      ],
+    };
+  });
 
-    const bars = [
-      {
-        label: '7 derniers jours',
-        hint: 'Periode actuelle',
-        value: snapshot.metrics.revenueLast7DaysInCents,
-        tone: 'primary',
+  protected readonly statusDistributionData = computed<ChartData<'doughnut'>>(() => {
+    const snapshot = this.dashboard();
+    const entries = snapshot?.performance.statusBreakdown ?? [];
+
+    return {
+      labels: entries.map((entry) => this.translateStatus(entry.status)),
+      datasets: [
+        {
+          data: entries.map((entry) => entry.count),
+          backgroundColor: [
+            this.chartPalette.forest,
+            this.chartPalette.olive,
+            this.chartPalette.sand,
+            this.chartPalette.terracotta,
+            '#7f8c5d',
+          ],
+          borderColor: this.chartPalette.parchment,
+          borderWidth: 4,
+          hoverOffset: 6,
+        },
+      ],
+    };
+  });
+
+  protected readonly categoryPerformanceData = computed<ChartData<'bar'>>(() => {
+    const snapshot = this.dashboard();
+    const entries = snapshot?.performance.topCategories ?? [];
+
+    return {
+      labels: entries.map((entry) => entry.name),
+      datasets: [
+        {
+          label: "Chiffre d'affaires",
+          data: entries.map((entry) => entry.revenueInCents / 100),
+          backgroundColor: this.chartPalette.sand,
+          borderColor: this.chartPalette.forest,
+          borderWidth: 1,
+          borderRadius: 10,
+          borderSkipped: false,
+        },
+      ],
+    };
+  });
+
+  protected readonly artisanPerformanceData = computed<ChartData<'bar'>>(() => {
+    const snapshot = this.dashboard();
+    const entries = snapshot?.performance.topArtisans ?? [];
+
+    return {
+      labels: entries.map((entry) => entry.studioName),
+      datasets: [
+        {
+          label: 'Ventes',
+          data: entries.map((entry) => entry.itemsSold),
+          backgroundColor: this.chartPalette.olive,
+          borderRadius: 10,
+          borderSkipped: false,
+        },
+        {
+          label: 'CA en TND',
+          data: entries.map((entry) => Math.round(entry.revenueInCents / 100)),
+          backgroundColor: this.chartPalette.forest,
+          borderRadius: 10,
+          borderSkipped: false,
+        },
+      ],
+    };
+  });
+
+  protected readonly revenueChartOptions: ChartOptions<'bar'> = this.createBarChartOptions({
+    indexAxis: 'x',
+    tooltipLabel: (item) => this.formatCurrencyValue(item.parsed.y ?? 0),
+  });
+
+  protected readonly categoryChartOptions: ChartOptions<'bar'> = this.createBarChartOptions({
+    indexAxis: 'y',
+    tooltipLabel: (item) => this.formatCurrencyValue(item.parsed.x ?? 0),
+  });
+
+  protected readonly artisanChartOptions: ChartOptions<'bar'> = this.createBarChartOptions({
+    indexAxis: 'y',
+    stacked: false,
+    tooltipLabel: (item) =>
+      item.dataset.label === 'CA en TND'
+        ? this.formatCurrencyValue(item.parsed.x ?? 0)
+        : `${item.dataset.label}: ${item.parsed.x ?? 0}`,
+  });
+
+  protected readonly doughnutChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '64%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: this.chartPalette.muted,
+          usePointStyle: true,
+          boxWidth: 10,
+          padding: 16,
+        },
       },
-      {
-        label: '7 jours precedents',
-        hint: 'Periode de comparaison',
-        value: snapshot.metrics.revenuePrevious7DaysInCents,
-        tone: 'secondary',
+      tooltip: {
+        callbacks: {
+          label: (item) => `${item.label}: ${item.raw ?? 0}`,
+        },
       },
-    ] as const;
-
-    const max = Math.max(...bars.map((bar) => bar.value), 1);
-
-    return bars.map((bar) => ({
-      ...bar,
-      width: bar.value > 0 ? `${Math.max((bar.value / max) * 100, 10)}%` : '0%',
-    }));
-  });
-
-  protected readonly statusBars = computed(() => {
-    const snapshot = this.dashboard();
-
-    if (!snapshot) {
-      return [];
-    }
-
-    const total = snapshot.performance.statusBreakdown.reduce(
-      (sum, entry) => sum + entry.count,
-      0,
-    );
-
-    return snapshot.performance.statusBreakdown.map((entry) => ({
-      ...entry,
-      share: total > 0 ? Math.round((entry.count / total) * 100) : 0,
-      width: total > 0 ? `${Math.max((entry.count / total) * 100, 8)}%` : '0%',
-    }));
-  });
-
-  protected readonly categoryBars = computed(() => {
-    const snapshot = this.dashboard();
-
-    if (!snapshot) {
-      return [];
-    }
-
-    const max = Math.max(
-      ...snapshot.performance.topCategories.map((category) => category.revenueInCents),
-      1,
-    );
-
-    return snapshot.performance.topCategories.map((category) => ({
-      ...category,
-      width:
-        category.revenueInCents > 0
-          ? `${Math.max((category.revenueInCents / max) * 100, 12)}%`
-          : '0%',
-    }));
-  });
-
-  protected readonly artisanBars = computed(() => {
-    const snapshot = this.dashboard();
-
-    if (!snapshot) {
-      return [];
-    }
-
-    const max = Math.max(
-      ...snapshot.performance.topArtisans.map((artisan) => artisan.revenueInCents),
-      1,
-    );
-
-    return snapshot.performance.topArtisans.map((artisan) => ({
-      ...artisan,
-      width:
-        artisan.revenueInCents > 0
-          ? `${Math.max((artisan.revenueInCents / max) * 100, 12)}%`
-          : '0%',
-    }));
-  });
+    },
+  };
 
   protected readonly lowStockProducts = computed(() =>
     this.products()
@@ -363,6 +427,21 @@ export class AdminPageComponent implements OnDestroy {
     }
 
     return 'stable';
+  }
+
+  protected translateStatus(status: string) {
+    switch (status) {
+      case 'CONFIRMED':
+        return 'Confirme';
+      case 'FULFILLING':
+        return 'En preparation';
+      case 'COMPLETED':
+        return 'Termine';
+      case 'CANCELLED':
+        return 'Annule';
+      default:
+        return status;
+    }
   }
 
   protected async manualRefresh() {
@@ -559,5 +638,72 @@ export class AdminPageComponent implements OnDestroy {
     } finally {
       this.updatingUserId.set(null);
     }
+  }
+
+  private createBarChartOptions(
+    config: {
+      indexAxis: 'x' | 'y';
+      stacked?: boolean;
+      tooltipLabel: (item: TooltipItem<'bar'>) => string;
+    },
+  ): ChartOptions<'bar'> {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: config.indexAxis,
+      interaction: {
+        mode: 'nearest',
+        intersect: false,
+      },
+      scales: {
+        x: {
+          stacked: config.stacked,
+          grid: {
+            color: this.chartPalette.line,
+          },
+          ticks: {
+            color: this.chartPalette.muted,
+          },
+          border: {
+            display: false,
+          },
+        },
+        y: {
+          stacked: config.stacked,
+          grid: {
+            color: this.chartPalette.line,
+          },
+          ticks: {
+            color: this.chartPalette.muted,
+          },
+          border: {
+            display: false,
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: this.chartPalette.muted,
+            usePointStyle: true,
+            boxWidth: 10,
+            padding: 16,
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: config.tooltipLabel,
+          },
+        },
+      },
+    };
+  }
+
+  private formatCurrencyValue(value: number) {
+    return new Intl.NumberFormat('fr-TN', {
+      style: 'currency',
+      currency: 'TND',
+    }).format(value);
   }
 }

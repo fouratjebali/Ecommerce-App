@@ -230,11 +230,9 @@
 .charts-grid,
 .dashboard-lower-grid,
 .management-grid,
-.leader-list,
 .alert-list,
 .compact-list,
-.toolbar,
-.bar-chart {
+.toolbar {
   display: grid;
   gap: 1rem;
 }
@@ -259,7 +257,6 @@
 .sidebar-link-copy,
 .sidebar-link-meta,
 .summary-card,
-.chart-row,
 .mini-heading,
 .product-card {
   display: grid;
@@ -356,61 +353,22 @@
   margin-bottom: 1rem;
 }
 
-.bar-chart {
-  gap: 0.9rem;
-}
-
-.chart-row {
-  gap: 0.45rem;
-}
-
-.chart-meta {
-  align-items: center;
-}
-
-.chart-track {
+.chart-canvas {
   position: relative;
-  height: 0.75rem;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(84, 107, 65, 0.12);
+  padding: 0.35rem 0.2rem 0;
 }
 
-.chart-fill {
-  display: block;
+.chart-canvas.is-medium {
+  min-height: 320px;
+}
+
+.chart-canvas.is-tall {
+  min-height: 360px;
+}
+
+.chart-canvas canvas {
+  width: 100%;
   height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--color-forest), var(--color-olive));
-}
-
-.chart-fill.is-secondary {
-  background: linear-gradient(90deg, var(--color-aged-paper), var(--color-mustard));
-}
-
-.chart-fill.is-olive {
-  background: linear-gradient(90deg, var(--color-olive), var(--color-forest));
-}
-
-.chart-fill.is-mustard {
-  background: linear-gradient(90deg, var(--color-mustard), var(--color-aged-paper));
-}
-
-.leader-card {
-  display: grid;
-  gap: 0.6rem;
-  padding: 0.95rem;
-  border: 1px solid rgba(84, 107, 65, 0.1);
-  border-radius: 1.2rem;
-  background: rgba(255, 250, 242, 0.72);
-}
-
-.leader-top {
-  align-items: start;
-}
-
-.leader-top > div {
-  display: grid;
-  gap: 0.2rem;
 }
 
 .compact-list {
@@ -604,8 +562,7 @@
   .management-metrics,
   .alert-head,
   .compact-row,
-  .chart-meta,
-  .leader-top {
+  .chart-meta {
     flex-direction: column;
   }
 

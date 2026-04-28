@@ -151,24 +151,13 @@
                   <strong>Evolution du chiffre d'affaires</strong>
                   <span>Comparaison des deux dernieres periodes</span>
                 </div>
-
-                <div class="bar-chart">
-                  @for (bar of revenueBars(); track bar.label) {
-                    <div class="chart-row">
-                      <div class="chart-meta">
-                        <span>{{ bar.label }}</span>
-                        <strong class="amount">{{ bar.value / 100 | tndCurrency }}</strong>
-                      </div>
-                      <div class="chart-track">
-                        <span
-                          class="chart-fill"
-                          [class.is-secondary]="bar.tone === 'secondary'"
-                          [style.width]="bar.width"
-                        ></span>
-                      </div>
-                      <small>{{ bar.hint }}</small>
-                    </div>
-                  }
+                <div class="chart-canvas is-medium">
+                  <canvas
+                    baseChart
+                    [data]="revenueComparisonData()"
+                    [options]="revenueChartOptions"
+                    [type]="'bar'"
+                  ></canvas>
                 </div>
               </article>
 
@@ -177,20 +166,13 @@
                   <strong>Repartition des statuts</strong>
                   <span>Lecture rapide du flux de commandes</span>
                 </div>
-
-                <div class="bar-chart">
-                  @for (status of statusBars(); track status.status) {
-                    <div class="chart-row">
-                      <div class="chart-meta">
-                        <span>{{ status.status | marketLabel }}</span>
-                        <strong class="quantity">{{ status.count }}</strong>
-                      </div>
-                      <div class="chart-track">
-                        <span class="chart-fill is-olive" [style.width]="status.width"></span>
-                      </div>
-                      <small><span class="numeric">{{ status.share }}</span>% du flux total</small>
-                    </div>
-                  }
+                <div class="chart-canvas is-medium">
+                  <canvas
+                    baseChart
+                    [data]="statusDistributionData()"
+                    [options]="doughnutChartOptions"
+                    [type]="'doughnut'"
+                  ></canvas>
                 </div>
               </article>
 
@@ -199,22 +181,13 @@
                   <strong>Categories les plus performantes</strong>
                   <span>Par chiffre d'affaires genere</span>
                 </div>
-
-                <div class="bar-chart">
-                  @for (category of categoryBars(); track category.slug) {
-                    <div class="chart-row">
-                      <div class="chart-meta">
-                        <span>{{ category.name | marketLabel }}</span>
-                        <strong class="amount">{{
-                          category.revenueInCents / 100 | tndCurrency
-                        }}</strong>
-                      </div>
-                      <div class="chart-track">
-                        <span class="chart-fill is-mustard" [style.width]="category.width"></span>
-                      </div>
-                      <small><span class="numeric">{{ category.itemsSold }}</span> articles vendus</small>
-                    </div>
-                  }
+                <div class="chart-canvas is-tall">
+                  <canvas
+                    baseChart
+                    [data]="categoryPerformanceData()"
+                    [options]="categoryChartOptions"
+                    [type]="'bar'"
+                  ></canvas>
                 </div>
               </article>
 
@@ -223,23 +196,13 @@
                   <strong>Ateliers moteurs</strong>
                   <span>Les meilleurs contributeurs du moment</span>
                 </div>
-
-                <div class="leader-list">
-                  @for (artisan of artisanBars(); track artisan.id) {
-                    <div class="leader-card">
-                      <div class="leader-top">
-                        <div>
-                          <strong>{{ artisan.studioName }}</strong>
-                          <span>{{ artisan.location }}</span>
-                        </div>
-                        <strong class="amount">{{ artisan.revenueInCents / 100 | tndCurrency }}</strong>
-                      </div>
-                      <div class="chart-track">
-                        <span class="chart-fill" [style.width]="artisan.width"></span>
-                      </div>
-                      <small><span class="numeric">{{ artisan.itemsSold }}</span> ventes sur la periode observee</small>
-                    </div>
-                  }
+                <div class="chart-canvas is-tall">
+                  <canvas
+                    baseChart
+                    [data]="artisanPerformanceData()"
+                    [options]="artisanChartOptions"
+                    [type]="'bar'"
+                  ></canvas>
                 </div>
               </article>
             </section>
