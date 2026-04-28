@@ -23,8 +23,8 @@ export class AuthPageComponent {
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly loginForm = {
-    email: 'noura@greencraft.local',
-    password: 'Artisan@1234',
+    email: '',
+    password: '',
   };
 
   protected readonly buyerForm = {
@@ -78,7 +78,7 @@ export class AuthPageComponent {
       await this.router.navigateByUrl('/vendor');
     } catch {
       this.errorMessage.set(
-        "La demande n'a pas pu etre traitee. Verifiez les champs du formulaire ou essayez un autre compte.",
+        "Nous n'avons pas pu traiter votre demande. Verifiez vos informations puis reessayez.",
       );
     } finally {
       this.isSubmitting.set(false);

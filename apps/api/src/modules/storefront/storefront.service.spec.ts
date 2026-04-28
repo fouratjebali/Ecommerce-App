@@ -26,13 +26,13 @@ describe('StorefrontService', () => {
       {
         getOverview: jest.fn().mockResolvedValue({
           metrics: [{ value: '3' }],
-          initiatives: [{ milestone: 'Sprint 2 foundation' }],
+          initiatives: [{ milestone: 'Parcours marketplace' }],
         }),
       } as never,
     );
   });
 
-  it('returns the Sprint 2 homepage payload', async () => {
+  it('returns the homepage payload', async () => {
     const homepage = await storefrontService.getHomepage();
 
     expect(homepage.hero.title).toContain('marketplace');

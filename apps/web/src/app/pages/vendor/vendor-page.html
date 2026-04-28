@@ -1,6 +1,5 @@
 @let currentDashboard = dashboard();
 @let currentOptions = options();
-@let currentUser = authService.user();
 @let currentNotice = notice();
 @let currentCraftmindDraft = craftmindDraft();
 
@@ -8,16 +7,12 @@
   <header class="vendor-header panel">
     <div>
       <p class="eyebrow">Registre d'atelier</p>
-      <h1>Gerez votre atelier artisanal, publiez vos produits et affinez vos fiches avec CraftMind.</h1>
-      <p>
-        Retrouvez dans un meme espace les informations de votre atelier, vos brouillons produits
-        et le suivi de vos commandes.
-      </p>
+      <h1>Gerez votre atelier et vos produits.</h1>
+      <p>Retrouvez votre profil, votre catalogue et vos commandes dans un seul espace.</p>
     </div>
 
     <div class="header-actions">
       <div class="account-pill">
-        <strong>{{ currentUser?.fullName ?? 'Compte artisan' }}</strong>
         <span>{{
           (currentDashboard ? currentDashboard.profile.verificationStatus : 'PENDING')
             | marketLabel
@@ -25,7 +20,6 @@
       </div>
       <a class="ghost-link" routerLink="/">Accueil</a>
       <a class="ghost-link" routerLink="/catalog">Catalogue</a>
-      <button type="button" class="primary-link" (click)="logout()">Se deconnecter</button>
     </div>
   </header>
 
@@ -142,7 +136,7 @@
             </label>
 
             <label>
-              <span>Slug</span>
+              <span>Identifiant URL</span>
               <input type="text" name="productSlug" [(ngModel)]="productForm.slug" required />
             </label>
           </div>
@@ -270,7 +264,7 @@
             </label>
 
             <label>
-              <span>Devise</span>
+              <span>Devise (TND)</span>
               <input type="text" name="currency" [(ngModel)]="productForm.currency" required />
             </label>
 
@@ -282,12 +276,12 @@
 
           <div class="grid-two">
             <label>
-              <span>URL de l'image</span>
+              <span>Lien de l'image</span>
               <input type="url" name="imageUrl" [(ngModel)]="productForm.imageUrl" required />
             </label>
 
             <label>
-              <span>Texte alternatif</span>
+              <span>Description de l'image</span>
               <input type="text" name="imageAlt" [(ngModel)]="productForm.imageAlt" required />
             </label>
           </div>
@@ -317,7 +311,7 @@
             <div class="form-block">
               <div class="block-heading">
                 <strong>Attributs produit</strong>
-                <span>Attributs utilises dans le catalogue et les filtres produit.</span>
+                <span>Completez les details qui aident les acheteurs a choisir.</span>
               </div>
 
               <div class="attribute-grid">
@@ -387,16 +381,13 @@
     <section class="panel craftmind-panel">
       <div class="panel-heading">
         <div>
-          <p class="eyebrow">Atelier CraftMind</p>
-          <h2>Accompagnement contextuel et generation de fiches</h2>
+          <p class="eyebrow">Assistant vendeur</p>
+          <h2>Aide a la redaction des fiches</h2>
         </div>
 
         <div class="craftmind-header-actions">
-          @if (craftmindProviderSummary()) {
-            <span class="meta-chip">{{ craftmindProviderSummary() }}</span>
-          }
           <button type="button" class="ghost-button" (click)="seedCraftmindPromptFromProductForm()">
-            Utiliser le formulaire actuel
+            Preparer avec ce produit
           </button>
         </div>
       </div>
@@ -404,12 +395,12 @@
       <div class="craftmind-layout">
         <div class="craftmind-chat-column">
           <label class="craftmind-prompt">
-            <span>Brief ou question</span>
+            <span>Question ou consigne</span>
             <textarea
               rows="4"
               name="craftmindPrompt"
               [(ngModel)]="craftmindPrompt"
-              placeholder="Demandez a CraftMind d'ameliorer un titre, de renforcer l'histoire durable ou de generer une fiche complete."
+              placeholder="Demandez une aide pour le titre, la description ou l'histoire du produit."
             ></textarea>
           </label>
 
@@ -420,7 +411,7 @@
               (click)="sendCraftmindPrompt()"
               [disabled]="craftmindLoading()"
             >
-              {{ craftmindLoading() ? 'Generation en cours...' : 'Envoyer la question' }}
+              {{ craftmindLoading() ? 'Preparation en cours...' : 'Envoyer la question' }}
             </button>
 
             <button
@@ -431,8 +422,8 @@
             >
               {{
                 generatingListingDraft()
-                  ? 'Generation du brouillon...'
-                  : 'Generer un brouillon de fiche'
+                  ? 'Preparation de la proposition...'
+                  : 'Creer une proposition de fiche'
               }}
             </button>
           </div>
@@ -450,15 +441,15 @@
           <div class="craftmind-thread">
             @for (message of craftmindMessages(); track message.id) {
               <article class="craftmind-message" [class.is-user]="message.role === 'user'">
-                <span class="card-label">{{ message.role === 'user' ? 'Vous' : 'CraftMind' }}</span>
+                <span class="card-label">{{ message.role === 'user' ? 'Vous' : 'Assistant' }}</span>
                 <p>{{ message.content }}</p>
               </article>
             }
 
             @if (craftmindLoading() || craftmindStreamingReply()) {
               <article class="craftmind-message">
-                <span class="card-label">CraftMind</span>
-                <p>{{ craftmindStreamingReply() || 'Preparation d une reponse contextualisee...' }}</p>
+                <span class="card-label">Assistant</span>
+                <p>{{ craftmindStreamingReply() || 'Preparation de la reponse...' }}</p>
               </article>
             }
           </div>
@@ -467,15 +458,15 @@
         <aside class="craftmind-side-column">
           <section class="craftmind-context panel-surface">
             <div class="block-heading">
-              <strong>Contexte retrouve</strong>
+              <strong>Sources utiles</strong>
               <span>{{
-                craftmindContextSummary() ?? 'CraftMind affichera ici les references atelier et catalogue utilisees.'
+                craftmindContextSummary() ?? 'Les informations utiles apparaitront ici.'
               }}</span>
             </div>
 
             @if (!craftmindContextDocuments().length) {
               <div class="empty-state compact-empty-state">
-                Posez une question ou generez un brouillon pour consulter le contexte RAG.
+                Posez une question pour afficher les sources utiles.
               </div>
             } @else {
               <div class="craftmind-context-list">
@@ -496,14 +487,13 @@
 
           <section class="craftmind-draft panel-surface">
             <div class="block-heading">
-              <strong>Brouillon de fiche</strong>
-              <span>Generez un brouillon, relisez-le, puis appliquez-le dans l'editeur produit.</span>
+              <strong>Proposition de fiche</strong>
+              <span>Creez une proposition, relisez-la, puis adaptez-la avant publication.</span>
             </div>
 
             @if (!currentCraftmindDraft) {
               <div class="empty-state compact-empty-state">
-                Aucun brouillon CraftMind pour le moment. Generez-en un depuis le formulaire actuel
-                ou un brief libre.
+                Aucune proposition pour le moment.
               </div>
             } @else {
               <div class="draft-preview">
@@ -537,7 +527,7 @@
                 </div>
 
                 <button type="button" class="primary-button" (click)="applyCraftmindDraft()">
-                  Appliquer le brouillon au formulaire
+                  Appliquer au formulaire
                 </button>
               </div>
             }
@@ -556,7 +546,7 @@
       </div>
 
       @if (!products().length) {
-        <div class="empty-state">Aucun produit n'a encore ete cree pour cet artisan.</div>
+        <div class="empty-state">Aucun produit pour le moment.</div>
       } @else {
         <div class="product-list">
           @for (product of products(); track product.id) {
@@ -611,10 +601,7 @@
       </div>
 
       @if (!vendorOrderItems().length) {
-        <div class="empty-state">
-          Les commandes acheteurs apparaitront ici des que le passage en caisse commencera a
-          alimenter cet atelier.
-        </div>
+        <div class="empty-state">Vos prochaines commandes apparaitront ici.</div>
       } @else {
         <div class="order-list">
           @for (item of vendorOrderItems(); track item.id) {
@@ -653,13 +640,13 @@
                 <div>
                   <span>Quantite</span>
                   <strong class="quantity">{{ item.quantity }}</strong>
-                  <small>Unites reservees</small>
+                  <small>Unites commandees</small>
                 </div>
 
                 <div>
                   <span>Total ligne</span>
                   <strong class="order-total">{{ item.lineTotalInCents / 100 | tndCurrency }}</strong>
-                  <small>Valeur du passage en caisse</small>
+                  <small>Total de l'article</small>
                 </div>
               </div>
 

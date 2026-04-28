@@ -5,11 +5,8 @@
   <header class="page-header panel">
     <div>
       <p class="eyebrow">Bon de commande</p>
-      <h1>Confirmez vos informations de livraison et transformez ce panier reserve en commande.</h1>
-      <p>
-        Verifiez les derniers details, conservez vos economies de lot et lancez l envoi de chaque
-        creation vers chez vous.
-      </p>
+      <h1>Confirmez votre livraison.</h1>
+      <p>Verifiez vos informations avant de continuer vers le paiement.</p>
     </div>
 
     <div class="header-actions">
@@ -23,7 +20,7 @@
   }
 
   @if (loading()) {
-    <div class="panel empty-state">Preparation de votre bon de commande...</div>
+    <div class="panel empty-state">Preparation de votre commande...</div>
   } @else if (currentCart; as cart) {
     @if (!cart.items.length) {
       <div class="panel empty-state">

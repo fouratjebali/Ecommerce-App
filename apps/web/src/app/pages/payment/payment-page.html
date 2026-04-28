@@ -8,17 +8,17 @@
       <div>
         <p class="eyebrow">Paiement</p>
         <h1>Paiement</h1>
-        <p class="page-note">Choisissez un moyen de paiement pour terminer la simulation.</p>
+        <p class="page-note">Choisissez votre moyen de paiement.</p>
       </div>
 
       <div class="page-flags">
-        <span class="status-chip">Mode test</span>
-        <span class="status-chip is-soft">Aucun debit</span>
+        <span class="status-chip">Carte</span>
+        <span class="status-chip is-soft">PayPal</span>
       </div>
     </div>
 
     <div class="header-actions">
-      <a class="ghost-link" routerLink="/checkout">Retour au checkout</a>
+      <a class="ghost-link" routerLink="/checkout">Retour a la livraison</a>
       <a class="ghost-link" routerLink="/cart">Panier</a>
     </div>
   </header>
@@ -30,12 +30,12 @@
   }
 
   @if (loading()) {
-    <div class="panel empty-state">Preparation de votre etape de paiement...</div>
+    <div class="panel empty-state">Preparation du paiement...</div>
   } @else if (currentCart; as cart) {
     @if (!cart.items.length || !draft) {
       <div class="panel empty-state">
         <h2>Les informations de paiement ne sont pas disponibles.</h2>
-        <a class="primary-link" routerLink="/checkout">Revenir au checkout</a>
+        <a class="primary-link" routerLink="/checkout">Revenir a la livraison</a>
       </div>
     } @else {
       <div class="payment-layout">
@@ -45,7 +45,7 @@
               <p class="eyebrow">Moyen de paiement</p>
               <h2>Choisissez votre mode de reglement</h2>
             </div>
-            <span class="status-chip">Aucun debit reel</span>
+            <span class="status-chip">Commande securisee</span>
           </div>
 
           <div class="method-grid">
@@ -118,7 +118,7 @@
                   <span>{{ selectedMethod().label }}</span>
                 </div>
                 <span class="preview-chip">
-                  {{ usesCardFields() ? 'Carte test' : 'Wallet test' }}
+                  {{ usesCardFields() ? 'Carte bancaire' : 'PayPal' }}
                 </span>
               </div>
 
@@ -129,11 +129,11 @@
               <div class="preview-meta">
                 <span>{{ previewName() }}</span>
                 <span>
-                  {{ usesCardFields() ? paymentForm.expiryMonth + '/' + paymentForm.expiryYear : 'Connexion simulee' }}
+                  {{ usesCardFields() ? paymentForm.expiryMonth + '/' + paymentForm.expiryYear : 'Connexion PayPal' }}
                 </span>
               </div>
             </div>
-            <p class="preview-note">Aucune transaction bancaire n est envoyee pendant ce test.</p>
+            <p class="preview-note">Vos informations restent liees a cette commande.</p>
           </div>
 
           @if (usesCardFields()) {
@@ -148,7 +148,7 @@
             </label>
 
             <label>
-              <span>Numero de carte test</span>
+              <span>Numero de carte</span>
               <input
                 class="numeric"
                 type="text"
@@ -199,7 +199,7 @@
           } @else {
             <div class="wallet-panel">
               <label>
-                <span>Adresse PayPal de test</span>
+                <span>Adresse PayPal</span>
                 <input
                   type="email"
                   name="paypalEmail"
@@ -208,7 +208,7 @@
                 />
               </label>
               <p>
-                Une validation fictive sera simulee au clic sur le bouton de paiement.
+                Vous serez redirige vers le suivi de commande apres validation.
               </p>
             </div>
           }
@@ -226,10 +226,10 @@
           <label class="checkbox-row">
             <input
               type="checkbox"
-              name="acceptSimulation"
-              [(ngModel)]="paymentForm.acceptSimulation"
+              name="acceptOrder"
+              [(ngModel)]="paymentForm.acceptOrder"
             />
-            <span>Je confirme qu il s agit d une simulation sans paiement reel.</span>
+            <span>Je confirme les informations de ma commande.</span>
           </label>
 
           <button class="primary-link submit-button" type="submit" [disabled]="submitting()">
@@ -289,7 +289,7 @@
   } @else {
     <div class="panel empty-state">
       <h2>Impossible d ouvrir l etape de paiement.</h2>
-      <a class="primary-link" routerLink="/checkout">Revenir au checkout</a>
+      <a class="primary-link" routerLink="/checkout">Revenir a la livraison</a>
     </div>
   }
 </section>

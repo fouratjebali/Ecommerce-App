@@ -105,7 +105,7 @@ export class VendorPageComponent {
       id: 'assistant-welcome',
       role: 'assistant',
       content:
-        "CraftMind est pret a vous aider pour la redaction des fiches produit, le langage de sourcing et la generation de brouillons de mise en ligne.",
+        'Je peux vous aider a preparer une fiche produit claire, chaleureuse et facile a lire.',
     },
   ]);
   protected readonly craftmindStreamingReply = signal('');
@@ -113,12 +113,10 @@ export class VendorPageComponent {
   protected readonly craftmindContextSummary = signal<string | null>(null);
   protected readonly craftmindSuggestedPrompts = signal<string[]>([
     "Proposez un titre plus chaleureux et artisanal pour ce produit.",
-    'Aidez-moi a renforcer cette description avec plus de details sur le sourcing.',
-    'Quelles affirmations dois-je verifier avant de publier cette fiche ?',
+    'Aidez-moi a rendre cette description plus claire pour les acheteurs.',
+    'Quels points dois-je verifier avant de publier cette fiche ?',
   ]);
   protected readonly craftmindDraft = signal<CraftmindListingDraft | null>(null);
-  protected readonly craftmindProviderSummary = signal<string | null>(null);
-
   protected profileForm: VendorProfilePayload = {
     studioName: '',
     headline: '',
@@ -148,7 +146,7 @@ export class VendorPageComponent {
       await this.loadVendorOverview();
       this.notice.set({
         tone: 'success',
-        text: "Le profil de l'atelier a ete enregistre pour cet espace de travail.",
+        text: "Le profil de l'atelier a ete enregistre.",
       });
     } catch {
       this.notice.set({
@@ -324,7 +322,7 @@ export class VendorPageComponent {
     if (!prompt) {
       this.notice.set({
         tone: 'error',
-        text: 'Ajoutez une consigne CraftMind ou utilisez d abord les informations du formulaire actuel.',
+        text: 'Ajoutez une consigne ou utilisez les informations du formulaire actuel.',
       });
       return;
     }
@@ -363,13 +361,12 @@ export class VendorPageComponent {
           this.craftmindContextDocuments.set(event.context.documents);
           this.craftmindContextSummary.set(event.context.summary);
           this.craftmindSuggestedPrompts.set(event.suggestedPrompts);
-          this.craftmindProviderSummary.set(`${event.provider} - ${event.model}`);
         },
         error: () => {
           this.craftmindStreamingReply.set('');
           this.notice.set({
             tone: 'error',
-            text: 'CraftMind ne peut pas diffuser une reponse pour le moment.',
+            text: "L'assistant ne peut pas repondre pour le moment.",
           });
           this.craftmindLoading.set(false);
         },
@@ -386,7 +383,7 @@ export class VendorPageComponent {
     if (!prompt) {
       this.notice.set({
         tone: 'error',
-        text: 'Ajoutez un brief CraftMind ou utilisez le formulaire actuel pour en generer un.',
+        text: 'Ajoutez une consigne ou utilisez le formulaire actuel.',
       });
       return;
     }
@@ -407,15 +404,14 @@ export class VendorPageComponent {
       this.craftmindDraft.set(response.draft);
       this.craftmindContextDocuments.set(response.context.documents);
       this.craftmindContextSummary.set(response.context.summary);
-      this.craftmindProviderSummary.set(`${response.provider} - ${response.model}`);
       this.notice.set({
         tone: 'success',
-        text: 'CraftMind a genere un brouillon de fiche a partir de votre brief actuel.',
+        text: 'Une proposition de fiche a ete preparee.',
       });
     } catch {
       this.notice.set({
         tone: 'error',
-        text: 'CraftMind ne peut pas generer de brouillon de fiche pour le moment.',
+        text: "L'assistant ne peut pas preparer de proposition pour le moment.",
       });
     } finally {
       this.generatingListingDraft.set(false);
@@ -450,7 +446,7 @@ export class VendorPageComponent {
 
     this.notice.set({
       tone: 'success',
-      text: 'Le brouillon CraftMind a ete applique au formulaire produit. Verifiez-le avant enregistrement.',
+      text: 'La proposition a ete appliquee au formulaire. Verifiez-la avant enregistrement.',
     });
   }
 
@@ -519,7 +515,7 @@ export class VendorPageComponent {
     } catch {
       this.notice.set({
         tone: 'error',
-        text: "L'espace vendeur n'a pas pu etre charge. Reconnectez-vous si la session a expire.",
+        text: "L'espace vendeur n'a pas pu etre charge. Reconnectez-vous puis reessayez.",
       });
     } finally {
       this.loading.set(false);
@@ -647,7 +643,7 @@ export class VendorPageComponent {
         ?.label ?? 'note eco actuelle';
 
     return [
-      `Creez ou ameliorez une fiche GreenCraft pour ${translateMarketLabel(categoryName).toLowerCase()}.`,
+      `Preparez une fiche claire pour ${translateMarketLabel(categoryName).toLowerCase()}.`,
       this.productForm.name ? `Nom actuel : ${this.productForm.name}.` : null,
       this.productForm.shortDescription
         ? `Description courte actuelle : ${this.productForm.shortDescription}.`

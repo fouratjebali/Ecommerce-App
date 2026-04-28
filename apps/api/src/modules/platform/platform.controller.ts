@@ -8,7 +8,7 @@ export class PlatformController {
   constructor(private readonly platformService: PlatformService) {}
 
   @Get('overview')
-  @ApiOperation({ summary: 'Get platform metrics and Sprint 1 initiatives' })
+  @ApiOperation({ summary: 'Get platform metrics and marketplace initiatives' })
   getOverview() {
     return this.platformService.getOverview();
   }

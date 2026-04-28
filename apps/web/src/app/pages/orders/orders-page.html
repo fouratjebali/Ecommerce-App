@@ -4,11 +4,8 @@
   <header class="page-header panel">
     <div>
       <p class="eyebrow">Suivi des commandes</p>
-      <h1>Suivez vos commandes artisanales, vos economies de lot et chaque etape de preparation.</h1>
-      <p>
-        Chaque commande est presentee comme un registre clair pour vous montrer son etat, ses
-        reductions et la prochaine etape.
-      </p>
+      <h1>Vos commandes.</h1>
+      <p>Consultez l'etat de vos achats et les informations de livraison.</p>
     </div>
 
     <div class="header-actions">
@@ -22,7 +19,7 @@
   }
 
   @if (loading()) {
-    <div class="panel empty-state">Ouverture de votre carnet de commandes...</div>
+    <div class="panel empty-state">Chargement de vos commandes...</div>
   } @else if (!orders().length) {
     <div class="panel empty-state">
       <h2>Aucune commande pour le moment.</h2>

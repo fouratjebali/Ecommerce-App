@@ -3,29 +3,12 @@
 
   <div class="auth-layout">
     <article class="auth-story">
-      <p class="eyebrow">Acces a la communaute</p>
-      <h1>Connectez-vous a votre atelier ou rejoignez la marketplace en tant qu'acheteur.</h1>
+      <p class="eyebrow">Espace compte</p>
+      <h1>Connectez-vous a GreenCraft.</h1>
       <p>
-        Entrez dans une marketplace plus humaine, ou les artisans gerent leur atelier, les
-        acheteurs parcourent les pieces avec attention et chaque fiche raconte le geste derriere
-        l'objet.
+        Retrouvez vos commandes, votre panier et votre espace atelier dans un environnement simple
+        et chaleureux.
       </p>
-
-      <div class="demo-accounts">
-        <p class="card-label">Comptes de demonstration</p>
-        <div>
-          <strong>Artisan :</strong>
-          <span>`noura@greencraft.local / Artisan@1234`</span>
-        </div>
-        <div>
-          <strong>Acheteur :</strong>
-          <span>`buyer@greencraft.local / Buyer@1234`</span>
-        </div>
-        <div>
-          <strong>Admin :</strong>
-          <span>`admin@greencraft.local / Admin@1234`</span>
-        </div>
-      </div>
     </article>
 
     <article class="auth-card">
@@ -154,6 +137,7 @@
                 type="text"
                 name="artisanSlug"
                 [(ngModel)]="artisanForm.slug"
+                placeholder="nom-de-votre-atelier"
                 required
               />
             </label>
@@ -218,7 +202,7 @@
         <button class="submit-button" type="submit" [disabled]="isSubmitting()">
           {{
             isSubmitting()
-              ? 'Preparation de votre acces...'
+              ? 'Veuillez patienter...'
               : mode() === 'login'
                 ? 'Entrer dans la marketplace'
                 : 'Creer un compte'

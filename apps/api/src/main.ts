@@ -37,7 +37,7 @@ async function bootstrap() {
       new DocumentBuilder()
         .setTitle('GreenCraft Marketplace API')
         .setDescription(
-          'Sprint 2 foundation for auth, artisan onboarding, and catalog management.',
+          'GreenCraft marketplace services for accounts, artisans, catalog, cart and orders.',
         )
         .setVersion('0.2.0')
         .addBearerAuth()

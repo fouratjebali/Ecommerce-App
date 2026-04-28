@@ -7,11 +7,8 @@
   <header class="page-header panel">
     <div>
       <p class="eyebrow">Recherche visuelle</p>
-      <h1>Televersez une photo et retrouvez les creations artisanales les plus proches.</h1>
-      <p>
-        Importez une image d inspiration depuis votre appareil et comparez-la au catalogue avec
-        similarite visuelle, metadata produit et filtres intelligents.
-      </p>
+      <h1>Trouvez un produit a partir d'une photo.</h1>
+      <p>Importez une image et affinez les resultats selon vos envies.</p>
     </div>
 
     <div class="header-actions">
@@ -68,13 +65,13 @@
       <section class="panel filter-panel">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Filtres hybrides</p>
+            <p class="eyebrow">Filtres</p>
             <h2>Affiner les resultats</h2>
           </div>
         </div>
 
         @if (loadingFacets()) {
-          <div class="loading-copy">Chargement des facettes...</div>
+          <div class="loading-copy">Chargement des filtres...</div>
         } @else {
           <div class="filter-quick-grid">
             <label class="filter-control">
@@ -199,10 +196,7 @@
       @if (!currentResults) {
         <div class="panel empty-state">
           <h2>La recherche visuelle est prete.</h2>
-          <p>
-            Televersez une image d inspiration et GreenCraft la comparera au catalogue actuel pour
-            faire remonter les correspondances artisanales les plus proches.
-          </p>
+          <p>Ajoutez une photo pour voir les produits les plus proches.</p>
         </div>
       } @else {
         <div class="panel result-summary">
@@ -213,10 +207,10 @@
 
           <div class="summary-badges">
             <span [style.background]="currentResults.query.dominantColorHex">
-              {{ currentResults.query.dominantColorHex }}
+              Couleur dominante
             </span>
             @if (currentResults.query.fallbackMode) {
-              <span class="fallback-chip">Mode de secours</span>
+              <span class="fallback-chip">Suggestions elargies</span>
             }
           </div>
         </div>
@@ -239,7 +233,7 @@
                     {{ item.visualMatch.similarity * 100 | number: '1.0-0' }}% de correspondance
                   </span>
                 } @else {
-                  <span class="match-badge is-fallback">Selection de secours</span>
+                  <span class="match-badge is-fallback">Suggestion</span>
                 }
               </div>
 

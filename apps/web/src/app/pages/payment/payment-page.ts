@@ -23,7 +23,6 @@ interface PaymentMethodOption {
   label: string;
   hint: string;
   badge: string;
-  testValue: string;
 }
 
 @Component({
@@ -48,36 +47,33 @@ export class PaymentPageComponent {
     {
       id: 'visa',
       label: 'Visa',
-      hint: 'Carte de test classique pour le parcours principal.',
+      hint: 'Reglement par carte bancaire.',
       badge: 'Carte',
-      testValue: '4242 4242 4242 4242',
     },
     {
       id: 'mastercard',
       label: 'Mastercard',
-      hint: 'Alternative de carte pour varier la simulation de paiement.',
+      hint: 'Reglement par carte bancaire.',
       badge: 'Carte',
-      testValue: '5555 5555 5555 4444',
     },
     {
       id: 'paypal',
       label: 'PayPal',
-      hint: 'Portefeuille simule avec validation fictive en fin de parcours.',
-      badge: 'Wallet',
-      testValue: 'sandbox@paypal.tn',
+      hint: 'Reglement avec votre compte PayPal.',
+      badge: 'PayPal',
     },
   ];
 
   protected readonly paymentForm = {
     cardholderName: '',
-    cardNumber: '4242 4242 4242 4242',
-    expiryMonth: '12',
-    expiryYear: '2028',
-    securityCode: '123',
+    cardNumber: '',
+    expiryMonth: '',
+    expiryYear: '',
+    securityCode: '',
     paymentMethod: 'visa' as PaymentMethodId,
-    paypalEmail: 'sandbox@paypal.tn',
+    paypalEmail: '',
     billingCity: 'Tunis',
-    acceptSimulation: false,
+    acceptOrder: false,
   };
 
   constructor() {
@@ -86,20 +82,6 @@ export class PaymentPageComponent {
 
   protected choosePaymentMethod(method: PaymentMethodId) {
     this.paymentForm.paymentMethod = method;
-
-    if (method === 'visa') {
-      this.paymentForm.cardNumber = '4242 4242 4242 4242';
-      return;
-    }
-
-    if (method === 'mastercard') {
-      this.paymentForm.cardNumber = '5555 5555 5555 4444';
-      return;
-    }
-
-    if (!this.paymentForm.paypalEmail) {
-      this.paymentForm.paypalEmail = 'sandbox@paypal.tn';
-    }
   }
 
   protected usesCardFields() {
@@ -116,20 +98,18 @@ export class PaymentPageComponent {
 
   protected submitLabel() {
     if (this.submitting()) {
-      return this.usesCardFields()
-        ? 'Traitement de la simulation...'
-        : 'Connexion PayPal fictive...';
+      return 'Validation en cours...';
     }
 
-    return this.usesCardFields() ? 'Payer' : 'Continuer avec PayPal';
+    return this.usesCardFields() ? 'Valider la commande' : 'Continuer avec PayPal';
   }
 
   protected previewValue() {
     if (this.usesCardFields()) {
-      return this.paymentForm.cardNumber || '4242 4242 4242 4242';
+      return this.paymentForm.cardNumber || '•••• •••• •••• ••••';
     }
 
-    return this.paymentForm.paypalEmail || 'sandbox@paypal.tn';
+    return this.paymentForm.paypalEmail || 'compte@paypal.tn';
   }
 
   protected previewName() {
@@ -137,7 +117,7 @@ export class PaymentPageComponent {
       return this.paymentForm.cardholderName || this.checkoutDraft()?.shippingName || 'Titulaire';
     }
 
-    return 'Portefeuille sandbox';
+    return 'Portefeuille PayPal';
   }
 
   protected async submit() {
@@ -148,10 +128,10 @@ export class PaymentPageComponent {
       return;
     }
 
-    if (!this.paymentForm.acceptSimulation) {
+    if (!this.paymentForm.acceptOrder) {
       this.notice.set({
         tone: 'error',
-        text: 'Veuillez confirmer que vous comprenez qu il s agit d un paiement simule.',
+        text: 'Veuillez confirmer votre commande avant de continuer.',
       });
       return;
     }
@@ -164,13 +144,13 @@ export class PaymentPageComponent {
       this.checkoutDraftService.clear();
       this.notice.set({
         tone: 'success',
-        text: 'Paiement simule avec succes. Votre commande a ete creee sans transaction reelle.',
+        text: 'Votre commande a ete confirmee.',
       });
       await this.router.navigateByUrl('/orders');
     } catch {
       this.notice.set({
         tone: 'error',
-        text: "La simulation n'a pas pu finaliser la commande. Verifiez votre panier et reessayez.",
+        text: "La commande n'a pas pu etre finalisee. Verifiez votre panier puis reessayez.",
       });
     } finally {
       this.submitting.set(false);

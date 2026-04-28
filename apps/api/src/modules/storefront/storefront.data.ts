@@ -157,8 +157,8 @@ export const storefrontSnapshot: StorefrontSnapshot = {
     {
       title: 'Recherche visuelle',
       summary:
-        'Les clients televersent une photo et retrouvent des produits similaires grace aux embeddings stockes dans pgvector.',
-      milestone: 'Signature IA',
+        'Les clients televersent une photo et retrouvent des produits proches dans le catalogue.',
+      milestone: 'Recherche par photo',
     },
   ],
 };

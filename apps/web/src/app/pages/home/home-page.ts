@@ -154,17 +154,17 @@ export class HomePageComponent {
     },
     {
       id: 'craftmind',
-      eyebrow: 'CraftMind',
+      eyebrow: 'Assistant vendeur',
       title: 'Aidez les artisans a mieux raconter leurs creations.',
       copy:
-        'CraftMind accompagne les vendeurs pour rediger leurs fiches, structurer leurs descriptions et renforcer la clarte de leur sourcing.',
+        'Un assistant aide les vendeurs a rediger des fiches claires, utiles et adaptees aux acheteurs.',
       points: [
         'Brouillons de fiches produit',
         'Aide a la redaction durable',
         'Support vendeur directement dans la plateforme',
       ],
       route: '/vendor',
-      cta: 'Decouvrir CraftMind',
+      cta: "Ouvrir l'espace vendeur",
     },
   ];
 
