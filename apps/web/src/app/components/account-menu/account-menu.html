@@ -1,0 +1,40 @@
+@if (user(); as currentUser) {
+  <div class="account-menu" [class.is-open]="open()">
+    <button
+      type="button"
+      class="account-trigger"
+      (click)="toggleMenu($event)"
+      [attr.aria-expanded]="open()"
+      aria-haspopup="menu"
+      aria-label="Ouvrir le menu du compte"
+    >
+      @if (currentUser.avatarUrl) {
+        <img [src]="currentUser.avatarUrl" [alt]="'Avatar de ' + displayName()" />
+      } @else {
+        <span>{{ initials() }}</span>
+      }
+    </button>
+
+    @if (open()) {
+      <section class="account-popover" role="menu" aria-label="Menu du compte">
+        <div class="account-card-header">
+          <div class="account-avatar" aria-hidden="true">{{ initials() }}</div>
+          <div>
+            <p class="account-name">{{ displayName() }}</p>
+            <p class="account-role">{{ roleLabel() }}</p>
+          </div>
+        </div>
+
+        @if (studioName()) {
+          <p class="account-detail">Atelier : {{ studioName() }}</p>
+        }
+
+        <p class="account-email">{{ currentUser.email }}</p>
+
+        <button type="button" class="logout-button" role="menuitem" (click)="logout()">
+          Se déconnecter
+        </button>
+      </section>
+    }
+  </div>
+}
