@@ -4,13 +4,17 @@
 
 <section class="payment-page">
   <header class="page-header panel">
-    <div>
-      <p class="eyebrow">Paiement simule</p>
-      <h1>Finalisez la commande avec une etape de paiement fictive, sans debit reel.</h1>
-      <p>
-        Cette page met en scene un paiement carte pour votre sprint. Aucune transaction bancaire
-        n est envoyee, mais le parcours reste coherent jusqu a la creation de commande.
-      </p>
+    <div class="page-heading">
+      <div>
+        <p class="eyebrow">Paiement</p>
+        <h1>Paiement</h1>
+        <p class="page-note">Choisissez un moyen de paiement pour terminer la simulation.</p>
+      </div>
+
+      <div class="page-flags">
+        <span class="status-chip">Mode test</span>
+        <span class="status-chip is-soft">Aucun debit</span>
+      </div>
     </div>
 
     <div class="header-actions">
@@ -38,99 +42,176 @@
         <form class="panel payment-form" (ngSubmit)="submit()">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Carte de test</p>
-              <h2>Coordonnees de paiement</h2>
+              <p class="eyebrow">Moyen de paiement</p>
+              <h2>Choisissez votre mode de reglement</h2>
             </div>
             <span class="status-chip">Aucun debit reel</span>
           </div>
 
           <div class="method-grid">
-            <label class="method-card" [class.is-active]="paymentForm.paymentMethod === 'card'">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="card"
-                [(ngModel)]="paymentForm.paymentMethod"
-              />
-              <div>
-                <strong>Carte bancaire</strong>
-                <span>Scenario principal du paiement</span>
-              </div>
-            </label>
+            @for (method of paymentMethods; track method.id) {
+              <label
+                class="method-card"
+                [class.is-active]="paymentForm.paymentMethod === method.id"
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  [checked]="paymentForm.paymentMethod === method.id"
+                  (change)="choosePaymentMethod(method.id)"
+                />
 
-            <label class="method-card" [class.is-active]="paymentForm.paymentMethod === 'wallet'">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="wallet"
-                [(ngModel)]="paymentForm.paymentMethod"
-              />
-              <div>
-                <strong>Portefeuille</strong>
-                <span>Affichage fictif pour le sprint</span>
-              </div>
-            </label>
+                <div class="method-brand">
+                  @switch (method.id) {
+                    @case ('visa') {
+                      <span class="method-logo is-visa" aria-hidden="true">
+                        <span class="visa-word">VISA</span>
+                      </span>
+                    }
+                    @case ('mastercard') {
+                      <span class="method-logo is-mastercard" aria-hidden="true">
+                        <span class="logo-circle is-left"></span>
+                        <span class="logo-circle is-right"></span>
+                      </span>
+                    }
+                    @case ('paypal') {
+                      <span class="method-logo is-paypal" aria-hidden="true">
+                        <span class="paypal-p is-back">P</span>
+                        <span class="paypal-p is-front">P</span>
+                      </span>
+                    }
+                  }
+                  <span class="method-badge">{{ method.badge }}</span>
+                </div>
+
+                <div class="method-copy">
+                  <strong>{{ method.label }}</strong>
+                  <span>{{ method.hint }}</span>
+                </div>
+              </label>
+            }
           </div>
 
-          <label>
-            <span>Nom sur la carte</span>
-            <input
-              type="text"
-              name="cardholderName"
-              [(ngModel)]="paymentForm.cardholderName"
-              required
-            />
-          </label>
+          <div class="payment-preview">
+            <div class="preview-card" [class.is-wallet]="!usesCardFields()">
+              <div class="preview-top">
+                <div class="preview-brand">
+                  @switch (selectedMethod().id) {
+                    @case ('visa') {
+                      <span class="method-logo is-visa" aria-hidden="true">
+                        <span class="visa-word">VISA</span>
+                      </span>
+                    }
+                    @case ('mastercard') {
+                      <span class="method-logo is-mastercard" aria-hidden="true">
+                        <span class="logo-circle is-left"></span>
+                        <span class="logo-circle is-right"></span>
+                      </span>
+                    }
+                    @case ('paypal') {
+                      <span class="method-logo is-paypal" aria-hidden="true">
+                        <span class="paypal-p is-back">P</span>
+                        <span class="paypal-p is-front">P</span>
+                      </span>
+                    }
+                  }
+                  <span>{{ selectedMethod().label }}</span>
+                </div>
+                <span class="preview-chip">
+                  {{ usesCardFields() ? 'Carte test' : 'Wallet test' }}
+                </span>
+              </div>
 
-          <label>
-            <span>Numero de carte test</span>
-            <input
-              class="numeric"
-              type="text"
-              name="cardNumber"
-              [(ngModel)]="paymentForm.cardNumber"
-              maxlength="19"
-              required
-            />
-          </label>
+              <strong class="preview-number" [class.numeric]="usesCardFields()">
+                {{ previewValue() }}
+              </strong>
 
-          <div class="grid-three">
-            <label>
-              <span>Mois</span>
-              <input
-                class="numeric"
-                type="text"
-                name="expiryMonth"
-                [(ngModel)]="paymentForm.expiryMonth"
-                maxlength="2"
-                required
-              />
-            </label>
-
-            <label>
-              <span>Annee</span>
-              <input
-                class="numeric"
-                type="text"
-                name="expiryYear"
-                [(ngModel)]="paymentForm.expiryYear"
-                maxlength="4"
-                required
-              />
-            </label>
-
-            <label>
-              <span>CVV</span>
-              <input
-                class="numeric"
-                type="text"
-                name="securityCode"
-                [(ngModel)]="paymentForm.securityCode"
-                maxlength="4"
-                required
-              />
-            </label>
+              <div class="preview-meta">
+                <span>{{ previewName() }}</span>
+                <span>
+                  {{ usesCardFields() ? paymentForm.expiryMonth + '/' + paymentForm.expiryYear : 'Connexion simulee' }}
+                </span>
+              </div>
+            </div>
+            <p class="preview-note">Aucune transaction bancaire n est envoyee pendant ce test.</p>
           </div>
+
+          @if (usesCardFields()) {
+            <label>
+              <span>Nom sur la carte</span>
+              <input
+                type="text"
+                name="cardholderName"
+                [(ngModel)]="paymentForm.cardholderName"
+                required
+              />
+            </label>
+
+            <label>
+              <span>Numero de carte test</span>
+              <input
+                class="numeric"
+                type="text"
+                name="cardNumber"
+                [(ngModel)]="paymentForm.cardNumber"
+                maxlength="19"
+                required
+              />
+            </label>
+
+            <div class="grid-three">
+              <label>
+                <span>Mois</span>
+                <input
+                  class="numeric"
+                  type="text"
+                  name="expiryMonth"
+                  [(ngModel)]="paymentForm.expiryMonth"
+                  maxlength="2"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Annee</span>
+                <input
+                  class="numeric"
+                  type="text"
+                  name="expiryYear"
+                  [(ngModel)]="paymentForm.expiryYear"
+                  maxlength="4"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>CVV</span>
+                <input
+                  class="numeric"
+                  type="text"
+                  name="securityCode"
+                  [(ngModel)]="paymentForm.securityCode"
+                  maxlength="4"
+                  required
+                />
+              </label>
+            </div>
+          } @else {
+            <div class="wallet-panel">
+              <label>
+                <span>Adresse PayPal de test</span>
+                <input
+                  type="email"
+                  name="paypalEmail"
+                  [(ngModel)]="paymentForm.paypalEmail"
+                  required
+                />
+              </label>
+              <p>
+                Une validation fictive sera simulee au clic sur le bouton de paiement.
+              </p>
+            </div>
+          }
 
           <label>
             <span>Ville de facturation</span>
@@ -142,14 +223,6 @@
             />
           </label>
 
-          <div class="simulation-note">
-            <strong>Important</strong>
-            <p>
-              Le formulaire ci-dessus est volontairement faux. Il sert uniquement a illustrer le
-              parcours de paiement pour le sprint 6.
-            </p>
-          </div>
-
           <label class="checkbox-row">
             <input
               type="checkbox"
@@ -160,11 +233,7 @@
           </label>
 
           <button class="primary-link submit-button" type="submit" [disabled]="submitting()">
-            {{
-              submitting()
-                ? 'Simulation du paiement...'
-                : 'Simuler le paiement et creer la commande'
-            }}
+            {{ submitLabel() }}
           </button>
         </form>
 
@@ -211,7 +280,7 @@
           </div>
 
           <div class="summary-total">
-            <span>Total a simuler</span>
+            <span>Total a payer</span>
             <strong class="cart-total">{{ cart.summary.totalInCents / 100 | tndCurrency }}</strong>
           </div>
         </aside>

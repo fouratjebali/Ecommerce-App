@@ -28,19 +28,36 @@
 }
 
 .page-header,
+.page-heading,
+.page-flags,
 .header-actions,
 .section-heading,
 .summary-row,
 .summary-total,
-.summary-item {
+.summary-item,
+.preview-top,
+.preview-brand,
+.preview-meta {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
 }
 
 .page-header {
-  align-items: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
   padding: 1.7rem 1.8rem;
+}
+
+.page-heading {
+  flex: 1 1 24rem;
+  align-items: center;
+}
+
+.page-flags {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .eyebrow {
@@ -69,13 +86,18 @@
 .empty-state h2 {
   margin: 0;
   font-family: var(--font-display);
-  line-height: 0.98;
+  line-height: 1.02;
   color: var(--color-walnut);
 }
 
 .page-header h1 {
-  max-width: 19ch;
-  font-size: clamp(2.15rem, 4vw, 4rem);
+  font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+}
+
+.page-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.98rem;
+  max-width: 36rem;
 }
 
 .page-header p,
@@ -84,7 +106,8 @@
 .summary-item strong,
 .method-card span,
 .delivery-card span,
-.simulation-note p {
+.wallet-panel p,
+.preview-note {
   color: var(--color-muted-ink);
   line-height: 1.75;
 }
@@ -173,7 +196,7 @@
 }
 
 .method-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .grid-three {
@@ -181,14 +204,20 @@
 }
 
 .method-card {
-  display: flex;
-  gap: 0.8rem;
-  align-items: flex-start;
-  padding: 1rem;
+  position: relative;
+  display: grid;
+  gap: 0.9rem;
+  min-height: 11.25rem;
+  padding: 1.05rem;
   border: 1px solid rgba(84, 107, 65, 0.14);
   border-radius: 1.2rem;
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
 }
 
 .method-card.is-active {
@@ -199,13 +228,174 @@
 }
 
 .method-card input {
-  width: auto;
-  margin-top: 0.2rem;
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
 }
 
-.method-card div {
+.method-brand,
+.method-copy {
   display: grid;
-  gap: 0.15rem;
+  gap: 0.35rem;
+}
+
+.method-brand {
+  grid-template-columns: 1fr auto;
+  align-items: start;
+}
+
+.method-copy strong {
+  color: var(--color-walnut);
+  font-size: 1rem;
+}
+
+.method-badge,
+.preview-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(84, 107, 65, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 250, 242, 0.8);
+  color: var(--color-walnut-soft);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.method-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+  height: 2.9rem;
+  border-radius: 0.95rem;
+  border: 1px solid rgba(47, 58, 36, 0.12);
+  background: rgba(255, 252, 246, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.method-logo.is-visa {
+  justify-content: flex-start;
+  padding-inline: 0.8rem;
+}
+
+.visa-word {
+  color: #21439c;
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.method-logo.is-mastercard {
+  position: relative;
+  gap: 0;
+}
+
+.logo-circle {
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+}
+
+.logo-circle.is-left {
+  margin-right: -0.42rem;
+  background: #ea6c2c;
+}
+
+.logo-circle.is-right {
+  background: #f4b33a;
+}
+
+.method-logo.is-paypal {
+  position: relative;
+  color: #1a59b8;
+  font-weight: 900;
+}
+
+.paypal-p {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.paypal-p.is-back {
+  transform: translateX(0.22rem);
+  opacity: 0.42;
+}
+
+.paypal-p.is-front {
+  transform: translateX(-0.1rem);
+}
+
+.payment-preview {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.preview-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid rgba(47, 58, 36, 0.18);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at top right, rgba(220, 204, 172, 0.22), transparent 8rem),
+    linear-gradient(180deg, rgba(84, 107, 65, 0.96), rgba(47, 58, 36, 0.98));
+  color: var(--color-parchment);
+  box-shadow:
+    0 16px 30px rgba(47, 58, 36, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.preview-card.is-wallet {
+  background:
+    radial-gradient(circle at top right, rgba(110, 148, 223, 0.2), transparent 8rem),
+    linear-gradient(180deg, #204b8f, #102c59);
+}
+
+.preview-brand {
+  align-items: center;
+}
+
+.preview-brand span:last-child {
+  color: inherit;
+  font-weight: 700;
+}
+
+.preview-number {
+  color: inherit;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.preview-meta {
+  align-items: center;
+  color: rgba(255, 248, 236, 0.8);
+  font-size: 0.9rem;
+}
+
+.preview-note {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.wallet-panel,
+.delivery-card {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid rgba(84, 107, 65, 0.1);
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
 }
 
 .status-chip {
@@ -220,18 +410,11 @@
   font-weight: 700;
 }
 
-.simulation-note,
-.delivery-card {
-  display: grid;
-  gap: 0.3rem;
-  padding: 1rem 1.05rem;
-  border: 1px solid rgba(84, 107, 65, 0.1);
-  border-radius: 1rem;
-  background:
-    linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
+.status-chip.is-soft {
+  background: rgba(255, 250, 242, 0.6);
 }
 
-.simulation-note strong,
+.wallet-panel strong,
 .delivery-card strong {
   color: var(--color-walnut);
 }
@@ -256,6 +439,8 @@
   display: grid;
   gap: 1rem;
   align-content: start;
+  position: sticky;
+  top: 1.2rem;
 }
 
 .summary-list {
@@ -295,6 +480,10 @@
   .payment-layout {
     grid-template-columns: 1fr;
   }
+
+  .summary-panel {
+    position: static;
+  }
 }
 
 @media (max-width: 760px) {
@@ -303,10 +492,13 @@
   }
 
   .page-header,
+  .page-heading,
   .header-actions,
   .section-heading,
   .summary-item,
-  .checkbox-row {
+  .checkbox-row,
+  .preview-top,
+  .preview-meta {
     flex-direction: column;
   }
 
