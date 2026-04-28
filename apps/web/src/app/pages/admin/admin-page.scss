@@ -12,8 +12,9 @@
 .notice,
 .metric-card,
 .management-card,
-.activity-panel,
-.alert-card {
+.alert-card,
+.workspace-panel,
+.summary-card {
   position: relative;
   border: 1px solid var(--color-line);
   border-radius: 1.9rem;
@@ -25,8 +26,9 @@
 .notice::before,
 .metric-card::before,
 .management-card::before,
-.activity-panel::before,
-.alert-card::before {
+.alert-card::before,
+.workspace-panel::before,
+.summary-card::before {
   content: '';
   position: absolute;
   inset: 0.8rem;
@@ -40,11 +42,12 @@
 .section-heading,
 .management-header,
 .management-metrics,
-.activity-row,
-.alert-head,
 .action-row,
 .chip-row,
-.stat-list div {
+.alert-head,
+.compact-row,
+.leader-top,
+.chart-meta {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -56,6 +59,7 @@
 }
 
 .admin-header h1,
+.sidebar-heading h2,
 .section-heading h2,
 .management-card h3 {
   margin: 0;
@@ -65,19 +69,22 @@
 }
 
 .admin-header h1 {
-  max-width: 16ch;
-  font-size: clamp(2.25rem, 4vw, 4rem);
+  max-width: 17ch;
+  font-size: clamp(2rem, 3.8vw, 3.6rem);
 }
 
 .admin-header p,
+.sidebar-heading p,
 .metric-card p,
-.alert-card p,
-.activity-row span,
 .management-card p,
 .management-card small,
-.panel-surface small {
+.compact-row span,
+.panel-surface small,
+.chart-row small,
+.leader-card span,
+.leader-card small {
   color: var(--color-muted-ink);
-  line-height: 1.7;
+  line-height: 1.65;
 }
 
 .eyebrow {
@@ -108,8 +115,7 @@
 .status-pill,
 .meta-chip,
 .status-badge,
-.alert-badge,
-.admin-nav a {
+.alert-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -134,18 +140,26 @@
 .ghost-link,
 .primary-button,
 .ghost-button,
-.admin-nav a {
-  min-height: 3rem;
-  padding: 0.82rem 1.1rem;
+.sidebar-link {
+  border: 1px solid rgba(47, 58, 36, 0.18);
   border-radius: 999px;
   font: inherit;
   font-weight: 800;
 }
 
 .ghost-link,
+.primary-button,
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.82rem 1.1rem;
+}
+
+.ghost-link,
 .ghost-button,
-.admin-nav a {
-  border: 1px solid rgba(47, 58, 36, 0.18);
+.sidebar-link {
   background:
     linear-gradient(180deg, rgba(255, 251, 243, 0.98), rgba(244, 228, 194, 0.9)),
     var(--surface-paper);
@@ -156,10 +170,14 @@
 }
 
 .primary-button {
-  border: 1px solid rgba(47, 58, 36, 0.18);
   background: linear-gradient(180deg, var(--color-forest), var(--color-walnut));
   color: var(--color-parchment);
   box-shadow: var(--shadow-pressed);
+}
+
+.inline-action {
+  min-height: 2.6rem;
+  margin-top: 0.35rem;
 }
 
 .notice {
@@ -180,37 +198,140 @@
   padding: 1.4rem;
 }
 
-.admin-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
+.admin-shell {
+  display: grid;
+  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+  gap: 1rem;
   margin-top: 1rem;
-  padding: 1rem;
+  align-items: start;
 }
 
-.metrics-grid,
-.performance-grid,
-.management-grid,
-.activity-layout,
-.dashboard-layout {
+.admin-sidebar,
+.workspace-panel {
+  padding: 1.4rem;
+}
+
+.admin-sidebar {
+  position: sticky;
+  top: 1rem;
   display: grid;
   gap: 1rem;
 }
 
-.metrics-grid {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  margin-top: 1rem;
+.sidebar-heading {
+  display: grid;
+  gap: 0.3rem;
 }
 
-.metric-card {
-  padding: 1.2rem;
+.sidebar-nav,
+.sidebar-summary,
+.admin-workspace,
+.metrics-grid,
+.charts-grid,
+.dashboard-lower-grid,
+.management-grid,
+.leader-list,
+.alert-list,
+.compact-list,
+.toolbar,
+.bar-chart {
+  display: grid;
+  gap: 1rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.05rem;
+  text-align: left;
+}
+
+.sidebar-link.is-active {
+  border-color: rgba(84, 107, 65, 0.32);
+  background: linear-gradient(180deg, rgba(153, 173, 122, 0.22), rgba(220, 204, 172, 0.38));
+  box-shadow:
+    0 7px 0 rgba(84, 107, 65, 0.12),
+    0 14px 24px rgba(84, 107, 65, 0.1);
+}
+
+.sidebar-link-copy,
+.sidebar-link-meta,
+.summary-card,
+.chart-row,
+.mini-heading,
+.product-card {
+  display: grid;
+}
+
+.sidebar-link-copy {
+  gap: 0.2rem;
+}
+
+.sidebar-link-copy strong,
+.sidebar-link-meta strong,
+.summary-card strong,
+.mini-heading strong {
+  color: var(--color-walnut);
+}
+
+.sidebar-link-copy span,
+.sidebar-link-meta small,
+.summary-card span,
+.mini-heading span {
+  color: var(--color-muted-ink);
+}
+
+.sidebar-link-meta {
+  justify-items: end;
+  min-width: 64px;
+}
+
+.sidebar-summary {
+  grid-template-columns: 1fr;
+}
+
+.summary-card {
+  gap: 0.35rem;
+  padding: 1rem 1.05rem;
+}
+
+.workspace-panel {
+  gap: 1rem;
+}
+
+.section-heading {
+  align-items: center;
+}
+
+.panel-surface,
+.toolbar,
+.info-block,
+.metric-card,
+.chart-panel,
+.product-visual {
+  border: 1px solid rgba(84, 107, 65, 0.1);
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
+}
+
+.metric-card,
+.panel-surface,
+.chart-panel,
+.management-card {
+  padding: 1.15rem;
+}
+
+.metrics-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .metric-card span:first-child,
 .management-metrics span,
-.panel-surface strong,
-.activity-row strong,
-.alert-head strong {
+.compact-row strong,
+.chart-meta span {
   color: var(--color-muted-ink);
 }
 
@@ -222,47 +343,92 @@
   color: var(--color-walnut);
 }
 
-.dashboard-layout {
-  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
-  margin-top: 1rem;
-}
-
-.insight-panel,
-.management-panel,
-.activity-panel {
-  padding: 1.4rem;
-}
-
-.section-heading {
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.performance-grid {
+.charts-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.panel-surface,
-.info-block {
-  display: grid;
+.dashboard-lower-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mini-heading {
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.bar-chart {
+  gap: 0.9rem;
+}
+
+.chart-row {
   gap: 0.45rem;
-  padding: 1rem;
-  border: 1px solid rgba(84, 107, 65, 0.1);
-  border-radius: 1.3rem;
-  background:
-    linear-gradient(180deg, rgba(255, 251, 243, 0.96), rgba(242, 228, 194, 0.84));
 }
 
-.stat-list,
-.leader-list,
-.activity-list,
-.alert-list {
+.chart-meta {
+  align-items: center;
+}
+
+.chart-track {
+  position: relative;
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(84, 107, 65, 0.12);
+}
+
+.chart-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-forest), var(--color-olive));
+}
+
+.chart-fill.is-secondary {
+  background: linear-gradient(90deg, var(--color-aged-paper), var(--color-mustard));
+}
+
+.chart-fill.is-olive {
+  background: linear-gradient(90deg, var(--color-olive), var(--color-forest));
+}
+
+.chart-fill.is-mustard {
+  background: linear-gradient(90deg, var(--color-mustard), var(--color-aged-paper));
+}
+
+.leader-card {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.6rem;
+  padding: 0.95rem;
+  border: 1px solid rgba(84, 107, 65, 0.1);
+  border-radius: 1.2rem;
+  background: rgba(255, 250, 242, 0.72);
 }
 
-.leader-list div,
-.management-metrics div {
+.leader-top {
+  align-items: start;
+}
+
+.leader-top > div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.compact-list {
+  gap: 0.7rem;
+}
+
+.compact-row {
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px dashed rgba(84, 107, 65, 0.18);
+}
+
+.compact-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.compact-row > div {
   display: grid;
   gap: 0.2rem;
 }
@@ -281,33 +447,45 @@
   text-transform: uppercase;
 }
 
-.activity-layout {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 1rem;
+.toolbar {
+  grid-template-columns: minmax(260px, 1.8fr) repeat(2, minmax(180px, 0.8fr));
+  align-items: end;
+  padding: 1rem;
 }
 
-.activity-row {
-  align-items: center;
-  padding: 0.9rem 0;
-  border-bottom: 1px dashed rgba(84, 107, 65, 0.18);
+.toolbar label,
+.search-field {
+  display: grid;
+  gap: 0.4rem;
 }
 
-.activity-row:last-child {
-  border-bottom: 0;
+.toolbar span,
+.toolbar label > span {
+  color: var(--color-muted-ink);
+  font-size: 0.92rem;
 }
 
-.management-panel {
-  margin-top: 1rem;
+.toolbar input,
+.toolbar select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
 }
 
 .management-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.users-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.products-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .management-card {
-  display: grid;
   gap: 1rem;
-  padding: 1.2rem;
 }
 
 .management-header {
@@ -316,6 +494,8 @@
 
 .management-metrics div {
   flex: 1;
+  display: grid;
+  gap: 0.2rem;
   padding: 0.9rem;
   border: 1px solid rgba(84, 107, 65, 0.1);
   border-radius: 1.2rem;
@@ -347,19 +527,67 @@
   color: var(--color-terracotta-deep);
 }
 
+.product-card {
+  align-content: start;
+}
+
+.product-visual {
+  overflow: hidden;
+  min-height: 220px;
+  padding: 0;
+}
+
+.product-visual img,
+.product-fallback {
+  display: block;
+  width: 100%;
+  height: 220px;
+}
+
+.product-visual img {
+  object-fit: cover;
+}
+
+.product-fallback {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(153, 173, 122, 0.3), rgba(220, 204, 172, 0.5));
+  color: var(--color-walnut);
+  font-family: var(--font-display);
+  text-align: center;
+}
+
 .compact-empty-state {
   margin-top: 0;
   padding: 1rem;
 }
 
-@media (max-width: 1280px) {
-  .metrics-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (max-width: 1320px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
   }
 
-  .dashboard-layout,
-  .activity-layout,
-  .management-grid {
+  .admin-sidebar {
+    position: static;
+  }
+
+  .sidebar-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1120px) {
+  .metrics-grid,
+  .charts-grid,
+  .dashboard-lower-grid,
+  .management-grid,
+  .users-grid,
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
     grid-template-columns: 1fr;
   }
 }
@@ -373,14 +601,19 @@
   .header-actions,
   .section-heading,
   .management-header,
-  .activity-row,
   .management-metrics,
-  .alert-head {
+  .alert-head,
+  .compact-row,
+  .chart-meta,
+  .leader-top {
     flex-direction: column;
   }
 
-  .metrics-grid,
-  .performance-grid {
+  .sidebar-nav {
     grid-template-columns: 1fr;
+  }
+
+  .sidebar-link {
+    border-radius: 1.2rem;
   }
 }

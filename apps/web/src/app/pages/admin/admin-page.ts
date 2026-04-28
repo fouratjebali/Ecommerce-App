@@ -1,5 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -17,9 +18,23 @@ interface NoticeState {
   text: string;
 }
 
+type AdminSection = 'dashboard' | 'users' | 'orders' | 'products';
+type UserRoleFilter = 'ALL' | AdminUser['role'];
+type VendorStatusFilter = 'ALL' | 'PENDING' | 'ACTIVE' | 'SUSPENDED';
+type OrderStatusFilter = 'ALL' | 'CONFIRMED' | 'FULFILLING' | 'COMPLETED' | 'CANCELLED';
+type ProductStatusFilter = 'ALL' | 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+type FeaturedFilter = 'ALL' | 'FEATURED' | 'STANDARD';
+
 @Component({
   selector: 'app-admin-page',
-  imports: [CommonModule, RouterLink, DatePipe, TndCurrencyPipe, MarketLabelPipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    DatePipe,
+    TndCurrencyPipe,
+    MarketLabelPipe,
+  ],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.scss',
 })
@@ -27,6 +42,7 @@ export class AdminPageComponent implements OnDestroy {
   private readonly adminApiService = inject(AdminApiService);
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
 
+  protected readonly activeSection = signal<AdminSection>('dashboard');
   protected readonly loading = signal(true);
   protected readonly refreshing = signal(false);
   protected readonly notice = signal<NoticeState | null>(null);
@@ -38,6 +54,249 @@ export class AdminPageComponent implements OnDestroy {
   protected readonly updatingOrderNumber = signal<string | null>(null);
   protected readonly updatingProductId = signal<string | null>(null);
 
+  protected readonly usersQuery = signal('');
+  protected readonly ordersQuery = signal('');
+  protected readonly productsQuery = signal('');
+  protected readonly userRoleFilter = signal<UserRoleFilter>('ALL');
+  protected readonly vendorStatusFilter = signal<VendorStatusFilter>('ALL');
+  protected readonly orderStatusFilter = signal<OrderStatusFilter>('ALL');
+  protected readonly productStatusFilter = signal<ProductStatusFilter>('ALL');
+  protected readonly featuredFilter = signal<FeaturedFilter>('ALL');
+
+  protected readonly sectionItems = computed(() => {
+    const snapshot = this.dashboard();
+
+    return [
+      {
+        id: 'dashboard' as const,
+        label: 'Tableau de bord',
+        helper: 'Vue globale et analyses',
+        count: snapshot ? snapshot.alerts.length : 0,
+        countLabel: 'alertes',
+      },
+      {
+        id: 'users' as const,
+        label: 'Utilisateurs',
+        helper: 'Roles et statuts d atelier',
+        count: this.users().length,
+        countLabel: 'comptes',
+      },
+      {
+        id: 'orders' as const,
+        label: 'Commandes',
+        helper: 'Suivi et interventions',
+        count: this.orders().length,
+        countLabel: 'commandes',
+      },
+      {
+        id: 'products' as const,
+        label: 'Catalogue',
+        helper: 'Moderation et mise en avant',
+        count: this.products().length,
+        countLabel: 'produits',
+      },
+    ];
+  });
+
+  protected readonly filteredUsers = computed(() => {
+    const query = this.usersQuery().trim().toLowerCase();
+    const roleFilter = this.userRoleFilter();
+    const vendorStatusFilter = this.vendorStatusFilter();
+
+    return this.users().filter((user) => {
+      if (roleFilter !== 'ALL' && user.role !== roleFilter) {
+        return false;
+      }
+
+      if (
+        vendorStatusFilter !== 'ALL' &&
+        user.artisanProfile?.verificationStatus !== vendorStatusFilter
+      ) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      return [
+        user.fullName,
+        user.email,
+        user.artisanProfile?.studioName ?? '',
+        user.artisanProfile?.location ?? '',
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+    });
+  });
+
+  protected readonly filteredOrders = computed(() => {
+    const query = this.ordersQuery().trim().toLowerCase();
+    const statusFilter = this.orderStatusFilter();
+
+    return this.orders().filter((order) => {
+      if (statusFilter !== 'ALL' && order.status !== statusFilter) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      return [
+        order.orderNumber,
+        order.buyer.fullName,
+        order.buyer.email,
+        order.shippingCity,
+        order.shippingCountry,
+        ...order.items.map((item) => item.productName),
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+    });
+  });
+
+  protected readonly filteredProducts = computed(() => {
+    const query = this.productsQuery().trim().toLowerCase();
+    const statusFilter = this.productStatusFilter();
+    const featuredFilter = this.featuredFilter();
+
+    return this.products().filter((product) => {
+      if (statusFilter !== 'ALL' && product.status !== statusFilter) {
+        return false;
+      }
+
+      if (
+        featuredFilter === 'FEATURED' &&
+        !product.isFeatured
+      ) {
+        return false;
+      }
+
+      if (
+        featuredFilter === 'STANDARD' &&
+        product.isFeatured
+      ) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      return [
+        product.name,
+        product.slug,
+        product.artisan.studioName,
+        product.artisan.location,
+        product.category.name,
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+    });
+  });
+
+  protected readonly revenueBars = computed(() => {
+    const snapshot = this.dashboard();
+
+    if (!snapshot) {
+      return [];
+    }
+
+    const bars = [
+      {
+        label: '7 derniers jours',
+        hint: 'Periode actuelle',
+        value: snapshot.metrics.revenueLast7DaysInCents,
+        tone: 'primary',
+      },
+      {
+        label: '7 jours precedents',
+        hint: 'Periode de comparaison',
+        value: snapshot.metrics.revenuePrevious7DaysInCents,
+        tone: 'secondary',
+      },
+    ] as const;
+
+    const max = Math.max(...bars.map((bar) => bar.value), 1);
+
+    return bars.map((bar) => ({
+      ...bar,
+      width: bar.value > 0 ? `${Math.max((bar.value / max) * 100, 10)}%` : '0%',
+    }));
+  });
+
+  protected readonly statusBars = computed(() => {
+    const snapshot = this.dashboard();
+
+    if (!snapshot) {
+      return [];
+    }
+
+    const total = snapshot.performance.statusBreakdown.reduce(
+      (sum, entry) => sum + entry.count,
+      0,
+    );
+
+    return snapshot.performance.statusBreakdown.map((entry) => ({
+      ...entry,
+      share: total > 0 ? Math.round((entry.count / total) * 100) : 0,
+      width: total > 0 ? `${Math.max((entry.count / total) * 100, 8)}%` : '0%',
+    }));
+  });
+
+  protected readonly categoryBars = computed(() => {
+    const snapshot = this.dashboard();
+
+    if (!snapshot) {
+      return [];
+    }
+
+    const max = Math.max(
+      ...snapshot.performance.topCategories.map((category) => category.revenueInCents),
+      1,
+    );
+
+    return snapshot.performance.topCategories.map((category) => ({
+      ...category,
+      width:
+        category.revenueInCents > 0
+          ? `${Math.max((category.revenueInCents / max) * 100, 12)}%`
+          : '0%',
+    }));
+  });
+
+  protected readonly artisanBars = computed(() => {
+    const snapshot = this.dashboard();
+
+    if (!snapshot) {
+      return [];
+    }
+
+    const max = Math.max(
+      ...snapshot.performance.topArtisans.map((artisan) => artisan.revenueInCents),
+      1,
+    );
+
+    return snapshot.performance.topArtisans.map((artisan) => ({
+      ...artisan,
+      width:
+        artisan.revenueInCents > 0
+          ? `${Math.max((artisan.revenueInCents / max) * 100, 12)}%`
+          : '0%',
+    }));
+  });
+
+  protected readonly lowStockProducts = computed(() =>
+    this.products()
+      .filter((product) => product.inventoryCount <= 3)
+      .sort((left, right) => left.inventoryCount - right.inventoryCount)
+      .slice(0, 5),
+  );
+
   constructor() {
     void this.loadAdminModule();
   }
@@ -45,6 +304,25 @@ export class AdminPageComponent implements OnDestroy {
   ngOnDestroy() {
     if (this.refreshTimer) {
       clearInterval(this.refreshTimer);
+    }
+  }
+
+  protected setSection(section: AdminSection) {
+    this.activeSection.set(section);
+  }
+
+  protected openAlertTarget(target: 'users' | 'orders' | 'products') {
+    this.activeSection.set(target);
+  }
+
+  protected alertActionLabel(target: 'users' | 'orders' | 'products') {
+    switch (target) {
+      case 'users':
+        return 'Ouvrir les utilisateurs';
+      case 'orders':
+        return 'Ouvrir les commandes';
+      default:
+        return 'Ouvrir le catalogue';
     }
   }
 
