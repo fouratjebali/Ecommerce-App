@@ -11,3 +11,4 @@ apps/*/coverage/
 apps/*/.angular/
 .DS_Store
 Thumbs.db
+node_modules
