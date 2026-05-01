@@ -1,17 +1,14 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, ElementRef, OnDestroy, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
+  Chart,
   ChartData,
   ChartOptions,
   TooltipItem,
+  registerables,
 } from 'chart.js';
-import {
-  BaseChartDirective,
-  provideCharts,
-  withDefaultRegisterables,
-} from 'ng2-charts';
 import { firstValueFrom } from 'rxjs';
 import {
   AdminDashboardResponse,
@@ -22,6 +19,8 @@ import {
 import { MarketLabelPipe } from '../../pipes/market-label.pipe';
 import { TndCurrencyPipe } from '../../pipes/tnd-currency.pipe';
 import { AdminApiService } from '../../services/admin-api.service';
+
+Chart.register(...registerables);
 
 interface NoticeState {
   tone: 'success' | 'error';
@@ -42,11 +41,9 @@ type FeaturedFilter = 'ALL' | 'FEATURED' | 'STANDARD';
     FormsModule,
     RouterLink,
     DatePipe,
-    BaseChartDirective,
     TndCurrencyPipe,
     MarketLabelPipe,
   ],
-  providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.scss',
 })
@@ -54,6 +51,14 @@ export class AdminPageComponent implements OnDestroy {
   private readonly adminApiService = inject(AdminApiService);
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
   private readonly workspaceAnchor = viewChild<ElementRef<HTMLElement>>('workspaceAnchor');
+  private readonly revenueChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('revenueChartCanvas');
+  private readonly statusChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('statusChartCanvas');
+  private readonly categoryChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('categoryChartCanvas');
+  private readonly artisanChartCanvas = viewChild<ElementRef<HTMLCanvasElement>>('artisanChartCanvas');
+  private revenueChart: Chart<'bar'> | null = null;
+  private statusChart: Chart<'doughnut'> | null = null;
+  private categoryChart: Chart<'bar'> | null = null;
+  private artisanChart: Chart<'bar'> | null = null;
   private readonly chartPalette = {
     forest: '#546B41',
     olive: '#99AD7A',
@@ -362,6 +367,45 @@ export class AdminPageComponent implements OnDestroy {
       .slice(0, 5),
   );
 
+  private readonly chartSyncEffect = effect((onCleanup) => {
+    onCleanup(() => this.destroyCharts());
+
+    const snapshot = this.dashboard();
+    const revenueCanvas = this.revenueChartCanvas();
+    const statusCanvas = this.statusChartCanvas();
+    const categoryCanvas = this.categoryChartCanvas();
+    const artisanCanvas = this.artisanChartCanvas();
+
+    if (!snapshot || !revenueCanvas || !statusCanvas || !categoryCanvas || !artisanCanvas) {
+      return;
+    }
+
+    this.revenueChart = this.renderBarChart(
+      this.revenueChart,
+      revenueCanvas,
+      this.revenueComparisonData(),
+      this.revenueChartOptions,
+    );
+    this.statusChart = this.renderDoughnutChart(
+      this.statusChart,
+      statusCanvas,
+      this.statusDistributionData(),
+      this.doughnutChartOptions,
+    );
+    this.categoryChart = this.renderBarChart(
+      this.categoryChart,
+      categoryCanvas,
+      this.categoryPerformanceData(),
+      this.categoryChartOptions,
+    );
+    this.artisanChart = this.renderBarChart(
+      this.artisanChart,
+      artisanCanvas,
+      this.artisanPerformanceData(),
+      this.artisanChartOptions,
+    );
+  });
+
   constructor() {
     void this.loadAdminModule();
   }
@@ -628,6 +672,36 @@ export class AdminPageComponent implements OnDestroy {
     }, intervalMs);
   }
 
+  private renderBarChart(
+    currentChart: Chart<'bar'> | null,
+    canvasRef: ElementRef<HTMLCanvasElement>,
+    data: ChartData<'bar'>,
+    options: ChartOptions<'bar'>,
+  ) {
+    currentChart?.destroy();
+
+    return new Chart(canvasRef.nativeElement, {
+      type: 'bar',
+      data,
+      options,
+    });
+  }
+
+  private renderDoughnutChart(
+    currentChart: Chart<'doughnut'> | null,
+    canvasRef: ElementRef<HTMLCanvasElement>,
+    data: ChartData<'doughnut'>,
+    options: ChartOptions<'doughnut'>,
+  ) {
+    currentChart?.destroy();
+
+    return new Chart(canvasRef.nativeElement, {
+      type: 'doughnut',
+      data,
+      options,
+    });
+  }
+
   private async patchUser(
     userId: string,
     payload: {
@@ -721,5 +795,17 @@ export class AdminPageComponent implements OnDestroy {
       style: 'currency',
       currency: 'TND',
     }).format(value);
+  }
+
+  private destroyCharts() {
+    this.revenueChart?.destroy();
+    this.statusChart?.destroy();
+    this.categoryChart?.destroy();
+    this.artisanChart?.destroy();
+
+    this.revenueChart = null;
+    this.statusChart = null;
+    this.categoryChart = null;
+    this.artisanChart = null;
   }
 }

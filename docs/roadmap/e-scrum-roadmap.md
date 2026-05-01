@@ -42,14 +42,6 @@
 - Webhook-driven order confirmation
 - Multi-vendor payout foundation
 
-## Sprint 7 Planned
+## Sprint 7 (QA) : Tests E2E (Cypress), tests de charge (JMeter), corrections de bugs
 
-- RabbitMQ automation for abandoned carts and shipment updates
-- Loyalty point events
-- Vendor dashboard analytics expansion
-
-## Sprint 8 Planned
-
-- Admin KPI dashboards
-- Conversion funnel instrumentation
-- A/B testing flags and release hardening before main branch launch
+## Sprint 8 (UX & Final) : Polissage UI, optimisation mobile

@@ -155,12 +155,7 @@
                   <span>Comparaison des deux dernieres periodes</span>
                 </div>
                 <div class="chart-canvas is-medium">
-                  <canvas
-                    baseChart
-                    [data]="revenueComparisonData()"
-                    [options]="revenueChartOptions"
-                    [type]="'bar'"
-                  ></canvas>
+                  <canvas #revenueChartCanvas></canvas>
                 </div>
               </article>
 
@@ -170,12 +165,7 @@
                   <span>Lecture rapide du flux de commandes</span>
                 </div>
                 <div class="chart-canvas is-medium">
-                  <canvas
-                    baseChart
-                    [data]="statusDistributionData()"
-                    [options]="doughnutChartOptions"
-                    [type]="'doughnut'"
-                  ></canvas>
+                  <canvas #statusChartCanvas></canvas>
                 </div>
               </article>
 
@@ -185,12 +175,7 @@
                   <span>Par chiffre d'affaires genere</span>
                 </div>
                 <div class="chart-canvas is-tall">
-                  <canvas
-                    baseChart
-                    [data]="categoryPerformanceData()"
-                    [options]="categoryChartOptions"
-                    [type]="'bar'"
-                  ></canvas>
+                  <canvas #categoryChartCanvas></canvas>
                 </div>
               </article>
 
@@ -200,12 +185,7 @@
                   <span>Les meilleurs contributeurs du moment</span>
                 </div>
                 <div class="chart-canvas is-tall">
-                  <canvas
-                    baseChart
-                    [data]="artisanPerformanceData()"
-                    [options]="artisanChartOptions"
-                    [type]="'bar'"
-                  ></canvas>
+                  <canvas #artisanChartCanvas></canvas>
                 </div>
               </article>
             </section>
